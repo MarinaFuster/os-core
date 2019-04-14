@@ -1,0 +1,25 @@
+#include "bitMap.h"
+
+unsigned char figures[] = {
+//SQAURE
+XXXXXXXX,
+XXXXXXXX,
+XXXXXXXX,
+XXXXXXXX,
+XXXXXXXX,
+XXXXXXXX,
+XXXXXXXX,
+XXXXXXXX,
+XXXXXXXX,
+XXXXXXXX,
+XXXXXXXX,
+XXXXXXXX,
+XXXXXXXX,
+XXXXXXXX,
+XXXXXXXX,
+XXXXXXXX,
+};
+
+char * square(){
+  return figures;
+}
