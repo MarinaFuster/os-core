@@ -42,7 +42,14 @@ void displayShell(){
     while(running){
       char c=getChar();
       if(c!=0){
-        putChar(c);
+        if (c!='\b'){
+          putChar(c);
+        }
+        else{
+          if (buffer_index!=0){
+            putChar(c);
+          }
+        }
         if(c=='\n'){
           execute();
           if(!running){
@@ -52,7 +59,9 @@ void displayShell(){
           printf(user);
         }
         else if(c=='\b'){
-          shell_buffer[--buffer_index]=0;
+          if (buffer_index!=0){
+            shell_buffer[--buffer_index]=0;
+          }
         }
         else{
           shell_buffer[buffer_index++]=c;
