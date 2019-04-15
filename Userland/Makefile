@@ -9,8 +9,8 @@ sampleCodeModule:
 	cd SampleCodeModule ; make
 
 sampleDataModule:
-	$ echo 'O0FFFF00' | xxd -r -p >> $(SAMPLE_DATA)
-
+	printf "This is sample data." >> $(SAMPLE_DATA) && dd if=/dev/zero bs=1 count=1 >> $(SAMPLE_DATA)
+	
 clean:
 	cd SampleCodeModule; make clean
 	rm -rf *.bin
