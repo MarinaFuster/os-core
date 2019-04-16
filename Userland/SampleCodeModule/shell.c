@@ -11,6 +11,7 @@
 #define DIVZERO "divzero"
 #define INVALIDOPERATION "invalidoperation"
 #define EXIT "exit"
+#define TEST_MALLOC_AND_FREE "testmemory" /* This must be removed later ! */
 
 #define MAX_COMMAND_LENGTH 20
 #define BUFFER_SIZE 100
@@ -84,6 +85,9 @@ void execute(){
     pong();
   else if(strcmp(command,HELP))
     help();
+  else if(strcmp(command, TEST_MALLOC_AND_FREE)){
+    test_malloc_and_free();
+  }
   else if(strcmp(command,EXIT)){
     exit();
     running=0;

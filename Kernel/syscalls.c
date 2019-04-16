@@ -13,7 +13,7 @@
 #define ENTER '\n'
 #define DELETE '\b'
 
-#define SYSCALLSQTY 10
+#define SYSCALLSQTY 12
 #define VALID_SYS_CODE(c) (c>=0 && c<=SYSCALLSQTY)
 
 typedef uint64_t (*syscall) (uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
@@ -102,6 +102,19 @@ uint64_t sys_disable_beep(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8,
   return 0;
 }
 
+/* arguements : pointer and size of memory we need to allocate
+   returns null if memory can not be allocated, else returns memory address
+*/
+uint64_t sys_malloc(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  ncPrint("MALLOC"); /* This must be removed later ! */
+}
+
+/* arguements : pointer and size of memory we need to free  
+*/
+uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  ncPrint("FREE"); /* This must be removed later ! */
+}
+
 void loadSysCalls(){
   syscalls[0]=&sys_exit;
   syscalls[1]=&sys_time;
@@ -113,6 +126,8 @@ void loadSysCalls(){
   syscalls[7]=&sys_ticks;
   syscalls[8]=&sys_beep;
   syscalls[9]=&sys_disable_beep;
+  syscalls[10]=&sys_malloc;
+  syscalls[11]=&sys_free;
 }
 
 void sysCallsHandler(uint64_t syscode, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){ // lega en rdi desde asm
