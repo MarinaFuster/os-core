@@ -14,7 +14,7 @@
 #define ENTER '\n'
 #define DELETE '\b'
 
-#define SYSCALLSQTY 12
+#define SYSCALLSQTY 15
 #define VALID_SYS_CODE(c) (c>=0 && c<=SYSCALLSQTY)
 
 typedef uint64_t (*syscall) (uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
@@ -116,6 +116,18 @@ uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
   return free(rsi);
 }
 
+uint64_t sys_exec(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  ncPrint("exec syscall"); // This must be replaced!
+}
+
+uint64_t sys_exit_process(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  ncPrint("exit process syscall"); // This must be replaced!
+}
+
+uint64_t sys_ps(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  ncPrint("ps syscall"); // This must be replaced!
+}
+
 void loadSysCalls(){
   syscalls[0]=&sys_exit;
   syscalls[1]=&sys_time;
@@ -129,6 +141,9 @@ void loadSysCalls(){
   syscalls[9]=&sys_disable_beep;
   syscalls[10]=&sys_malloc;
   syscalls[11]=&sys_free;
+  syscalls[12]=&sys_exec;
+  syscalls[13]=&sys_exit_process;
+  syscalls[14]=&sys_ps;
 }
 
 void sysCallsHandler(uint64_t syscode, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){ // lega en rdi desde asm
