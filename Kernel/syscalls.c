@@ -7,6 +7,7 @@
 #include "video.h"
 #include "time.h"
 #include "beep.h"
+#include "memoryManager.h"
 
 #define EOF -1
 #define TAB '\t'
@@ -106,13 +107,13 @@ uint64_t sys_disable_beep(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8,
    returns null if memory can not be allocated, else returns memory address
 */
 uint64_t sys_malloc(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  ncPrint("MALLOC"); /* This must be removed later ! */
+  return allocate(rsi);
 }
 
 /* arguements : pointer and size of memory we need to free  
 */
 uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  ncPrint("FREE"); /* This must be removed later ! */
+  return free(rsi);
 }
 
 void loadSysCalls(){
