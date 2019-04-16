@@ -110,7 +110,7 @@ uint64_t sys_malloc(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint6
   return allocate(rsi);
 }
 
-/* arguements : pointer and size of memory we need to free  
+/* arguements : pointer to memory address we need to free  
 */
 uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
   return free(rsi);

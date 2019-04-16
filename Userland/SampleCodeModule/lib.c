@@ -107,3 +107,11 @@ void printf(const char * str, ...){
   }
   va_end(argsList); //finalizacion de la funcion
 }
+
+void * malloc(uint64_t size){
+   return int80(10,size,0,0,0,0);
+}
+
+void free(void * pointer){
+  int80(11,(uint64_t)pointer,0,0,0,0);
+}
