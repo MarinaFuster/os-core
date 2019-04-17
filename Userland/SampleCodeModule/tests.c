@@ -6,7 +6,7 @@ extern uint64_t int80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, ui
 
 void test_memory(){ /* This must be removed later ! */
 
-    void * bigger_than_memory_block=malloc(6248449);
+    void * bigger_than_memory_block=malloc(99975169);
     if(bigger_than_memory_block==NULL)
         printf("Test 1... OK\n");
     else

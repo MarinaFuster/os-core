@@ -1,7 +1,7 @@
 #include <stdint.h>
 
-#define MEMORY_SIZE 0x5F5800 
-#define OFFSET 0x400
+#define MEMORY_SIZE 0x5F58000 
+#define OFFSET 0x1000
 /* 6102 pages */
 
 #define UNSUCCESSFUL -1
