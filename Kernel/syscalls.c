@@ -118,14 +118,17 @@ uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
 
 uint64_t sys_exec(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
   ncPrint("exec syscall"); // This must be replaced!
+  return 0;
 }
 
 uint64_t sys_exit_process(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
   ncPrint("exit process syscall"); // This must be replaced!
+  return 0;
 }
 
 uint64_t sys_ps(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
   ncPrint("ps syscall"); // This must be replaced!
+  return 0;
 }
 
 void loadSysCalls(){

@@ -21,5 +21,5 @@ XXXXXXXX,
 };
 
 char * square(){
-  return figures;
+  return (char *)figures;
 }

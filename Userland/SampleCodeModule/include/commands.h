@@ -1,3 +1,6 @@
+#ifndef __COMMANDS__
+#define __COMMANDS__
+
 #define DATE "date"
 #define TIME "time"
 #define CLEAR "clear"
@@ -6,9 +9,7 @@
 #define DIVZERO "divzero"
 #define INVALIDOPERATION "invalidoperation"
 #define EXIT "exit"
-
-#ifndef __COMMANDS__
-#define __COMMANDS__
+#define TEST_MALLOC_AND_FREE "testmemory" /* This must be removed later ! */
 
 void date();
 void time();
@@ -17,5 +18,7 @@ void pong();
 void help();
 void divzero();
 void invalidoperation();
+void exit();
+void test_malloc_and_free(); /* This must be removed later ! */
 
 #endif

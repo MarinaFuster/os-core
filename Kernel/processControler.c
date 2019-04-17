@@ -18,3 +18,10 @@ typedef struct {
 // Hay que chequear que no haya problemas con esta inicializacion
 // Asi como con otras. Revisar codigo! 
 static processList * processRegister=0; 
+
+// ESTA FUNCION TIENE QUE DESAPARECER UNA VEZ TERMINADO TODO!
+void
+function_just_meant_to_remove_process_controler_warnings(){
+    processRegister=0;
+    return;
+}

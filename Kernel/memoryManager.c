@@ -75,7 +75,7 @@ allocate(uint64_t size){
         memoryBlock[index+i].size=0;
     }
 
-    return memoryStartingPoint+(index*OFFSET);
+    return (uint64_t)memoryStartingPoint+(index*OFFSET);
 
 }
 

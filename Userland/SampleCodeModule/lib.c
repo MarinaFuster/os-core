@@ -8,7 +8,7 @@
 #define SPECIAL 1
 #define NORMAL 0
 
-extern int int80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
+extern uint64_t int80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
 
 void strncpy(char * destination, const char * source, int length){
 	int i=0;
@@ -109,7 +109,7 @@ void printf(const char * str, ...){
 }
 
 void * malloc(uint64_t size){
-   return int80(10,size,0,0,0,0);
+   return (void *)int80(10,size,0,0,0,0);
 }
 
 void free(void * pointer){

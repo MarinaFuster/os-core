@@ -18,7 +18,6 @@
 #define TAB '\t'
 
 static char circularBuffer[BUFFER_SIZE]={0};
-static int currentIndex;
 static int lastIndex;
 static int bufferEmpty=TRUE;
 
@@ -79,6 +78,7 @@ void keyboard_handler(){
 		return;
 
 	if(VALID_KEY(pressedKey)){    //Si presione una tecla correcta
+		
 		char asciiKey;
 		asciiKey=ASCII_VALUE[pressedKey];
 

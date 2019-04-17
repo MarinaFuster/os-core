@@ -25,10 +25,10 @@ static int rightPlayerY=HEIGHT/2;
 static int rightScore=0;
 
 void hold(int ticks){
-  int80(7,&ticks_start,0,0,0,0);
+  int80(7,(uint64_t)&ticks_start,0,0,0,0);
   ticks_end=ticks_start;
   while(ticks_end<ticks_start+ticks){
-    int80(7,&ticks_end,0,0,0,0);
+    int80(7,(uint64_t)&ticks_end,0,0,0,0);
   }
 }
 
@@ -180,7 +180,7 @@ void beep(){
 //  int80(9,0,0,0,0,0);
 }
 
-int checkGol(){
+void checkGol(){
   if(ballX==1 && (ballY<leftPlayerY-3 || ballY>leftPlayerY+3)){
     leftScore+=1;
     beep();
@@ -225,7 +225,6 @@ void pong(){
   clear();
   startBall();
   startPlayers();
-  int playermove=0;
   while(running){
     moveRacket();
     checkBounce();

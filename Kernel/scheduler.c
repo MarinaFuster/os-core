@@ -25,3 +25,11 @@ typedef struct{
 El indice corresponde a la prioridad: 0 (mas importante), 1, 2.
 */
 static dequeue * priorityQueues[3]={0};
+
+
+// ESTA FUNCION TIENE QUE DESAPARECER UNA VEZ TERMINADO TODO!
+void
+function_just_meant_to_remove_scheduler_warnings(){
+    priorityQueues[0]=(dequeue *)0;
+    return;
+}

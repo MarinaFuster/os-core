@@ -2,10 +2,7 @@
 #include <stdint.h>
 #include <naiveConsole.h>
 #include <rtc.h>
-
-void addToBuffer();
-char readFromBuffer();
-char readLast();
+#include <keyboard.h>
 
 static void int_21();
 static void int_20();

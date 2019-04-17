@@ -3,16 +3,6 @@
 #include "include/stdlib.h"
 #include "commands.h"
 
-#define DATE "date"
-#define TIME "time"
-#define CLEAR "clear"
-#define PONG "playpong"
-#define HELP "help"
-#define DIVZERO "divzero"
-#define INVALIDOPERATION "invalidoperation"
-#define EXIT "exit"
-#define TEST_MALLOC_AND_FREE "testmemory" /* This must be removed later ! */
-
 #define MAX_COMMAND_LENGTH 20
 #define BUFFER_SIZE 100
 
@@ -72,7 +62,7 @@ void displayShell(){
 }
 
 void execute(){
-  char * command[MAX_COMMAND_LENGTH];
+  char command[MAX_COMMAND_LENGTH];
   strncpy(command,shell_buffer,MAX_COMMAND_LENGTH);
 
   if(strcmp(command,DATE))

@@ -1,6 +1,7 @@
 #include "video.h"
 #include "bitMap.h"
 
+extern char * square();
 
 /* VBEModeInfoBlock = 0X5C00 ---> /Bootloader/Pure64/src/sysvar.asm */
 
@@ -128,7 +129,7 @@ void clearScreen(){
 void drawAFigure(uint64_t x, uint64_t y){
   x=x*CHAR_WIDTH;
   y=y*CHAR_HEIGHT;
-  uint8_t * charMap = square();
+  uint8_t * charMap = (uint8_t *)square();
 	for(int i = 0; i < CHAR_HEIGHT; i++) {
       for(int j = 0; j < CHAR_WIDTH; j++) {
 
@@ -142,7 +143,6 @@ void drawAFigure(uint64_t x, uint64_t y){
 void deleteAt(uint64_t x, uint64_t y){
   x=x*CHAR_WIDTH;
   y=y*CHAR_HEIGHT;
-  uint8_t * charMap = square();
 	for(int i = 0; i < CHAR_HEIGHT; i++) {
       for(int j = 0; j < CHAR_WIDTH; j++) {
               drawAPixelWithColour(CHAR_WIDTH - 1 - j + x, i + y, BLACK);
