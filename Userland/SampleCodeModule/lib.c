@@ -108,8 +108,8 @@ void printf(const char * str, ...){
   va_end(argsList); //finalizacion de la funcion
 }
 
-void * malloc(uint64_t size){
-   return (void *)int80(10,size,0,0,0,0);
+void * malloc(uint64_t bytes){
+   return (void *)int80(10,bytes,0,0,0,0);
 }
 
 void free(void * pointer){

@@ -19,6 +19,6 @@ void help();
 void divzero();
 void invalidoperation();
 void exit();
-void test_malloc_and_free(); /* This must be removed later ! */
+
 
 #endif

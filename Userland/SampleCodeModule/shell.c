@@ -2,6 +2,7 @@
 #include "include/exceptions.h"
 #include "include/stdlib.h"
 #include "commands.h"
+#include "tests.h"
 
 #define MAX_COMMAND_LENGTH 20
 #define BUFFER_SIZE 100
@@ -75,8 +76,8 @@ void execute(){
     pong();
   else if(strcmp(command,HELP))
     help();
-  else if(strcmp(command, TEST_MALLOC_AND_FREE)){
-    test_malloc_and_free();
+  else if(strcmp(command, TEST_MEMORY)){
+    test_memory();
   }
   else if(strcmp(command,EXIT)){
     exit();

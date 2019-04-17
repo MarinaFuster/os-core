@@ -44,10 +44,3 @@ void invalidoperation(){
 void exit(){
     int80(5,0,0,0,0,0);
 }
-
-void test_malloc_and_free(){ /* This must be removed later ! */
-    int80(10,0,0,0,0,0);
-    printf("\n");
-    int80(11,0,0,0,0,0);
-    printf("\n");
-}

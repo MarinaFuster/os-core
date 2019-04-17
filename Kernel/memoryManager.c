@@ -18,7 +18,7 @@ typedef struct{
 // Preguntar el lunes por la direccion de memoria que tira
 // Compararla con la direccion de memoria si inicializamos en 1
 // Chequear si la zona donde se inicializa es zona que este pisando algun binario
-static memoryDescriptor memoryBlock[MEMORY_SIZE/OFFSET]={0};
+static memoryDescriptor memoryBlock[MEMORY_SIZE/OFFSET]={{0}};
 
 int
 bestFitAlgorithm(int blocks){
@@ -55,6 +55,11 @@ bestFitAlgorithm(int blocks){
 /* Returns null if memory cannot be allocated, else returns memory address */
 uint64_t
 allocate(uint64_t size){
+
+    if(size==0)
+        return 0;
+    if(size>MEMORY_SIZE)
+        return 0;
 
     int blocks = size/OFFSET;
     if(size%OFFSET != 0)
