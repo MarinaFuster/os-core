@@ -15,39 +15,43 @@ typedef struct{
     uint64_t size;
 }memoryDescriptor;
 
-// Preguntar el lunes por la direccion de memoria que tira
-// Compararla con la direccion de memoria si inicializamos en 1
-// Chequear si la zona donde se inicializa es zona que este pisando algun binario
 static memoryDescriptor memoryBlock[MEMORY_SIZE/OFFSET]={{0}};
 
 int
 bestFitAlgorithm(int blocks){
 
     int bestPossibleIndex=-1;
-    int bestSize=0;
+    int bestSize=MEMORY_SIZE;
     int currentPossibleSize=0;
+    int currentPossibleIndex=-1;
     int i;
     
     for(i=0; i<MEMORY_SIZE/OFFSET; i++){
 
         if(currentPossibleSize!=0){
-            if(!memoryBlock[i].occupied)
+            if(memoryBlock[i].occupied==0)
                 currentPossibleSize+=1;
             else{
                 if(currentPossibleSize==blocks){ /* I cant find a better fit */
-                    return i;
+                    return currentPossibleIndex;
                 }
                 if(currentPossibleSize>blocks && currentPossibleSize < bestSize){
                         bestSize=currentPossibleSize;
-                        bestPossibleIndex=i;
+                        bestPossibleIndex=currentPossibleIndex;
                 }
                 currentPossibleSize=0;
             }
         }
-
-        if(!memoryBlock[i].occupied)
-            currentPossibleSize+=1;    
+        else{
+            if(memoryBlock[i].occupied==0){
+                currentPossibleSize+=1;
+                currentPossibleIndex=i;
+            }
+        }
     }
+
+    if(currentPossibleSize>=blocks && bestPossibleIndex==-1)
+        bestPossibleIndex=currentPossibleIndex;
 
     return bestPossibleIndex;
 }
@@ -87,12 +91,14 @@ allocate(uint64_t size){
 /* Returns -1 if free process fails */
 uint64_t
 free(uint64_t pointer){
+    
     uint64_t index = (pointer-(uint64_t)memoryStartingPoint)/OFFSET;
+    uint32_t blocks=memoryBlock[index].size;
 
     if(!memoryBlock[index].isBeggining)
         return UNSUCCESSFUL;
-
-    for(int i=0; i<memoryBlock[index].size; i++){
+    
+    for(int i=0; i<blocks; i++){
         memoryBlock[index+i].occupied=0;
         memoryBlock[index+i].isBeggining=0;
         memoryBlock[index+i].size=0;

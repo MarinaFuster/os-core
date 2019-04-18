@@ -109,7 +109,9 @@ void printf(const char * str, ...){
 }
 
 void * malloc(uint64_t bytes){
-   return (void *)int80(10,bytes,0,0,0,0);
+  void * address;
+  int80(10,bytes,(uint64_t)&address,0,0,0);
+  return address;
 }
 
 void free(void * pointer){
