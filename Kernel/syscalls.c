@@ -103,17 +103,21 @@ uint64_t sys_disable_beep(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8,
   return 0;
 }
 
-/* arguements : pointer and size of memory we need to allocate
-   returns null if memory can not be allocated, else returns memory address
+/* arguements : bytes of memory we need to allocate and pointer_address where we 
+   store the new address if possible (else null)
 */
-uint64_t sys_malloc(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  return allocate(rsi);
+uint64_t sys_malloc(uint64_t bytes, uint64_t pointer_address, uint64_t rcx, uint64_t r8, uint64_t r9){
+  uint64_t address=allocate(bytes);
+  unsigned long int * pointer=(unsigned long int *)pointer_address;
+  *pointer=address;
+  return 0;
 }
 
 /* arguements : pointer to memory address we need to free  
 */
 uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  return free(rsi);
+  free(rsi);
+  return 0;
 }
 
 uint64_t sys_exec(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
