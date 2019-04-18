@@ -54,11 +54,11 @@ void addProcessToScheduler(int processId, int priority, char * desc){
     dequeueNode dnode;
     dnode.task=td;
     if(priorityQueues[priority-1].size==0){
-        dnode.next=0;
+        dnode->next=0;
         priorityQueues[priority-1].size=1;
     }else{
-        dnode.next=priorityQueues[priority-1].first;
+        dnode->next=priorityQueues[priority-1].first;
         priorityQueues[priority-1].size++;
     }
-    priorityQueues[priority-1].first=dnode;
+    priorityQueues[priority-1]->first=dnode;
 }
