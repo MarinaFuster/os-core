@@ -81,12 +81,12 @@ createProcessWithPriority(uint64_t size,char * description,int priority){
 	pd.address=allocate(size);
 	pnode.process=pd;
 	if(processRegister==0){
-		pnode.next=0;
-		processRegister.first=pnode;
+		pnode->next=0;
+		processRegister->first=pnode;
 		processRegister.size=1;
 	}else{+
-		pnode.next=processRegister.first;
-		processRegister.first=pnode;
+		pnode->next=processRegister->first;
+		processRegister->first=pnode;
 		processRegister.size++;
 	}
 	addProcessToScheduler(processID-1, priority,description);
