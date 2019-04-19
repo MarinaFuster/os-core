@@ -20,8 +20,8 @@ typedef struct{
 }dequeue;
 
 
-// HABRIA QUE HACER UN.H
 int removeProcess(int pid);
 int removeFromDequeueRec(dequeueNode* node, int pid);
+void addProcessToScheduler(int processId, int priority, char * desc);
 
 #endif

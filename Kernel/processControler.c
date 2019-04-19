@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include <naiveConsole.h>
 #include <processController.h>
+#include <memoryManager.h>
+#include <scheduler.h>
 static int processID=1;
 
 // Hay que chequear que no haya problemas con esta inicializacion
@@ -53,6 +55,7 @@ int removeFromController(int pid){
   }
 
   removeFromControllerRec(processRegister->first, pid);
+  return 1; //TODO: ESTO LO AGREGUE, NO SE SI ERA LA IDEA... POR AHI RETORNAR EL PID
 }
 
 int removeFromControllerRec(processListNode* node, int pid){
@@ -67,29 +70,29 @@ int removeFromControllerRec(processListNode* node, int pid){
 
   return removeFromControllerRec(node->next, pid);
 }
-
-int
-createProcess(uint64_t size,char * description){
-	return createProcessWithPriority(size,description, 2);
-}
-
 int
 createProcessWithPriority(uint64_t size,char * description,int priority){
-	processDescriptor pd;
-	processListNode pnode;
-	pd.pid=processID++;
-	pd.address=allocate(size);
-	pnode.priorityaccess=pd;
+	processDescriptor * pd;
+	processListNode * pnode;
+	pd->pid=processID++;
+	pd->address=allocate(size);
+	pnode->process=*pd;
 	if(processRegister==0){
 		pnode->next=0;
 		processRegister->first=pnode;
-		processRegister.size=1;
-	}else{+
+		processRegister->size=1;
+	}else{
 		pnode->next=processRegister->first;
 		processRegister->first=pnode;
-		processRegister.size++;
+		processRegister->size++;
 	}
 	addProcessToScheduler(processID-1, priority,description);
 
 	return processID-1;
 }
+int
+createProcess(uint64_t size,char * description){
+	return createProcessWithPriority(size,description, 2);
+}
+
+
