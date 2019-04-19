@@ -72,8 +72,8 @@ int removeFromControllerRec(processListNode* node, int pid){
 }
 int
 createProcessWithPriority(uint64_t size,char * description,int priority){
-	processDescriptor * pd;
-	processListNode * pnode;
+	processDescriptor * pd=0;
+	processListNode * pnode=0;
 	pd->pid=processID++;
 	pd->address=allocate(size);
 	pnode->process=*pd;
