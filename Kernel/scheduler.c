@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <processControler.h>
+#include <processController.h>
 #include <scheduler.h>
 
 
@@ -60,5 +60,5 @@ void addProcessToScheduler(int processId, int priority, char * desc){
         dnode.next=priorityQueues[priority-1]->first;
         priorityQueues[priority-1]->size++;
     }
-    priorityQueues[priority-1]->first=dnode;
+    priorityQueues[priority-1]->first=&dnode;
 }

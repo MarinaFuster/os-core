@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <naiveConsole.h>
-#include <processControler.h>
+#include <processController.h>
 static int processID=1;
 
 // Hay que chequear que no haya problemas con esta inicializacion
@@ -79,7 +79,7 @@ createProcessWithPriority(uint64_t size,char * description,int priority){
 	processListNode pnode;
 	pd.pid=processID++;
 	pd.address=allocate(size);
-	pnode.priorityocess=pd;
+	pnode.priorityaccess=pd;
 	if(processRegister==0){
 		pnode->next=0;
 		processRegister->first=pnode;
