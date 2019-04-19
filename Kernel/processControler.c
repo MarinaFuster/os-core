@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <naiveConsole.h>
-#include <processController.h>
+#include <processControler.h>
 static int processID=1;
 
 // Hay que chequear que no haya problemas con esta inicializacion
@@ -24,7 +24,7 @@ void ps (){
     ncTab();
     ncPrint("PID");
     ncNewline();
-    recursive_ps(processRegister->first);
+    recursivePs(processRegister->first);
   }
 
   return;
@@ -39,7 +39,7 @@ void recursivePs(processListNode* node){
   ncTab();
   ncPrintDec(node->process.pid);
   ncNewline();
-  recursive_ps(node->next);
+  recursivePs(node->next);
 }
 
 int removeFromController(int pid){
@@ -79,7 +79,7 @@ createProcessWithPriority(uint64_t size,char * description,int priority){
 	processListNode pnode;
 	pd.pid=processID++;
 	pd.address=allocate(size);
-	pnode.process=pd;
+	pnode.priorityocess=pd;
 	if(processRegister==0){
 		pnode->next=0;
 		processRegister->first=pnode;

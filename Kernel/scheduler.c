@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <processController.h>
+#include <processControler.h>
 #include <scheduler.h>
 
 
@@ -21,7 +21,7 @@ function_just_meant_to_remove_scheduler_warnings(){
 }
 
 int removeProcess(int pid) {
-  remove_from_controller(pid);
+  removeFromController(pid);
   for (int i=0; i<3; i++){
     if(removeFromDequeueRec(priorityQueues[i]->first,pid)){
       return 1;
@@ -53,12 +53,12 @@ void addProcessToScheduler(int processId, int priority, char * desc){
     td.stackPointer=0;
     dequeueNode dnode;
     dnode.task=td;
-    if(priorityQueues[priority-1].size==0){
-        dnode->next=0;
-        priorityQueues[priority-1].size=1;
+    if(priorityQueues[priority-1]->size==0){
+        dnode.next=0;
+        priorityQueues[priority-1]->size=1;
     }else{
-        dnode->next=priorityQueues[priority-1].first;
-        priorityQueues[priority-1].size++;
+        dnode.next=priorityQueues[priority-1]->first;
+        priorityQueues[priority-1]->size++;
     }
     priorityQueues[priority-1]->first=dnode;
 }
