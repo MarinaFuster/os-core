@@ -8,6 +8,7 @@
 #include "time.h"
 #include "beep.h"
 #include "memoryManager.h"
+#include "processControler.h"
 
 #define EOF -1
 #define TAB '\t'
@@ -103,7 +104,7 @@ uint64_t sys_disable_beep(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8,
   return 0;
 }
 
-/* arguements : bytes of memory we need to allocate and pointer_address where we 
+/* arguements : bytes of memory we need to allocate and pointer_address where we
    store the new address if possible (else null)
 */
 uint64_t sys_malloc(uint64_t bytes, uint64_t pointer_address, uint64_t rcx, uint64_t r8, uint64_t r9){
@@ -113,7 +114,7 @@ uint64_t sys_malloc(uint64_t bytes, uint64_t pointer_address, uint64_t rcx, uint
   return 0;
 }
 
-/* arguements : pointer to memory address we need to free  
+/* arguements : pointer to memory address we need to free
 */
 uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
   free(rsi);
@@ -121,7 +122,7 @@ uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
 }
 
 uint64_t sys_exec(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  ncPrint("exec syscall"); // This must be replaced!
+  createProcess(0x1000, "ProcessTesting"); // Esto hay que cambiarlo, por algun lado tiene que recibir nombre
   return 0;
 }
 

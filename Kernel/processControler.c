@@ -72,8 +72,10 @@ int removeFromControllerRec(processListNode* node, int pid){
 }
 int
 createProcessWithPriority(uint64_t size,char * description,int priority){
-	processDescriptor * pd=0;
-	processListNode * pnode=0;
+  processDescriptor newProcess;
+  processDescriptor * pd=&newProcess;   // Puntero a la estructura del proceso
+  processListNode node;
+	processListNode * pnode=&node;         // Puntero al nodo que contiene la estructura del proceso
 	pd->pid=processID++;
 	pd->address=allocate(size);
 	pnode->process=*pd;
@@ -94,5 +96,3 @@ int
 createProcess(uint64_t size,char * description){
 	return createProcessWithPriority(size,description, 2);
 }
-
-
