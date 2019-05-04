@@ -94,13 +94,28 @@ void addToRoundRobin(dequeueNode * dNode){
   (priorityQueue->size)++;
 }
 
-void addProcessToScheduler(int priority, uint8_t pid){
+void addProcessToScheduler(int priority, uint8_t pid, uint64_t memoryBlock){
   for(int i=priority; i<3; i++){
     dequeueNode * dNode=(dequeueNode *)allocate(sizeof(dequeueNode));
     dNode->pid=pid;
     dNode->state=0;
-    dNode->stackPointer=0;
+    dNode->stackPointer=memoryBlock+OFFSET;
     dNode->next=0;
     addToRoundRobin(dNode);      
   }    
+}
+
+uint64_t contextSwitching(uint64_t rsp) {
+  
+  (priorityQueue->first)->stackPointer=rsp;  // Guardo en nodo el nuevo SP del P1
+
+  //Reordeno priorityQueue (el proximo proceso es el nuevo first, y el anterior first ahora va al fondo)
+  (priorityQueue->last)->next=priorityQueue->first;
+  priorityQueue->last=(priorityQueue->last)->next;
+  priorityQueue->first=(priorityQueue->first)->next;
+  (priorityQueue->last)->next=0;
+
+
+  return (priorityQueue->first)->stackPointer;
+
 }

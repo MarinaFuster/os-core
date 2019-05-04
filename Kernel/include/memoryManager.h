@@ -4,4 +4,6 @@
 uint64_t allocate(uint64_t size);
 uint64_t free(uint64_t pointer);
 
+#define OFFSET 0x1000
+
 #endif
