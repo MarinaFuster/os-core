@@ -1,21 +1,8 @@
 #ifndef _PROCESS_CONTROLLER_
 #define _PROCESS_CONTROLLER_
+
+void initializeProcessRegister();
 /*
-
-typedef struct{
-    char* description;
-    uint8_t pid;
-}processDescriptor;
-
-typedef struct{
-    processDescriptor process;
-    struct processListNode * next;
-}processListNode;
-
-typedef struct {
-    processListNode * first;
-    uint32_t size;
-}processList;
 void ps ();
 void recursivePs(processListNode* node);
 int removeFromController(int pid);

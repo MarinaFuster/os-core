@@ -5,6 +5,7 @@
 #include <naiveConsole.h>
 #include "idtLoader.h"
 #include "scheduler.h"
+#include "processController.h"
 
 extern void delay();
 extern void _hlt();
@@ -56,6 +57,7 @@ void * initializeKernelBinary()
 int main(){
 	ncClear();
 	load_idt();
+	initializeProcessRegister();
 	initializeScheduler();
 	//initializeScreen();
 	((EntryPoint)sampleCodeModuleAddress)();

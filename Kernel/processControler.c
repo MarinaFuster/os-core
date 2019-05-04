@@ -1,24 +1,33 @@
 #include <stdint.h>
+#include <stdio.h>  // We need this in order to use sizeof (just for that)
 #include <naiveConsole.h>
 #include <processController.h>
 #include <memoryManager.h>
 #include <scheduler.h>
 
-/*
-static int processID=1;
+typedef struct{
+    char* description;
+    uint8_t pid;
+    struct processListNode * next;
+}processListNode;
 
-// Hay que chequear que no haya problemas con esta inicializacion
-// Asi como con otras. Revisar codigo!
+typedef struct {
+    processListNode * first;
+    uint8_t size;
+}processList;
+
+
+static int processID=1;
 static processList * processRegister=0;
 
-// ESTA FUNCION TIENE QUE DESAPARECER UNA VEZ TERMINADO TODO!
-void
-function_just_meant_to_remove_process_controler_warnings(){
-    processRegister=0;
-    return;
+void initializeProcessRegister(){
+  processRegister=(processList *)allocate(sizeof(*processRegister));
+  processRegister->first=0;
+  processRegister->size=0;
 }
 
-void ps (){
+/*
+void ps(){
   if (processRegister->first==0){
     ncPrint("There is no process running");
     ncNewline();
