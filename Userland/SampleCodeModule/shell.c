@@ -66,18 +66,26 @@ void execute(){
   char command[MAX_COMMAND_LENGTH];
   strncpy(command,shell_buffer,MAX_COMMAND_LENGTH);
 
-  if(strcmp(command,DATE))
+  if(strcmp(command,DATE)){
     date();
-  else if(strcmp(command,TIME))
+  }
+  else if(strcmp(command,TIME)){
     time();
-  else if(strcmp(command,CLEAR))
+  }
+  else if(strcmp(command,CLEAR)){
     clear();
-  else if(strcmp(command,PONG))
+  }
+  else if(strcmp(command,PONG)){
     pong();
-  else if(strcmp(command,HELP))
+  }
+  else if(strcmp(command,HELP)){
     help();
+  }
   else if(strcmp(command, TEST_MEMORY)){
     test_memory();
+  }
+    else if(strcmp(command, TEST_PROCESSES)){
+    test_process();
   }
   else if(strcmp(command,EXIT)){
     exit();

@@ -1,64 +1,106 @@
 #include <stdint.h>
 #include <processController.h>
 #include <scheduler.h>
+#include <memoryManager.h>
+#include <stdio.h>
+#include <naiveConsole.h>
 
+typedef struct dequeueNode{
+    uint8_t pid;
+    uint8_t state;
+    uint64_t stackPointer;
+    struct dequeueNode * next;
+}dequeueNode;
 
-// Chequeen en queue si prefieren dejar el size o ver de hacer el nodo centinela
-// Me parecio mas quilombo asi que deje el size, el otro no sabia muy bien como hacerlo.
-// Faltarian metodos add, remove, etc de la FIFO
+typedef struct{
+    dequeueNode * first;
+    dequeueNode * last;
+    uint32_t size;
+}dequeue;
 
 /*
-El indice corresponde a la prioridad: 0 (mas importante), 1, 2.
+  Unica cola con lista de prioridades
 */
-static dequeue * priorityQueues[3]={0};
+
+// OBSERVACION! Esta creacion deberia ir en una funcion del
+// estilo initializeRoundRobin o algo asi. The end.
+static dequeue * priorityQueue=0;
 
 
-// ESTA FUNCION TIENE QUE DESAPARECER UNA VEZ TERMINADO TODO!
-void
-function_just_meant_to_remove_scheduler_warnings(){
-    priorityQueues[0]=(dequeue *)0;
-    return;
+void initializeScheduler(){
+  priorityQueue=(dequeue *)allocate(sizeof(dequeue));
+  priorityQueue->first=0;
+  priorityQueue->last=0;
+  priorityQueue->size=0;
 }
 
-int removeProcess(int pid) {
-  removeFromController(pid);
-  for (int i=0; i<3; i++){
-    if(removeFromDequeueRec(priorityQueues[i]->first,pid)){
-      return 1;
-    };
+void printLista(){ // desp sacarlo
+  ncPrintDec(priorityQueue->size);
+  dequeueNode * current=priorityQueue->first;
+  while(current!=0){
+    ncPrintHex((uint64_t)current);
+    current=current->next;
   }
+  ncNewline();
+  ncNewline();
+}
 
+dequeueNode* removeFromDequeueRec(dequeueNode* node, int pid, int quantity){
+  if(quantity==0)
+    return node;
+  if(node->next==0 && node->pid!=pid){
+    priorityQueue->last=node;
+    return node;
+  }
+  if((node->pid)==pid){
+    dequeueNode * to_return=node->next;
+    free((uint64_t)node);
+    quantity--;
+    (priorityQueue->size)--;
+    return removeFromDequeueRec(to_return, pid, quantity);
+  }
+  node->next=removeFromDequeueRec(node->next, pid, quantity);
+  return node;
+}
+
+int removeProcess(int priority, uint8_t pid) {
+
+  if(priorityQueue->first==0)
+    return 0;
+  if(priorityQueue->first==priorityQueue->last){
+    if(priorityQueue->first->pid==pid){
+      free((uint64_t)priorityQueue->first);
+      priorityQueue->first=0;
+      priorityQueue->last=0;
+      priorityQueue->size=0;
+      return 1;
+    }
+    return 0;
+  }
+  priorityQueue->first = removeFromDequeueRec(priorityQueue->first,pid,3-priority);
   return 0;
 }
 
-
-int removeFromDequeueRec(dequeueNode* node, int pid){
-  if (node->next==0){
-    return 0;
+void addToRoundRobin(dequeueNode * dNode){
+  
+  if(priorityQueue->first==0){
+    priorityQueue->first=dNode;
+    priorityQueue->last=dNode;
   }
-
-  if (( (node->next)->task.pid)==pid){
-    node->next=(node->next)->next;
-    return 1;
+  else{
+    (priorityQueue->last)->next=dNode;
+    priorityQueue->last=dNode;  
   }
-
-  return removeFromDequeueRec(node->next, pid);
+  (priorityQueue->size)++;
 }
-void addProcessToScheduler(int processId, int priority, char * desc){
-    taskDescriptor td;
-    td.pid=processId;
-    td.time=0;
-    td.state=0;
-    td.description=desc;
-    td.stackPointer=0;
-    dequeueNode dnode;
-    dnode.task=td;
-    if(priorityQueues[priority-1]->size==0){
-        dnode.next=0;
-        priorityQueues[priority-1]->size=1;
-    }else{
-        dnode.next=priorityQueues[priority-1]->first;
-        priorityQueues[priority-1]->size++;
-    }
-    priorityQueues[priority-1]->first=&dnode;
+
+void addProcessToScheduler(int priority, uint8_t pid){
+  for(int i=priority; i<3; i++){
+    dequeueNode * dNode=(dequeueNode *)allocate(sizeof(dequeueNode));
+    dNode->pid=pid;
+    dNode->state=0;
+    dNode->stackPointer=0;
+    dNode->next=0;
+    addToRoundRobin(dNode);      
+  }    
 }

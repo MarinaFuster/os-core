@@ -3,7 +3,8 @@
 
 #define TEST_MEMORY "testmemory"
 
-void test_memory(); /* This must be removed later ! */
+void test_memory();
+void test_process();
 
 
 #endif // __TESTS__

@@ -3,6 +3,8 @@
 #include <processController.h>
 #include <memoryManager.h>
 #include <scheduler.h>
+
+/*
 static int processID=1;
 
 // Hay que chequear que no haya problemas con esta inicializacion
@@ -96,3 +98,4 @@ int
 createProcess(uint64_t size,char * description){
 	return createProcessWithPriority(size,description, 2);
 }
+*/

@@ -8,7 +8,8 @@
 #include "time.h"
 #include "beep.h"
 #include "memoryManager.h"
-#include "processControler.h"
+#include "processController.h"
+#include "scheduler.h"
 
 #define EOF -1
 #define TAB '\t'
@@ -122,7 +123,19 @@ uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
 }
 
 uint64_t sys_exec(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  createProcess(0x1000, "ProcessTesting"); // Esto hay que cambiarlo, por algun lado tiene que recibir nombre
+  //createProcess(0x1000, "ProcessTesting"); // Esto hay que cambiarlo, por algun lado tiene que recibir nombre
+  addProcessToScheduler(0,1);
+  printLista();
+  addProcessToScheduler(1,2);
+  printLista();
+  addProcessToScheduler(2,3);
+  printLista();
+  removeProcess(1,2);
+  printLista();
+  removeProcess(2,3);
+  printLista();
+  removeProcess(0,1);
+  printLista();
   return 0;
 }
 

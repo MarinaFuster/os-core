@@ -10,6 +10,7 @@
 #define INVALIDOPERATION "invalidoperation"
 #define EXIT "exit"
 #define TEST_MALLOC_AND_FREE "testmemory" /* This must be removed later ! */
+#define TEST_PROCESSES "testprocess"
 
 void date();
 void time();

@@ -117,3 +117,7 @@ void * malloc(uint64_t bytes){
 void free(void * pointer){
   int80(11,(uint64_t)pointer,0,0,0,0);
 }
+
+void exec(){
+  int80(12,0,0,0,0,0);
+}
