@@ -1,7 +1,9 @@
 #include "include/shell.h"
+#include "include/stdlib.h"
 /* sampleCodeModule.c */
 
 int main() {
-	displayShell();
+	exec("bash", 0,(uint64_t)displayShell);
+	//displayShell();
 	return 0;
 }
