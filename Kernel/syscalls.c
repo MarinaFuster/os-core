@@ -123,7 +123,9 @@ uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
 }
 
 uint64_t sys_exec(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  createProcessWithPriority("pong", 2, 0);
+  //createProcessWithPriority("pong", 2, 0);
+  //printLista();
+  testStackBuilder("pong");
   /*
   createProcessWithPriority("clear", 0, 0);
   removeFromRegister(2);
@@ -133,6 +135,7 @@ uint64_t sys_exec(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
   removeFromRegister(4);
   createProcessWithPriority("pong", 2, 0);
   createProcessWithPriority("clear", 0, 0);*/
+  ncPrint("HOLA");
   return 0;
 }
 

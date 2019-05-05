@@ -6,6 +6,7 @@
 #include <scheduler.h>
 
 extern void buildStack(uint64_t stackStartingPoint, uint64_t functionPointer);
+extern uint64_t printValuesFromStack(uint64_t pointer);
 
 typedef struct processListNode{
     char* description;
@@ -39,7 +40,7 @@ uint8_t noProcessRunning(){
 // Tested !
 void 
 addToRegister(processListNode * newProcess){
-  //(processRegister->size)++; HUGE PROBLEM HERE
+  //(processRegister->size)++; //HUGE PROBLEM HERE
   newProcess->next=processRegister->first;
   processRegister->first=newProcess; // Adds always at the front
 }
@@ -81,9 +82,30 @@ getFreeID(){
   return 0;
 }
 
+void
+testStackBuilder(uint64_t functionPointer){
+  uint64_t memoryBlock=(uint64_t)allocate(sizeof(OFFSET));
+  buildStack(memoryBlock+OFFSET, functionPointer);
+  //ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-0x008));
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-64));
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-128));
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-192));
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-50000));
+  ncNewline();
+  //uint64_t aux = *(memoryBlock+OFFSET-0x008); 
+  //ncPrintHex(aux);
+  //ncPrintHex(*(memoryBlock+OFFSET-0x0012));
+  //ncPrinthex(*(memoryBlock+OFFSET-0x0016));
+}
+
+
 // Tested !
 void
 createProcessWithPriority(char * description, int priority, uint64_t functionPointer){
+
   processListNode * newProcess=(processListNode *)allocate(sizeof(*newProcess));
   uint64_t memoryBlock=(uint64_t)allocate(sizeof(OFFSET)); // Offset equals to stack size
   newProcess->description=description;
@@ -92,6 +114,7 @@ createProcessWithPriority(char * description, int priority, uint64_t functionPoi
   newProcess->priority=priority;
   addToRegister(newProcess);
   //buildStack(memoryBlock+OFFSET, functionPointer); // memoryBlock+OFFSET represents the beginning of the stack
+  
   //addProcessToScheduler(priority, newProcess->pid, newProcess->memoryBlock);
 }
 

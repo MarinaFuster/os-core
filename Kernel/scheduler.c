@@ -99,6 +99,7 @@ void addProcessToScheduler(int priority, uint8_t pid, uint64_t memoryBlock){
     dNode->state=0;
     dNode->stackPointer=memoryBlock+OFFSET;
     dNode->next=0;
+    
     addToRoundRobin(dNode);      
   }    
 }
