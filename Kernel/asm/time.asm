@@ -1,4 +1,3 @@
-GLOBAL getStackPointer
 GLOBAL saveStackContext
 GLOBAL loadStackContext
 
@@ -6,19 +5,23 @@ GLOBAL loadStackContext
 SECTION .text
 
 ; UNTESTED
-getStackPointer:
-    mov rax, rsp
-    ret
-
-; UNTESTED
 saveStackContext:
+    push rbp
+    mov rbp, rsp
+
     pushState
     pushfq
+
+    mov rsp, rbp
+    pop rbp
+
     ret
 
 ; UNTESTED
 loadStackContext:
+
     mov rsp, rdi
     popfq
     popState
+
     iretq

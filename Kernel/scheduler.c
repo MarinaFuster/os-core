@@ -91,15 +91,19 @@ void addToRoundRobin(dequeueNode * dNode){
   (priorityQueue->size)++;
 }
 
-void addProcessToScheduler(int priority, uint8_t pid, uint64_t memoryBlock){
+void addProcessToScheduler(int priority, uint8_t pid, uint64_t rsp){
   for(int i=priority; i<3; i++){
     dequeueNode * dNode=(dequeueNode *)allocate(sizeof(dequeueNode));
     dNode->pid=pid;
     dNode->state=0;
-    dNode->stackPointer=memoryBlock+OFFSET;
+    dNode->stackPointer=rsp;
     dNode->next=0;
     addToRoundRobin(dNode);      
   }    
+}
+
+uint64_t getStackPointer(){
+  return (priorityQueue->first)->stackPointer;
 }
 
 uint64_t contextSwitching(uint64_t rsp) {

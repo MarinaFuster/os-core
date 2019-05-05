@@ -9,7 +9,7 @@
 
 extern uint64_t printValuesFromStack(uint64_t pointer); // THIS MUST BE REMOVED
 
-extern void buildStack(uint64_t stackStartingPoint, uint64_t functionPointer);
+extern uint64_t buildStack(uint64_t stackStartingPoint, uint64_t functionPointer);
 
 typedef struct processListNode{
     char* description;  
@@ -26,6 +26,7 @@ typedef struct processList{
 
 
 static int processID=1;
+static int empty=1;
 static processList * processRegister=0;
 
 void initializeProcessRegister(){
@@ -56,7 +57,8 @@ void ps(){
 }
 
 uint8_t noProcessRunning(){
-  return processRegister->size==0;
+  //return processRegister->size==0; // Problems here!
+  return empty;
 }
 
 void 
@@ -90,16 +92,20 @@ createProcessWithPriority(char * description,int priority,  uint64_t functionPoi
       ncPrint("You cannot run more processes");
       free((uint64_t)memoryBlock);
       free((uint64_t)newProcess);
+      return;
   }
   newProcess->pid=processID++;
   newProcess->memoryBlock=memoryBlock;
   newProcess->priority=priority;
   addToRegister(newProcess);
-  //buildStack(memoryBlock+OFFSET, functionPointer); // memoryBlock+OFFSET represents the beginning of the stack
-  //addProcessToScheduler(priority, newProcess->pid, newProcess->memoryBlock);
+  uint64_t rsp=buildStack(memoryBlock+OFFSET, functionPointer); // memoryBlock+OFFSET represents the beginning of the stack
+  ncPrintHex(rsp);
+  ncNewline();
+  addProcessToScheduler(priority, newProcess->pid, rsp);
+  empty=0;
 }
 
-
+// Tested !
 // This function is meant to test if the virgin stack was created correctly
 void
 testStackBuilder(uint64_t functionPointer){

@@ -67,7 +67,7 @@ void execute(){
   strncpy(command,shell_buffer,MAX_COMMAND_LENGTH);
 
   if(strcmp(command,DATE)){
-    date();
+    exec("date", 2, (uint64_t)date);
   }
   else if(strcmp(command,TIME)){
     time();
