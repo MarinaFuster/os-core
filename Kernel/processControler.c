@@ -5,13 +5,16 @@
 #include <memoryManager.h>
 #include <scheduler.h>
 
-typedef struct{
+extern void buildStack(uint64_t stackStartingPoint, uint64_t functionPointer);
+typedef struct processListNode{
     char* description;
     uint8_t pid;
+    int priority;
+    uint64_t memoryBlock;
     struct processListNode * next;
 }processListNode;
 
-typedef struct {
+typedef struct processList{
     processListNode * first;
     uint8_t size;
 }processList;
@@ -26,7 +29,56 @@ void initializeProcessRegister(){
   processRegister->size=0;
 }
 
+void printRegister(){
+  processListNode * current=(processRegister->first);
+  while(current!=0){
+    ncPrintDec(current->pid);
+    current=(current->next);
+  }
+}
+
+uint8_t noProcessRunning(){
+  return processRegister->size==0;
+}
+
+void 
+addToRegister(processListNode * newProcess){
+  newProcess->next=processRegister->first;
+  processRegister->first=newProcess;
+}
+
+processListNode * removeFromRegisterRec(processListNode * current, uint8_t pid){
+  if(current==0)
+    return current;
+  if(current->pid==pid){
+    removeProcess(current->priority, current->pid);
+    return current->next;
+  }
+  current->next=removeFromRegisterRec(current->next,pid);
+  return current;
+}
+
+void 
+removeFromRegister(uint8_t pid){
+  processRegister->first=removeFromRegisterRec(processRegister->first,pid);
+}
+
+void
+createProcessWithPriority(uint64_t size,char * description,int priority,  uint64_t functionPointer){
+  processListNode * newProcess=(processListNode *)allocate(sizeof(*newProcess));
+  uint64_t memoryBlock=(uint64_t)allocate(sizeof(OFFSET)); // Offset equals to stack size
+  newProcess->description=description;
+  newProcess->pid=processID++;
+  newProcess->memoryBlock=memoryBlock;
+  newProcess->priority=priority;
+  addToRegister(newProcess);
+  buildStack(memoryBlock+OFFSET, functionPointer); // memoryBlock+OFFSET represents the beginning of the stack
+  addProcessToScheduler(priority, newProcess->pid, newProcess->memoryBlock);
+}
+
 /*
+
+
 void ps(){
   if (processRegister->first==0){
     ncPrint("There is no process running");
@@ -55,56 +107,4 @@ void recursivePs(processListNode* node){
   recursivePs(node->next);
 }
 
-int removeFromController(int pid){
-  if (processRegister==0){
-    return 0;
-  }
-
-  if((processRegister->first->process.pid)==pid){
-    processRegister->first=processRegister->first->next;
-    return 1;
-  }
-
-  removeFromControllerRec(processRegister->first, pid);
-  return 1; //TODO: ESTO LO AGREGUE, NO SE SI ERA LA IDEA... POR AHI RETORNAR EL PID
-}
-
-int removeFromControllerRec(processListNode* node, int pid){
-  if (node->next==0){
-    return 0;
-  }
-
-  if ((node->next->process.pid)==pid){
-    node->next=(node->next->next);
-    return 1;
-  }
-
-  return removeFromControllerRec(node->next, pid);
-}
-int
-createProcessWithPriority(uint64_t size,char * description,int priority){
-  processDescriptor newProcess;
-  processDescriptor * pd=&newProcess;   // Puntero a la estructura del proceso
-  processListNode node;
-	processListNode * pnode=&node;         // Puntero al nodo que contiene la estructura del proceso
-	pd->pid=processID++;
-	pd->address=allocate(size);
-	pnode->process=*pd;
-	if(processRegister==0){
-		pnode->next=0;
-		processRegister->first=pnode;
-		processRegister->size=1;
-	}else{
-		pnode->next=processRegister->first;
-		processRegister->first=pnode;
-		processRegister->size++;
-	}
-	addProcessToScheduler(processID-1, priority,description);
-
-	return processID-1;
-}
-int
-createProcess(uint64_t size,char * description){
-	return createProcessWithPriority(size,description, 2);
-}
 */

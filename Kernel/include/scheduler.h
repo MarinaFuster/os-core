@@ -1,6 +1,8 @@
 #ifndef __SCHEDULER__
 #define __SCHEDULER__
 
+#include <stdint.h>
+
 //int removeProcess(int pid);
 //int removeFromDequeueRec(dequeueNode* node, int pid);
 void initializeScheduler();

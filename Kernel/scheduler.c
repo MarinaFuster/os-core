@@ -115,7 +115,6 @@ uint64_t contextSwitching(uint64_t rsp) {
   priorityQueue->first=(priorityQueue->first)->next;
   (priorityQueue->last)->next=0;
 
-
   return (priorityQueue->first)->stackPointer;
 
 }

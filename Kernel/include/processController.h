@@ -1,13 +1,15 @@
 #ifndef _PROCESS_CONTROLLER_
 #define _PROCESS_CONTROLLER_
 
+#include <stdint.h>
+
 void initializeProcessRegister();
+uint8_t noProcessRunning();
+void removeFromRegister(uint8_t pid);
+void createProcessWithPriority(uint64_t size,char * description,int priority,  uint64_t functionPointer);
+
 /*
 void ps ();
 void recursivePs(processListNode* node);
-int removeFromController(int pid);
-int removeFromControllerRec(processListNode* node, int pid);
-int createProcess(uint64_t size,char * description);
-int createProcessWithPriority(uint64_t size,char * description,int priority);
 */
 #endif

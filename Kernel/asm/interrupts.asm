@@ -72,7 +72,6 @@ SECTION .text
 	out 20h, al
 
 	popState
-
 	iretq
 %endmacro
 
