@@ -123,7 +123,7 @@ uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
 }
 
 uint64_t sys_exec(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  //createProcess(0x1000, "ProcessTesting"); // Esto hay que cambiarlo, por algun lado tiene que recibir nombre
+  
   return 0;
 }
 

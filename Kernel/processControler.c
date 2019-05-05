@@ -64,7 +64,7 @@ removeFromRegister(uint8_t pid){
 }
 
 void
-createProcessWithPriority(uint64_t size,char * description,int priority,  uint64_t functionPointer){
+createProcessWithPriority(char * description,int priority,  uint64_t functionPointer){
   processListNode * newProcess=(processListNode *)allocate(sizeof(*newProcess));
   uint64_t memoryBlock=(uint64_t)allocate(sizeof(OFFSET)); // Offset equals to stack size
   newProcess->description=description;
@@ -76,35 +76,3 @@ createProcessWithPriority(uint64_t size,char * description,int priority,  uint64
   addProcessToScheduler(priority, newProcess->pid, newProcess->memoryBlock);
 }
 
-/*
-
-
-void ps(){
-  if (processRegister->first==0){
-    ncPrint("There is no process running");
-    ncNewline();
-  }
-  else {
-    ncPrint("Process description");
-    ncTab();
-    ncPrint("PID");
-    ncNewline();
-    recursivePs(processRegister->first);
-  }
-
-  return;
-}
-
-void recursivePs(processListNode* node){
-  if (node==0){
-    return;
-  }
-
-  ncPrint(node->process.description);
-  ncTab();
-  ncPrintDec(node->process.pid);
-  ncNewline();
-  recursivePs(node->next);
-}
-
-*/
