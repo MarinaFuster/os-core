@@ -18,7 +18,7 @@ saveStackContext:
 
 ; UNTESTED
 loadStackContext:
-    mov rsp, [rbp+8]
+    mov rsp, rdi
     popfq
     popState
     iretq

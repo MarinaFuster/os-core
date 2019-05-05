@@ -105,17 +105,12 @@ void
 testStackBuilder(uint64_t functionPointer){
   uint64_t memoryBlock=(uint64_t)allocate(sizeof(OFFSET));
   buildStack(memoryBlock+OFFSET, functionPointer);
-  //ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-0x008));
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-64));
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-8)); //IP!!!
   ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-128));
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-16));
   ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-192));
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-24));
   ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-256));
-  ncNewline();
-  //uint64_t aux = *(memoryBlock+OFFSET-0x008); 
-  //ncPrintHex(aux);
-  //ncPrintHex(*(memoryBlock+OFFSET-0x0012));
-  //ncPrinthex(*(memoryBlock+OFFSET-0x0016));
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-32));
+  ncNewline();  
 }
