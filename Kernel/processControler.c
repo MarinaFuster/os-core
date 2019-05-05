@@ -7,7 +7,10 @@
 
 #define MAX_PROCESSES_QTY 50
 
+extern uint64_t printValuesFromStack(uint64_t pointer); // THIS MUST BE REMOVED
+
 extern void buildStack(uint64_t stackStartingPoint, uint64_t functionPointer);
+
 typedef struct processListNode{
     char* description;
     uint8_t pid;
@@ -96,3 +99,23 @@ createProcessWithPriority(char * description,int priority,  uint64_t functionPoi
   //addProcessToScheduler(priority, newProcess->pid, newProcess->memoryBlock);
 }
 
+
+// THIS MUST BE REMOVED 
+void
+testStackBuilder(uint64_t functionPointer){
+  uint64_t memoryBlock=(uint64_t)allocate(sizeof(OFFSET));
+  buildStack(memoryBlock+OFFSET, functionPointer);
+  //ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-0x008));
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-64));
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-128));
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-192));
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-50000));
+  ncNewline();
+  //uint64_t aux = *(memoryBlock+OFFSET-0x008); 
+  //ncPrintHex(aux);
+  //ncPrintHex(*(memoryBlock+OFFSET-0x0012));
+  //ncPrinthex(*(memoryBlock+OFFSET-0x0016));
+}
