@@ -80,5 +80,5 @@ void test_memory(){
 
 void
 test_process(){
-    exec();
+    exec(0,0,0);
 }

@@ -12,7 +12,7 @@ extern uint64_t printValuesFromStack(uint64_t pointer); // THIS MUST BE REMOVED
 extern void buildStack(uint64_t stackStartingPoint, uint64_t functionPointer);
 
 typedef struct processListNode{
-    char* description;
+    char* description;  
     uint8_t pid;
     int priority;
     uint64_t memoryBlock;
@@ -112,7 +112,7 @@ testStackBuilder(uint64_t functionPointer){
   ncNewline();
   ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-192));
   ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-50000));
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-256));
   ncNewline();
   //uint64_t aux = *(memoryBlock+OFFSET-0x008); 
   //ncPrintHex(aux);

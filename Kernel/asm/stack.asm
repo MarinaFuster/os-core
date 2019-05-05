@@ -5,8 +5,7 @@ SECTION .text
 
 printValuesFromStack:
 	;rax retorno
-	mov rbx, [rbp+4]
-	mov rax,[rbx]
+	mov rax,[rdi]
 	ret
 
 ; NEEDED TO BE DONE
@@ -15,25 +14,31 @@ setFlags:
 
 ; UNTESTED
 buildStack:
-    
-	mov rcx,[rbp+8]
-	mov rdx, [rbp+12]
-	mov qword [rcx], rdx ;Esta creo que es la ip
-	mov qword [rcx-1], 0x000 ;rax
-	mov qword [rcx-2], 0x001 ;rbx
-	mov qword [rcx-3], 0x002 ;rcx
-	mov qword [rcx-4], 0x003 ;rdx
-	mov qword [rcx-5], 0x004 ;rbp
-	mov qword [rcx-6], 0x005 ;rdi
-	mov qword [rcx-7], 0x06 ;rsi
-	mov qword [rcx-8], 0x007 ;r8
-	mov qword [rcx-9], 0x008
-	mov qword [rcx-10], 0x009
-	mov qword [rcx-11], 0x00A
-	mov qword [rcx-12], 0x00B
-	mov qword [rcx-13], 0x00C
-	mov qword [rcx-14], 0x00D
-	mov qword [rcx-15], 0x00E ;rd15
-	mov qword [rcx-16], 0x202 ;flags
 
+    mov r8, rsp 	; r8 is reserved for argument passing, thus its not used
+	mov r9, rbp		; r9 is also reserved for argument passing
+	mov rsp, rdi
+	mov rbp, rsp
+
+	push rsi
+	push 0x00
+	push 0x01
+	push 0x02
+	push 0x03
+	push 0x04
+	push 0x05
+	push 0x06
+	push 0x07
+	push 0x08
+	push 0x09
+	push 0x0A
+	push 0x0B
+	push 0x0C
+	push 0x0D
+	push 0x0F
+	push 0x202
+
+	mov rbp, r9
+	mov rax, rsp
+	mov rsp, r8
 	ret
