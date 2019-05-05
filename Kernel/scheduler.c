@@ -18,15 +18,10 @@ typedef struct{
     uint32_t size;
 }dequeue;
 
-/*
-  Unica cola con lista de prioridades
-*/
 
-// OBSERVACION! Esta creacion deberia ir en una funcion del
-// estilo initializeRoundRobin o algo asi. The end.
 static dequeue * priorityQueue=0;
 
-
+ // Tested !
 void initializeScheduler(){
   priorityQueue=(dequeue *)allocate(sizeof(dequeue));
   priorityQueue->first=0;
@@ -34,7 +29,7 @@ void initializeScheduler(){
   priorityQueue->size=0;
 }
 
-void printLista(){ // desp sacarlo
+void printLista(){ // Tested ! This method is just for testing
   ncPrintDec(priorityQueue->size);
   dequeueNode * current=priorityQueue->first;
   while(current!=0){
@@ -45,6 +40,7 @@ void printLista(){ // desp sacarlo
   ncNewline();
 }
 
+// Tested !
 dequeueNode* removeFromDequeueRec(dequeueNode* node, int pid, int quantity){
   if(quantity==0)
     return node;
@@ -63,6 +59,7 @@ dequeueNode* removeFromDequeueRec(dequeueNode* node, int pid, int quantity){
   return node;
 }
 
+// Tested !
 int removeProcess(int priority, uint8_t pid) {
 
   if(priorityQueue->first==0)
@@ -94,6 +91,7 @@ void addToRoundRobin(dequeueNode * dNode){
   (priorityQueue->size)++;
 }
 
+// Tested !
 void addProcessToScheduler(int priority, uint8_t pid, uint64_t memoryBlock){
   for(int i=priority; i<3; i++){
     dequeueNode * dNode=(dequeueNode *)allocate(sizeof(dequeueNode));
@@ -105,6 +103,7 @@ void addProcessToScheduler(int priority, uint8_t pid, uint64_t memoryBlock){
   }    
 }
 
+// UNTESTED 
 uint64_t contextSwitching(uint64_t rsp) {
   
   (priorityQueue->first)->stackPointer=rsp;  // Guardo en nodo el nuevo SP del P1

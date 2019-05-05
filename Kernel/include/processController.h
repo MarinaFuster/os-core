@@ -6,10 +6,8 @@
 void initializeProcessRegister();
 uint8_t noProcessRunning();
 void removeFromRegister(uint8_t pid);
-void createProcessWithPriority(uint64_t size,char * description,int priority,  uint64_t functionPointer);
-
-/*
+void createProcessWithPriority(char * description,int priority,  uint64_t functionPointer);
+void printRegister();
 void ps ();
-void recursivePs(processListNode* node);
-*/
+
 #endif
