@@ -78,6 +78,9 @@ void execute(){
   else if(strcmp(command,PONG)){
     pong();
   }
+  else if(strcmp(command,PS)){
+    ps();
+  }
   else if(strcmp(command,HELP)){
     help();
   }

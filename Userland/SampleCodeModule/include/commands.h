@@ -5,6 +5,7 @@
 #define TIME "time"
 #define CLEAR "clear"
 #define PONG "pong"
+#define PS "ps"
 #define HELP "help"
 #define DIVZERO "divzero"
 #define INVALIDOPERATION "invalidoperation"
@@ -16,6 +17,7 @@ void date();
 void time();
 void clear();
 void pong();
+void ps();
 void help();
 void divzero();
 void invalidoperation();
