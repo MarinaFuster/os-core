@@ -123,17 +123,21 @@ uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
 }
 
 uint64_t sys_exec(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  
   return 0;
 }
 
+/* arguments:
+   char * description on rsi
+   int priority on rdx
+   uint64_t function pointer on rcx
+*/
 uint64_t sys_exit_process(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  ncPrint("exit process syscall"); // This must be replaced!
+  createProcessWithPriority((char *)rsi, (int)rdx, rcx);
   return 0;
 }
 
 uint64_t sys_ps(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  ncPrint("ps syscall"); // This must be replaced!
+  ps();
   return 0;
 }
 

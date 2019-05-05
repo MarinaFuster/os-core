@@ -5,6 +5,8 @@
 #include <memoryManager.h>
 #include <scheduler.h>
 
+#define MAX_PROCESSES_QTY 50
+
 extern void buildStack(uint64_t stackStartingPoint, uint64_t functionPointer);
 typedef struct processListNode{
     char* description;
@@ -29,12 +31,25 @@ void initializeProcessRegister(){
   processRegister->size=0;
 }
 
-void printRegister(){
+void psProcesses(){
   processListNode * current=(processRegister->first);
   while(current!=0){
     ncPrintDec(current->pid);
+    ncPrint("     ");
+    ncPrint(current->description);
+    ncNewline();
     current=(current->next);
   }
+}
+
+void ps(){
+  ncPrint("PID   ");
+  ncPrint("Description");
+  ncNewline();
+  ncPrint("------------------");
+  ncNewline();
+
+  psProcesses();
 }
 
 uint8_t noProcessRunning(){
@@ -68,11 +83,16 @@ createProcessWithPriority(char * description,int priority,  uint64_t functionPoi
   processListNode * newProcess=(processListNode *)allocate(sizeof(*newProcess));
   uint64_t memoryBlock=(uint64_t)allocate(sizeof(OFFSET)); // Offset equals to stack size
   newProcess->description=description;
+  if(processID==MAX_PROCESSES_QTY){
+      ncPrint("You cannot run more processes");
+      free((uint64_t)memoryBlock);
+      free((uint64_t)newProcess);
+  }
   newProcess->pid=processID++;
   newProcess->memoryBlock=memoryBlock;
   newProcess->priority=priority;
   addToRegister(newProcess);
-  buildStack(memoryBlock+OFFSET, functionPointer); // memoryBlock+OFFSET represents the beginning of the stack
-  addProcessToScheduler(priority, newProcess->pid, newProcess->memoryBlock);
+  //buildStack(memoryBlock+OFFSET, functionPointer); // memoryBlock+OFFSET represents the beginning of the stack
+  //addProcessToScheduler(priority, newProcess->pid, newProcess->memoryBlock);
 }
 
