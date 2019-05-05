@@ -21,9 +21,6 @@ typedef struct{
 /*
   Unica cola con lista de prioridades
 */
-
-// OBSERVACION! Esta creacion deberia ir en una funcion del
-// estilo initializeRoundRobin o algo asi. The end.
 static dequeue * priorityQueue=0;
 
 
