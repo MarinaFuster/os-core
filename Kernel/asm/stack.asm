@@ -2,11 +2,13 @@ GLOBAL buildStack
 
 SECTION .text
 
+; NEEDED TO BE DONE
 setFlags:
 
 
+; UNTESTED
 buildStack:
-
+    
     mov rax, [rbp+12]
 ;	mov cs, 0x008
 ;	mov rflags, 0x202
