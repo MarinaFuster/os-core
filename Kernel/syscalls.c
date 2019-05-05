@@ -122,18 +122,23 @@ uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
   return 0;
 }
 
+/* arguments:
+   char * description on rsi
+   int priority on rdx
+   uint64_t function pointer on rcx
+*/
 uint64_t sys_exec(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  //createProcess(0x1000, "ProcessTesting"); // Esto hay que cambiarlo, por algun lado tiene que recibir nombre
+  createProcessWithPriority((char *)rsi, (int)rdx, rcx);
   return 0;
 }
 
 uint64_t sys_exit_process(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  ncPrint("exit process syscall"); // This must be replaced!
+  
   return 0;
 }
 
 uint64_t sys_ps(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  ncPrint("ps syscall"); // This must be replaced!
+  ps();
   return 0;
 }
 

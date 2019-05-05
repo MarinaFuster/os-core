@@ -8,7 +8,7 @@ const static char * date_msg= "Date:  ";
 const static char * country= "Argentina";
 const static char * time_msg= "TIme:  ";
 
-const static char * helpInstructions="\nCommands\n\ndate             : get current date\ntime             : get current time\nclear            : clear terminal screen\nplaypong         : play ping pong and have fun\nhelp             : shows commands functions\ndivzero          : script that provokes division by zero\ninvalidoperation : script that provokes an invalid operation\nexit             : exit shell\n\n\n";
+const static char * helpInstructions="\nCommands\n\ndate             : get current date\ntime             : get current time\nclear            : clear terminal screen\nplaypong         : play ping pong and have fun\nhelp             : shows commands functions\ndivzero          : script that provokes division by zero\ninvalidoperation : script that provokes an invalid operation\nexit             : exit shell\nps               : lists running processes\n\n\n";
 
 void date(){
     printf(date_msg);
@@ -30,6 +30,9 @@ void clear(){
 void playpong(){
   pong();
   clear();
+}
+void ps(){
+  int80(14,0,0,0,0,0);
 }
 void help(){
   printf(helpInstructions);

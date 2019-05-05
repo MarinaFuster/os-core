@@ -21,9 +21,6 @@ typedef struct{
 /*
   Unica cola con lista de prioridades
 */
-
-// OBSERVACION! Esta creacion deberia ir en una funcion del
-// estilo initializeRoundRobin o algo asi. The end.
 static dequeue * priorityQueue=0;
 
 
@@ -114,7 +111,6 @@ uint64_t contextSwitching(uint64_t rsp) {
   priorityQueue->last=(priorityQueue->last)->next;
   priorityQueue->first=(priorityQueue->first)->next;
   (priorityQueue->last)->next=0;
-
 
   return (priorityQueue->first)->stackPointer;
 
