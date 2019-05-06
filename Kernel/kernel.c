@@ -57,10 +57,11 @@ void * initializeKernelBinary()
 int main(){
 	ncClear();
 	load_idt();
+	ncPrint("HOLA");
 	initializeProcessRegister();
 	initializeScheduler();
 	//initializeScreen();
-	createProcessWithPriority("init", 0, sampleCodeModuleAddress);
+	createProcessWithPriority("init", 2, (uint64_t)sampleCodeModuleAddress);
 	//((EntryPoint)sampleCodeModuleAddress)();
 	while(1){
 		_hlt();

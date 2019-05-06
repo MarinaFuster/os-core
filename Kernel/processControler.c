@@ -30,6 +30,7 @@ static int empty=1;
 static processList * processRegister=0;
 
 void initializeProcessRegister(){
+  
   processRegister=(processList *)allocate(sizeof(*processRegister));
   processRegister->first=0;
   processRegister->size=0;
@@ -99,8 +100,9 @@ createProcessWithPriority(char * description,int priority,  uint64_t functionPoi
   newProcess->priority=priority;
   addToRegister(newProcess);
   uint64_t rsp=buildStack(memoryBlock+OFFSET, functionPointer); // memoryBlock+OFFSET represents the beginning of the stack
-  ncPrintHex(rsp);
-  ncNewline();
+  //testStackBuilder(functionPointer);
+  //ncPrintHex(rsp);
+  //ncNewline();
   addProcessToScheduler(priority, newProcess->pid, rsp);
   empty=0;
 }

@@ -21,7 +21,7 @@ buildStack:
 
 	push 0x0000     ; stack segment
 	push rdi        ; stack pointer
-	push 0x206	    ; rflags	
+	push 0x202	    ; rflags	
 	push 0x8		; cs
 	push rsi		; rip
 	push 0x0000		; rax

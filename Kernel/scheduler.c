@@ -4,6 +4,7 @@
 #include <memoryManager.h>
 #include <stdio.h>
 #include <naiveConsole.h>
+#include <time.h>
 
 typedef struct dequeueNode{
     uint8_t pid;
@@ -21,8 +22,9 @@ typedef struct{
 /*
   Unica cola con lista de prioridades
 */
+static int first=1;
 static dequeue * priorityQueue=0;
-
+static int empty = 1;
 
 void initializeScheduler(){
   priorityQueue=(dequeue *)allocate(sizeof(dequeue));
@@ -100,6 +102,7 @@ void addProcessToScheduler(int priority, uint8_t pid, uint64_t rsp){
     dNode->next=0;
     addToRoundRobin(dNode);      
   }    
+  empty=0;
 }
 
 uint64_t getStackPointer(){
@@ -107,7 +110,13 @@ uint64_t getStackPointer(){
 }
 
 uint64_t contextSwitching(uint64_t rsp) {
-  
+  if(empty){
+    return rsp;
+  }
+  if(first){
+    first=0;
+    return (priorityQueue->first)->stackPointer;
+  }
   timer_handler();
   
   (priorityQueue->first)->stackPointer=rsp;  // Guardo en nodo el nuevo SP del P1
