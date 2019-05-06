@@ -22,6 +22,7 @@ EXTERN main
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN sysCallsHandler
+EXTERN contextSwitching
 
 SECTION .text
 
@@ -123,7 +124,19 @@ picSlaveMask:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-	irqHandlerMaster 0
+	
+	pushState
+
+	mov rdi, rsp
+	call contextSwitching
+	mov rsp, rax
+
+	mov al, 20h
+	out 20h, al ; EOI
+
+	popState
+
+	iretq
 
 ;Keyboard
 _irq01Handler:
