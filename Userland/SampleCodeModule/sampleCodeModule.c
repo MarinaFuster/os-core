@@ -3,7 +3,6 @@
 /* sampleCodeModule.c */
 
 int main() {
-	exec("bash", 0,(uint64_t)displayShell);
-	//displayShell();
+	displayShell();
 	return 0;
 }
