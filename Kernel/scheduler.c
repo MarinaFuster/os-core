@@ -108,6 +108,8 @@ uint64_t getStackPointer(){
 
 uint64_t contextSwitching(uint64_t rsp) {
   
+  timer_handler();
+  
   (priorityQueue->first)->stackPointer=rsp;  // Guardo en nodo el nuevo SP del P1
 
   //Reordeno priorityQueue (el proximo proceso es el nuevo first, y el anterior first ahora va al fondo)
