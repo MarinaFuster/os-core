@@ -4,12 +4,14 @@
 #include <processController.h>
 #include <memoryManager.h>
 #include <scheduler.h>
+#include "interrupts.h"
 
 #define MAX_PROCESSES_QTY 50
 
 extern uint64_t printValuesFromStack(uint64_t pointer); // THIS MUST BE REMOVED
-
 extern uint64_t buildStack(uint64_t stackStartingPoint, uint64_t functionPointer);
+extern void _loadProcess(uint64_t rsp);
+extern void _hlt();
 
 typedef struct processListNode{
     char* description;  
@@ -84,7 +86,7 @@ removeFromRegister(uint8_t pid){
   processRegister->first=removeFromRegisterRec(processRegister->first,pid);
 }
 
-void
+uint8_t
 createProcessWithPriority(char * description,int priority,  uint64_t functionPointer){
   processListNode * newProcess=(processListNode *)allocate(sizeof(*newProcess));
   uint64_t memoryBlock=(uint64_t)allocate(sizeof(OFFSET)); // Offset equals to stack size
@@ -93,18 +95,40 @@ createProcessWithPriority(char * description,int priority,  uint64_t functionPoi
       ncPrint("You cannot run more processes");
       free((uint64_t)memoryBlock);
       free((uint64_t)newProcess);
-      return;
+      return 0;
   }
   newProcess->pid=processID++;
   newProcess->memoryBlock=memoryBlock;
   newProcess->priority=priority;
   addToRegister(newProcess);
   uint64_t rsp=buildStack(memoryBlock+OFFSET, functionPointer); // memoryBlock+OFFSET represents the beginning of the stack
-  //testStackBuilder(functionPointer);
-  //ncPrintHex(rsp);
-  //ncNewline();
   addProcessToScheduler(priority, newProcess->pid, rsp);
   empty=0;
+  return newProcess->pid;
+}
+
+// We know that that pid exists
+processListNode *
+getProcess(uint8_t pid){
+  processListNode * current=processRegister->first;
+  while(current!=0){
+    if(current->pid==pid)
+      return current;
+    current=current->next;
+  }
+  return 0;
+}
+
+void
+exitProcess(uint8_t pid){
+  processListNode * process=getProcess(pid);
+  removeFromRegister(pid);
+  removeProcess(pid, process->priority);
+  //uint64_t rsp=contextSwitching(process->memoryBlock+OFFSET);
+  //_loadProcess(rsp);
+  while(1){
+    _hlt();
+  }
 }
 
 // Tested !

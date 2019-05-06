@@ -5,6 +5,7 @@ GLOBAL picMasterMask
 GLOBAL picSlaveMask
 GLOBAL haltcpu
 GLOBAL _hlt
+GLOBAL _loadProcess
 
 GLOBAL _irq00Handler
 GLOBAL _irq01Handler
@@ -181,6 +182,13 @@ _int80Handler:
 
 	mov rsp,rbp
 	popState
+	iretq
+
+_loadProcess:
+
+	mov rsp, rdi
+	popState
+
 	iretq
 
 

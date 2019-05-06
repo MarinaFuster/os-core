@@ -6,6 +6,8 @@
 #include <naiveConsole.h>
 #include <time.h>
 
+#define DEAD 3
+
 typedef struct dequeueNode{
     uint8_t pid;
     uint8_t state;
@@ -43,7 +45,7 @@ void printLista(){ // desp sacarlo
   ncNewline();
   ncNewline();
 }
-
+/*
 dequeueNode* removeFromDequeueRec(dequeueNode* node, int pid, int quantity){
   if(quantity==0)
     return node;
@@ -78,6 +80,19 @@ int removeProcess(int priority, uint8_t pid) {
   }
   priorityQueue->first = removeFromDequeueRec(priorityQueue->first,pid,3-priority);
   return 0;
+}
+*/
+
+int removeProcess(int priority, uint8_t pid){
+  dequeueNode * current=priorityQueue->first;
+  while(current!=0 && priority<3){
+    if(current->pid==pid){
+      current->state=DEAD;
+      priority++;
+    }
+    current=current->next;
+  }
+  return 1;
 }
 
 void addToRoundRobin(dequeueNode * dNode){
@@ -121,12 +136,19 @@ uint64_t contextSwitching(uint64_t rsp) {
   
   (priorityQueue->first)->stackPointer=rsp;  // Guardo en nodo el nuevo SP del P1
 
-  //Reordeno priorityQueue (el proximo proceso es el nuevo first, y el anterior first ahora va al fondo)
-  (priorityQueue->last)->next=priorityQueue->first;
-  priorityQueue->last=(priorityQueue->last)->next;
-  priorityQueue->first=(priorityQueue->first)->next;
-  (priorityQueue->last)->next=0;
+  int keepGoing=1;
 
+  //while(keepGoing){
+    if(!(priorityQueue->first==priorityQueue->last)){
+    (priorityQueue->last)->next=priorityQueue->first;
+    priorityQueue->last=(priorityQueue->last)->next;
+    priorityQueue->first=(priorityQueue->first)->next;
+    (priorityQueue->last)->next=0;
+    }
+    //if(priorityQueue->first->state!=DEAD)
+      //keepGoing=0;
+  //}
+  
   return (priorityQueue->first)->stackPointer;
 
 }

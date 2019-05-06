@@ -12,7 +12,8 @@ void putChar(char c);
 int strcmp(const char * str1, const char * str2);
 int strlen(const char * string);
 void strncpy(char * dest, const char * source, int n);
-void exec(char * description, int priority, uint64_t functionPointer);
+void exec(char * description, int priority, uint64_t functionPointer, uint8_t * pid);
+void myExit(uint8_t pid);
 
 
 #endif

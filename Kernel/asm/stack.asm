@@ -1,6 +1,8 @@
 GLOBAL buildStack
 GLOBAL printValuesFromStack
 
+EXTERN exitProcess
+
 SECTION .text
 
 printValuesFromStack:
@@ -18,7 +20,7 @@ buildStack:
     mov r8, rsp 	; r8 is reserved for argument passing, thus its not used
 	mov r9, rbp		; r9 is also reserved for argument passing
 	mov rsp, rdi
-
+	
 	push 0x0000     ; stack segment
 	push rdi        ; stack pointer
 	push 0x202	    ; rflags	

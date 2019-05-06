@@ -57,7 +57,6 @@ void * initializeKernelBinary()
 int main(){
 	ncClear();
 	load_idt();
-	ncPrint("HOLA");
 	initializeProcessRegister();
 	initializeScheduler();
 	//initializeScreen();
