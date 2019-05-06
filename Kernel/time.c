@@ -13,17 +13,6 @@ static unsigned long ticks = 0;
 
 void timer_handler() {
 	ticks++;
-	if(noProcessRunning()){
-		return;
-	}
-	saveStackContext();
-	uint64_t rsp=getStackPointer();
-	ncPrintHex(rsp);
-	ncNewline();
-	uint64_t newRsp=contextSwitching(rsp);
-	ncPrintHex(newRsp);
-	ncNewline();
-	loadStackContext(newRsp);
 }
 
 int ticks_elapsed(){
