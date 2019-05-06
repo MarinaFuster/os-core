@@ -18,9 +18,12 @@ buildStack:
     mov r8, rsp 	; r8 is reserved for argument passing, thus its not used
 	mov r9, rbp		; r9 is also reserved for argument passing
 	mov rsp, rdi
-	mov rbp, rsp
 
-	push rsi		; IP
+	push 0x0000     ; stack segment
+	push rdi        ; stack pointer
+	push 0x206	    ; rflags	
+	push 0x8		; cs
+	push rsi		; rip
 	push 0x0000		; rax
 	push 0x0001		; rbx
 	push 0x0002		; rcx
@@ -36,10 +39,10 @@ buildStack:
 	push 0x000C
 	push 0x000D
 	push 0x000F		; r15
-	push 0x0202		; Flags
+
+	mov rax, rsp
 
 	mov rbp, r9
-	mov rax, rsp
 	mov rsp, r8
 
 	ret
