@@ -124,10 +124,8 @@ exitProcess(uint8_t pid){
   processListNode * process=getProcess(pid);
   removeFromRegister(pid);
   removeProcess(pid, process->priority);
-  //uint64_t rsp=contextSwitching(process->memoryBlock+OFFSET);
-  //_loadProcess(rsp);
   while(1){
-    _hlt();
+    _hlt(); 
   }
 }
 

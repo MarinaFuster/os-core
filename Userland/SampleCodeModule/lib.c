@@ -121,7 +121,3 @@ void free(void * pointer){
 void exec(char * description, int priority, uint64_t functionPointer, uint8_t * pid){
   int80(12,(uint64_t)description,(uint64_t)priority,functionPointer,0,0);
 }
-
-void myExit(uint8_t pid){
-  int80(13,(uint64_t)pid,0,0,0,0);
-}

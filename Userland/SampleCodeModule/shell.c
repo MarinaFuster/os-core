@@ -69,7 +69,6 @@ void execute(){
   if(strcmp(command,DATE)){
     uint8_t pid=0;
     exec("date", 2, (uint64_t)date, &pid);
-    myExit(pid);
   }
   else if(strcmp(command,TIME)){
     time();
