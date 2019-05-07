@@ -77,8 +77,6 @@ void test_memory(){
     free(meant_to_be_after_fourth_block);   
 
 }
-
-void
-test_process(){
-    ;
+void testprocess(){
+  
 }
