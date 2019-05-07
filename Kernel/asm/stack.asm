@@ -1,6 +1,14 @@
 GLOBAL buildStack
+GLOBAL printValuesFromStack
+
+EXTERN exitProcess
 
 SECTION .text
+
+printValuesFromStack:
+	;rax retorno
+	mov rax,[rdi]
+	ret
 
 ; NEEDED TO BE DONE
 setFlags:
@@ -8,27 +16,35 @@ setFlags:
 
 ; UNTESTED
 buildStack:
-    
-    mov rax, [rbp+12]
-;	mov cs, 0x008
-;	mov rflags, 0x202
-	mov rsp, [rbp+8]
-;	mov ss, 0x000
-;	mov base, 0x000
-;   mov gs, 0x001
-;	mov fs, 0x002
-	mov r15, 0x003
-	mov r14, 0x004
-	mov r13, 0x005
-	mov r12, 0x006
-	mov r11, 0x007
-	mov r10, 0x008
-	mov r9, 0x009
-	mov r8, 0x00A
-	mov rsi, 0x00B
-	mov rdi, 0x00C
-	mov rbp, 0x00D
-	mov rdx, 0x00E
-	mov rcx, 0x00F
-	mov rbx, 0x010
-	jmp rax
+
+    mov r8, rsp 	; r8 is reserved for argument passing, thus its not used
+	mov r9, rbp		; r9 is also reserved for argument passing
+	mov rsp, rdi
+	
+	push 0x0000     ; stack segment
+	push rdi        ; stack pointer
+	push 0x202	    ; rflags	
+	push 0x8		; cs
+	push rsi		; rip
+	push 0x0000		; rax
+	push 0x0001		; rbx
+	push 0x0002		; rcx
+	push 0x0003		; rdx
+	push 0x0004		; rbp
+	push 0x0005		; rdi
+	push 0x0006		; rsi
+	push 0x0007		; r8
+	push 0x0008
+	push 0x0009
+	push 0x000A
+	push 0x000B
+	push 0x000C
+	push 0x000D
+	push 0x000F		; r15
+
+	mov rax, rsp
+
+	mov rbp, r9
+	mov rsp, r8
+
+	ret

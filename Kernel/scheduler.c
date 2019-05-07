@@ -4,6 +4,9 @@
 #include <memoryManager.h>
 #include <stdio.h>
 #include <naiveConsole.h>
+#include <time.h>
+
+#define DEAD 3
 
 typedef struct dequeueNode{
     uint8_t pid;
@@ -21,8 +24,9 @@ typedef struct{
 /*
   Unica cola con lista de prioridades
 */
+static int first=1;
 static dequeue * priorityQueue=0;
-
+static int empty = 1;
 
 void initializeScheduler(){
   priorityQueue=(dequeue *)allocate(sizeof(dequeue));
@@ -41,7 +45,7 @@ void printLista(){ // desp sacarlo
   ncNewline();
   ncNewline();
 }
-
+/*
 dequeueNode* removeFromDequeueRec(dequeueNode* node, int pid, int quantity){
   if(quantity==0)
     return node;
@@ -77,6 +81,19 @@ int removeProcess(int priority, uint8_t pid) {
   priorityQueue->first = removeFromDequeueRec(priorityQueue->first,pid,3-priority);
   return 0;
 }
+*/
+
+int removeProcess(int priority, uint8_t pid){
+  dequeueNode * current=priorityQueue->first;
+  while(current!=0 && priority<3){
+    if(current->pid==pid){
+      current->state=DEAD;
+      priority++;
+    }
+    current=current->next;
+  }
+  return 1;
+}
 
 void addToRoundRobin(dequeueNode * dNode){
   
@@ -91,27 +108,47 @@ void addToRoundRobin(dequeueNode * dNode){
   (priorityQueue->size)++;
 }
 
-void addProcessToScheduler(int priority, uint8_t pid, uint64_t memoryBlock){
+void addProcessToScheduler(int priority, uint8_t pid, uint64_t rsp){
   for(int i=priority; i<3; i++){
     dequeueNode * dNode=(dequeueNode *)allocate(sizeof(dequeueNode));
     dNode->pid=pid;
     dNode->state=0;
-    dNode->stackPointer=memoryBlock+OFFSET;
+    dNode->stackPointer=rsp;
     dNode->next=0;
     addToRoundRobin(dNode);      
   }    
+  empty=0;
+}
+
+uint64_t getStackPointer(){
+  return (priorityQueue->first)->stackPointer;
 }
 
 uint64_t contextSwitching(uint64_t rsp) {
+  if(empty){
+    return rsp;
+  }
+  if(first){
+    first=0;
+    return (priorityQueue->first)->stackPointer;
+  }
+  timer_handler();
   
   (priorityQueue->first)->stackPointer=rsp;  // Guardo en nodo el nuevo SP del P1
 
-  //Reordeno priorityQueue (el proximo proceso es el nuevo first, y el anterior first ahora va al fondo)
-  (priorityQueue->last)->next=priorityQueue->first;
-  priorityQueue->last=(priorityQueue->last)->next;
-  priorityQueue->first=(priorityQueue->first)->next;
-  (priorityQueue->last)->next=0;
+  int keepGoing=1;
 
+  //while(keepGoing){
+    if(!(priorityQueue->first==priorityQueue->last)){
+    (priorityQueue->last)->next=priorityQueue->first;
+    priorityQueue->last=(priorityQueue->last)->next;
+    priorityQueue->first=(priorityQueue->first)->next;
+    (priorityQueue->last)->next=0;
+    }
+    //if(priorityQueue->first->state!=DEAD)
+      //keepGoing=0;
+  //}
+  
   return (priorityQueue->first)->stackPointer;
 
 }

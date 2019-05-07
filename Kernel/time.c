@@ -13,10 +13,6 @@ static unsigned long ticks = 0;
 
 void timer_handler() {
 	ticks++;
-	if(noProcessRunning())
-		return;
-	saveStackContext();
-	loadStackContext(contextSwitching(getStackPointer(getStackPointer())));
 }
 
 int ticks_elapsed(){

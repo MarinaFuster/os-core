@@ -4,12 +4,17 @@
 #include <processController.h>
 #include <memoryManager.h>
 #include <scheduler.h>
+#include "interrupts.h"
 
 #define MAX_PROCESSES_QTY 50
 
-extern void buildStack(uint64_t stackStartingPoint, uint64_t functionPointer);
+extern uint64_t printValuesFromStack(uint64_t pointer); // THIS MUST BE REMOVED
+extern uint64_t buildStack(uint64_t stackStartingPoint, uint64_t functionPointer);
+extern void _loadProcess(uint64_t rsp);
+extern void _hlt();
+
 typedef struct processListNode{
-    char* description;
+    char* description;  
     uint8_t pid;
     int priority;
     uint64_t memoryBlock;
@@ -23,9 +28,11 @@ typedef struct processList{
 
 
 static int processID=1;
+static int empty=1;
 static processList * processRegister=0;
 
 void initializeProcessRegister(){
+  
   processRegister=(processList *)allocate(sizeof(*processRegister));
   processRegister->first=0;
   processRegister->size=0;
@@ -53,7 +60,8 @@ void ps(){
 }
 
 uint8_t noProcessRunning(){
-  return processRegister->size==0;
+  //return processRegister->size==0; // Problems here!
+  return empty;
 }
 
 void 
@@ -78,7 +86,7 @@ removeFromRegister(uint8_t pid){
   processRegister->first=removeFromRegisterRec(processRegister->first,pid);
 }
 
-void
+uint8_t
 createProcessWithPriority(char * description,int priority,  uint64_t functionPointer){
   processListNode * newProcess=(processListNode *)allocate(sizeof(*newProcess));
   uint64_t memoryBlock=(uint64_t)allocate(sizeof(OFFSET)); // Offset equals to stack size
@@ -87,12 +95,78 @@ createProcessWithPriority(char * description,int priority,  uint64_t functionPoi
       ncPrint("You cannot run more processes");
       free((uint64_t)memoryBlock);
       free((uint64_t)newProcess);
+      return 0;
   }
   newProcess->pid=processID++;
   newProcess->memoryBlock=memoryBlock;
   newProcess->priority=priority;
   addToRegister(newProcess);
-  //buildStack(memoryBlock+OFFSET, functionPointer); // memoryBlock+OFFSET represents the beginning of the stack
-  //addProcessToScheduler(priority, newProcess->pid, newProcess->memoryBlock);
+  uint64_t rsp=buildStack(memoryBlock+OFFSET, functionPointer); // memoryBlock+OFFSET represents the beginning of the stack
+  addProcessToScheduler(priority, newProcess->pid, rsp);
+  empty=0;
+  return newProcess->pid;
 }
 
+// We know that that pid exists
+processListNode *
+getProcess(uint8_t pid){
+  processListNode * current=processRegister->first;
+  while(current!=0){
+    if(current->pid==pid)
+      return current;
+    current=current->next;
+  }
+  return 0;
+}
+
+void
+exitProcess(uint8_t pid){
+  processListNode * process=getProcess(pid);
+  removeFromRegister(pid);
+  removeProcess(pid, process->priority);
+  while(1){
+    _hlt(); 
+  }
+}
+
+// Tested !
+// This function is meant to test if the virgin stack was created correctly
+void
+testStackBuilder(uint64_t functionPointer){
+  uint64_t memoryBlock=(uint64_t)allocate(sizeof(OFFSET));
+  buildStack(memoryBlock+OFFSET, functionPointer);
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-8)); //IP!!!
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-16)); //rax
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-24)); 
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-32));  
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-40));
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-48));
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-56));
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-64));
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-72)); //r8
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-80));
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-88));
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-96));
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-104));
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-112));
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-120));
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-128));
+  ncNewline();
+  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-136)); //Flags
+  ncNewline();
+}

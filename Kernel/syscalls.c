@@ -128,12 +128,12 @@ uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
    uint64_t function pointer on rcx
 */
 uint64_t sys_exec(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  createProcessWithPriority((char *)rsi, (int)rdx, rcx);
+  (*(uint64_t *)r8)=(uint64_t)createProcessWithPriority((char *)rsi, (int)rdx, rcx);
   return 0;
 }
 
-uint64_t sys_exit_process(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  
+uint64_t sys_exit_process(uint64_t pid, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  exitProcess(pid);
   return 0;
 }
 
