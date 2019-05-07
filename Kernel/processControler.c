@@ -129,44 +129,16 @@ exitProcess(uint8_t pid){
   }
 }
 
-// Tested !
-// This function is meant to test if the virgin stack was created correctly
+/* Tested !
+  This function is meant to test if the virgin stack was created correctly
+
+*/
 void
 testStackBuilder(uint64_t functionPointer){
   uint64_t memoryBlock=(uint64_t)allocate(sizeof(OFFSET));
   buildStack(memoryBlock+OFFSET, functionPointer);
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-8)); //IP!!!
-  ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-16)); //rax
-  ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-24)); 
-  ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-32));  
-  ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-40));
-  ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-48));
-  ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-56));
-  ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-64));
-  ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-72)); //r8
-  ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-80));
-  ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-88));
-  ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-96));
-  ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-104));
-  ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-112));
-  ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-120));
-  ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-128));
-  ncNewline();
-  ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-136)); //Flags
-  ncNewline();
+  for(int i=1; i<18; i++){
+    ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-8*i)); 
+    ncNewline();
+  }
 }
