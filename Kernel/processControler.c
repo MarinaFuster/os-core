@@ -131,7 +131,6 @@ exitProcess(uint8_t pid){
 
 /* Tested !
   This function is meant to test if the virgin stack was created correctly
-
 */
 void
 testStackBuilder(uint64_t functionPointer){
