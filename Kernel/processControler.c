@@ -124,9 +124,6 @@ exitProcess(uint8_t pid){
   processListNode * process=getProcess(pid);
   removeFromRegister(pid);
   removeProcess(pid, process->priority);
-  while(1){
-    _hlt(); 
-  }
 }
 
 /* Tested !

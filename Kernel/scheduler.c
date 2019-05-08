@@ -45,7 +45,8 @@ void printLista(){ // desp sacarlo
   ncNewline();
   ncNewline();
 }
-/*
+
+/*Recursive function*/
 dequeueNode* removeFromDequeueRec(dequeueNode* node, int pid, int quantity){
   if(quantity==0)
     return node;
@@ -64,6 +65,7 @@ dequeueNode* removeFromDequeueRec(dequeueNode* node, int pid, int quantity){
   return node;
 }
 
+/*Wrapper function*/
 int removeProcess(int priority, uint8_t pid) {
 
   if(priorityQueue->first==0)
@@ -80,19 +82,6 @@ int removeProcess(int priority, uint8_t pid) {
   }
   priorityQueue->first = removeFromDequeueRec(priorityQueue->first,pid,3-priority);
   return 0;
-}
-*/
-
-int removeProcess(int priority, uint8_t pid){
-  dequeueNode * current=priorityQueue->first;
-  while(current!=0 && priority<3){
-    if(current->pid==pid){
-      current->state=DEAD;
-      priority++;
-    }
-    current=current->next;
-  }
-  return 1;
 }
 
 void addToRoundRobin(dequeueNode * dNode){
@@ -138,16 +127,12 @@ uint64_t contextSwitching(uint64_t rsp) {
 
   int keepGoing=1;
 
-  //while(keepGoing){
-    if(!(priorityQueue->first==priorityQueue->last)){
-    (priorityQueue->last)->next=priorityQueue->first;
-    priorityQueue->last=(priorityQueue->last)->next;
-    priorityQueue->first=(priorityQueue->first)->next;
-    (priorityQueue->last)->next=0;
-    }
-    //if(priorityQueue->first->state!=DEAD)
-      //keepGoing=0;
-  //}
+  if(!(priorityQueue->first==priorityQueue->last)){
+  (priorityQueue->last)->next=priorityQueue->first;
+  priorityQueue->last=(priorityQueue->last)->next;
+  priorityQueue->first=(priorityQueue->first)->next;
+  (priorityQueue->last)->next=0;
+  }
   
   return (priorityQueue->first)->stackPointer;
 
