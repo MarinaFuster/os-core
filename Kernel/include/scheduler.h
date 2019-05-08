@@ -11,5 +11,6 @@ void printLista(); // desp sacarlo
 int removeProcess(int priority, uint8_t pid);
 uint64_t contextSwitching(uint64_t rsp);
 uint64_t getStackPointer();
+void loadNext();
 
 #endif

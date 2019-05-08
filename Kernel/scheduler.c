@@ -6,6 +6,8 @@
 #include <naiveConsole.h>
 #include <time.h>
 
+extern void _loadProcess(uint64_t rsp);
+
 #define DEAD 3
 
 typedef struct dequeueNode{
@@ -111,6 +113,10 @@ void addProcessToScheduler(int priority, uint8_t pid, uint64_t rsp){
 
 uint64_t getStackPointer(){
   return (priorityQueue->first)->stackPointer;
+}
+
+void loadNext(){
+  _loadProcess(priorityQueue->first->stackPointer);
 }
 
 uint64_t contextSwitching(uint64_t rsp) {

@@ -95,7 +95,7 @@ wrapperFunction(void(*functionPointer)(), uint8_t pid, int priority){
   removeFromRegister(pid);
   removeProcess(priority,pid);
   _sti();
-  // WHAT SHOULD I PUT HERE NO TO BREAK DOWN SHELL
+  loadNext();
 }
 
 
@@ -115,7 +115,6 @@ createProcessWithPriority(char * description, int priority,  uint64_t functionPo
   newProcess->priority=priority;
   addToRegister(newProcess);
   uint64_t rsp=buildStack(memoryBlock+OFFSET, (uint64_t)wrapperFunction, (uint64_t)functionPointer, (uint64_t)newProcess->pid, (uint64_t)priority);
-  testStackBuilder(functionPointer,newProcess->pid, priority);
   addProcessToScheduler(priority, newProcess->pid, rsp);
   empty=0;
   return newProcess->pid;
