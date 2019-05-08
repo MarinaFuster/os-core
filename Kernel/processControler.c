@@ -6,7 +6,7 @@
 #include <scheduler.h>
 #include "interrupts.h"
 
-#define MAX_PROCESSES_QTY 50
+#define MAX_PROCESSES_QTY 60
 
 extern uint64_t printValuesFromStack(uint64_t pointer); // THIS MUST BE REMOVED
 extern uint64_t buildStack(uint64_t stackStartingPoint,uint64_t wrapperFunction, uint64_t functionPointer, uint64_t pid, uint64_t priority);
