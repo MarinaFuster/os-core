@@ -25,7 +25,6 @@ typedef struct processListNode{
 
 typedef struct processList{
     processListNode * first;
-    uint8_t size;
 }processList;
 
 
@@ -37,7 +36,6 @@ void initializeProcessRegister(){
   
   processRegister=(processList *)allocate(sizeof(*processRegister));
   processRegister->first=0;
-  processRegister->size=0;
 }
 
 void psProcesses(){
@@ -62,7 +60,6 @@ void ps(){
 }
 
 uint8_t noProcessRunning(){
-  //return processRegister->size==0; // Problems here!
   return empty;
 }
 
@@ -97,7 +94,6 @@ wrapperFunction(void(*functionPointer)(), uint8_t pid, int priority){
   _sti();
   loadNext();
 }
-
 
 uint8_t
 createProcessWithPriority(char * description, int priority,  uint64_t functionPointer){
