@@ -65,40 +65,40 @@ void displayShell(){
 void execute(){
   char command[MAX_COMMAND_LENGTH];
   strncpy(command,shell_buffer,MAX_COMMAND_LENGTH);
-
+  uint8_t pid=0;
+  
   if(strcmp(command,DATE)){
-    uint8_t pid=0;
     exec("date", 2, (uint64_t)date, &pid);
   }
   else if(strcmp(command,TIME)){
-    time();
+    exec("time", 2, (uint64_t)time, &pid);
   }
   else if(strcmp(command,CLEAR)){
-    clear();
+    exec("clear", 2, (uint64_t)clear, &pid);
   }
   else if(strcmp(command,PONG)){
-    pong();
+    exec("pong", 2, (uint64_t)pong, &pid);
   }
   else if(strcmp(command,PS)){
-    ps();
+    exec("ps", 2, (uint64_t)ps, &pid);
   }
   else if(strcmp(command,HELP)){
-    help();
+    exec("ps", 2, (uint64_t)ps, &pid);
   }
   else if(strcmp(command, TEST_MEMORY)){
-    test_memory();
+    exec("testmemory", 2, (uint64_t)test_memory, &pid);
   }
-    else if(strcmp(command, TEST_PROCESSES)){
-    test_process();
+  else if(strcmp(command, TEST_PROCESSES)){
+    exec("testproess", 2, (uint64_t)test_process, &pid);
   }
   else if(strcmp(command,EXIT)){
-    exit();
+    exec("exit", 2, (uint64_t)exit, &pid);
     running=0;
   }
-  else if(strcmp(command,DIVZERO)){
+  else if(strcmp(command,DIVZERO)){     // Exception do not count as process
     divzero();
   }
-  else if(strcmp(command,INVALIDOPERATION)){
+  else if(strcmp(command,INVALIDOPERATION)){   // Exception do not count as process
     invalidoperation();
   }
   else
