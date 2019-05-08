@@ -9,6 +9,9 @@ const static char * country= "Argentina";
 const static char * time_msg= "TIme:  ";
 
 const static char * helpInstructions="\nCommands\n\ndate             : get current date\ntime             : get current time\nclear            : clear terminal screen\nplaypong         : play ping pong and have fun\nhelp             : shows commands functions\ndivzero          : script that provokes division by zero\ninvalidoperation : script that provokes an invalid operation\nexit             : exit shell\nps               : lists running processes\n\n\n";
+/*
+  Commands must have the same prototype in order for them to work --> void (* function)();
+*/
 
 void date(){
     printf(date_msg);

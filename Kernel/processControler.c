@@ -9,9 +9,11 @@
 #define MAX_PROCESSES_QTY 50
 
 extern uint64_t printValuesFromStack(uint64_t pointer); // THIS MUST BE REMOVED
-extern uint64_t buildStack(uint64_t stackStartingPoint, uint64_t functionPointer);
+extern uint64_t buildStack(uint64_t stackStartingPoint,uint64_t wrapperFunction, uint64_t functionPointer, uint64_t pid, uint64_t priority);
 extern void _loadProcess(uint64_t rsp);
 extern void _hlt();
+extern void _cli();
+extern void _sti();
 
 typedef struct processListNode{
     char* description;  
@@ -86,8 +88,19 @@ removeFromRegister(uint8_t pid){
   processRegister->first=removeFromRegisterRec(processRegister->first,pid);
 }
 
+void
+wrapperFunction(void(*functionPointer)(), uint8_t pid, int priority){
+  functionPointer();
+  _cli();
+  removeFromRegister(pid);
+  removeProcess(priority,pid);
+  _sti();
+  // WHAT SHOULD I PUT HERE NO TO BREAK DOWN SHELL
+}
+
+
 uint8_t
-createProcessWithPriority(char * description,int priority,  uint64_t functionPointer){
+createProcessWithPriority(char * description, int priority,  uint64_t functionPointer){
   processListNode * newProcess=(processListNode *)allocate(sizeof(*newProcess));
   uint64_t memoryBlock=(uint64_t)allocate(sizeof(OFFSET)); // Offset equals to stack size
   newProcess->description=description;
@@ -101,7 +114,8 @@ createProcessWithPriority(char * description,int priority,  uint64_t functionPoi
   newProcess->memoryBlock=memoryBlock;
   newProcess->priority=priority;
   addToRegister(newProcess);
-  uint64_t rsp=buildStack(memoryBlock+OFFSET, functionPointer); // memoryBlock+OFFSET represents the beginning of the stack
+  uint64_t rsp=buildStack(memoryBlock+OFFSET, (uint64_t)wrapperFunction, (uint64_t)functionPointer, (uint64_t)newProcess->pid, (uint64_t)priority);
+  testStackBuilder(functionPointer,newProcess->pid, priority);
   addProcessToScheduler(priority, newProcess->pid, rsp);
   empty=0;
   return newProcess->pid;
@@ -130,10 +144,10 @@ exitProcess(uint8_t pid){
   This function is meant to test if the virgin stack was created correctly
 */
 void
-testStackBuilder(uint64_t functionPointer){
+testStackBuilder(uint64_t functionPointer, uint8_t pid, int priority){
   uint64_t memoryBlock=(uint64_t)allocate(sizeof(OFFSET));
-  buildStack(memoryBlock+OFFSET, functionPointer);
-  for(int i=1; i<18; i++){
+  buildStack(memoryBlock+OFFSET, (uint64_t)wrapperFunction, (uint64_t)functionPointer, (uint64_t)pid, (uint64_t)priority);
+  for(int i=1; i<21; i++){
     ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-8*i)); 
     ncNewline();
   }

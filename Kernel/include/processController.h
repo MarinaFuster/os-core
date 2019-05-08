@@ -9,6 +9,6 @@ void removeFromRegister(uint8_t pid);
 uint8_t createProcessWithPriority(char * description,int priority,  uint64_t functionPointer);
 void ps();
 void exitProcess(uint8_t pid);
-void testStackBuilder(uint64_t functionPointer);
+void testStackBuilder(uint64_t functionPointer, uint8_t pid, int priority);
 
 #endif
