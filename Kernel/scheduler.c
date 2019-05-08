@@ -116,6 +116,7 @@ uint64_t getStackPointer(){
 }
 
 void loadNext(){
+  ncPrint("user@localhost > ");
   _loadProcess(priorityQueue->first->stackPointer);
 }
 
@@ -130,8 +131,6 @@ uint64_t contextSwitching(uint64_t rsp) {
   timer_handler();
   
   (priorityQueue->first)->stackPointer=rsp;  // Guardo en nodo el nuevo SP del P1
-
-  int keepGoing=1;
 
   if(!(priorityQueue->first==priorityQueue->last)){
   (priorityQueue->last)->next=priorityQueue->first;
