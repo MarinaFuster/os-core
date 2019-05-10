@@ -9,6 +9,7 @@
 extern void _loadProcess(uint64_t rsp);
 
 #define DEAD 3
+#define BLOCK 4
 
 typedef struct dequeueNode{
     uint8_t pid;
@@ -87,14 +88,14 @@ int removeProcess(int priority, uint8_t pid) {
 }
 
 void addToRoundRobin(dequeueNode * dNode){
-  
+
   if(priorityQueue->first==0){
     priorityQueue->first=dNode;
     priorityQueue->last=dNode;
   }
   else{
     (priorityQueue->last)->next=dNode;
-    priorityQueue->last=dNode;  
+    priorityQueue->last=dNode;
   }
   (priorityQueue->size)++;
 }
@@ -106,8 +107,8 @@ void addProcessToScheduler(int priority, uint8_t pid, uint64_t rsp){
     dNode->state=0;
     dNode->stackPointer=rsp;
     dNode->next=0;
-    addToRoundRobin(dNode);      
-  }    
+    addToRoundRobin(dNode);
+  }
   empty=0;
 }
 
@@ -129,8 +130,10 @@ uint64_t contextSwitching(uint64_t rsp) {
     return (priorityQueue->first)->stackPointer;
   }
   timer_handler();
-  
+
   (priorityQueue->first)->stackPointer=rsp;  // Guardo en nodo el nuevo SP del P1
+
+
 
   if(!(priorityQueue->first==priorityQueue->last)){
   (priorityQueue->last)->next=priorityQueue->first;
@@ -138,7 +141,41 @@ uint64_t contextSwitching(uint64_t rsp) {
   priorityQueue->first=(priorityQueue->first)->next;
   (priorityQueue->last)->next=0;
   }
-  
+
+  if((priorityQueue->first)->state==BLOCK){
+    contextSwitching((priorityQueue->first)->stackPointer);
+  }
+
   return (priorityQueue->first)->stackPointer;
 
+}
+
+int blockProcess(dequeueNode *current, uint8_t pid){
+  if(current==NULL)
+    return 0;
+  if(current->pid==pid){
+    current->state=BLOCK;
+    return 1;
+  }
+  blockProcess(current->next, pid);
+  return 0;
+}
+
+int unblockProcess(dequeueNode *current, uint8_t pid){
+  if(current==NULL)
+    return 0;
+  if(current->pid==pid){
+    current->state=1;   // CHECK THIS
+    return 1;
+  }
+  blockProcess(current->next, pid);
+  return 0;
+}
+
+int blockedState(uint8_t pid){
+  return blockProcess(priorityQueue->first, pid);
+}
+
+int unblockedState(uint8_t pid){
+  return unblockProcess(priorityQueue->first, pid);
 }
