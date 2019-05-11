@@ -11,6 +11,7 @@
 #include "processController.h"
 #include "scheduler.h"
 #include "mutex.h"
+#include "shm.h"
 
 #define EOF -1
 #define TAB '\t'
@@ -140,18 +141,25 @@ uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
   return 0;
 }
 
-uint64_t sys_shm_create(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  /*Creates shared memory*/
+/*Creates shared memory*/
+uint64_t sys_shm_create(uint64_t id, uint64_t shm, uint64_t rcx, uint64_t r8, uint64_t r9){
+  uint64_t address=shmCreate((uint8_t)id);
+  uint64_t * aux=(uint64_t *)shm;
+  *aux=address;
   return 0;
 }
 
-uint64_t sys_shm_open(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  /*Gives access to an already created shared memory*/
+/*Gives access to an already created shared memory*/
+uint64_t sys_shm_open(uint64_t id, uint64_t shm, uint64_t rcx, uint64_t r8, uint64_t r9){
+  uint64_t address=shmOpen((uint8_t)id);
+  uint64_t * aux=(uint64_t *)shm;
+  *aux=address;
   return 0;
 }
 
-uint64_t sys_shm_close(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  /*Releases shared memory*/
+/*Releases shared memory*/
+uint64_t sys_shm_close(uint64_t id, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  shmClose(id);
   return 0;
 }
 

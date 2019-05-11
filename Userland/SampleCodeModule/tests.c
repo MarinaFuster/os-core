@@ -80,6 +80,27 @@ void testMemory(){
 
 }
 
+void testSharedMemory(){
+    uint64_t shm=shmCreate(1);
+    char * buffer=(char *)shm;
+    *buffer='x';
+    *(buffer+1)='y';
+    *(buffer+2)='z';
+    *(buffer+3)='\0';
+    printf(buffer);
+    printf("   ");
+    
+    uint64_t second_shm=shmOpen(1);
+    char * second_buffer=(char *)second_shm;
+    *second_buffer='a';
+    *(second_buffer+1)='b';
+    *(second_buffer+2)='c';
+    printf(buffer);
+    printf("\n");
+
+    shmClose(1);
+}
+
 void testProcessA(){
     for(int i=0;i<500;i++){
         int j=0;

@@ -98,6 +98,9 @@ void execute(){
   else if(strcmp(command, TEST_MEMORY)){
     exec("testmemory", 2, (uint64_t)testMemory, &pid);
   }
+  else if(strcmp(command, TEST_SHARED_MEMORY)){
+    exec("testshmemory", 2, (uint64_t)testSharedMemory, &pid);
+  }
   else if(strcmp(command, TEST_PROCESS_A)){
     exec("testprocessa", 2, (uint64_t)testProcessA, &pid);
   }

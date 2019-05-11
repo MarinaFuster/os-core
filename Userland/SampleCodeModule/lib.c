@@ -121,3 +121,19 @@ void free(void * pointer){
 void exec(char * description, int priority, uint64_t functionPointer, uint8_t * pid){
   int80(12,(uint64_t)description,(uint64_t)priority,functionPointer,0,0);
 }
+
+uint64_t shmCreate(uint8_t id){
+  uint64_t address=0;
+  int80(15,(uint64_t)id, (uint64_t)(&address), 0, 0, 0);
+  return address;
+}
+
+uint64_t shmOpen(uint8_t id){
+  uint64_t address=0;
+  int80(16,(uint64_t)id, (uint64_t)(&address), 0, 0, 0);
+  return address;
+}
+
+void shmClose(uint8_t id){
+  int80(17,(uint64_t)id, 0, 0, 0, 0);
+}
