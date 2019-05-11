@@ -2,9 +2,11 @@
 #define __TESTS__
 
 #define TEST_MEMORY "testmemory"
+#define TEST_PROCESS_A "a"
+#define TEST_PROCESS_B "b"
 
-void test_memory();
-void test_process();
-
+void testMemory();
+void testProcessA();
+void testProcessB();
 
 #endif // __TESTS__

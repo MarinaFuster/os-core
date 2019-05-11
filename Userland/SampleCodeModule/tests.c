@@ -1,10 +1,11 @@
 #include "include/stdlib.h"
+#include "include/commands.h"
 #define NULL 0
 
 
 extern uint64_t int80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
 
-void test_memory(){
+void testMemory(){
 
     void * bigger_than_memory_block=malloc(0x6000000);
     if(bigger_than_memory_block==NULL)
@@ -78,6 +79,21 @@ void test_memory(){
     free(meant_to_be_after_fourth_block);   
 
 }
-void test_process(){
-  
+
+void testProcessA(){
+    for(int i=0;i<500;i++){
+        int j=0;
+        while(j<500000)
+            j++;
+        printf(" a ");
+    }
+}
+
+void testProcessB(){
+    for(int i=0;i<500;i++){
+        int j=0;
+        while(j<500000)
+            j++;
+        printf(" b ");
+    }
 }
