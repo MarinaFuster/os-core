@@ -120,13 +120,35 @@ void testProcessB(){
 }
 
 void testMutexC(){
-
+    uint64_t shm=shmCreate(2);
+    int * number=(int *)shm;
+    *number=0;
+    for(int i=0;i<1000;i++){
+        int j=0;
+        while(j<5000000)
+            j++;
+        (*number)++;
+    }
+    printf("Done with test mutex C!\n");
 }
 
 void testMutexD(){
-
+    uint64_t shm=shmOpen(2);
+    int * number=(int *)shm;
+    for(int i=0;i<1000;i++){
+        int j=0;
+        while(j<5000000)
+            j++;
+        (*number)++;
+    }
+    printf("Done with test mutex D!\n");
 }
 
 void testMutexE(){
-
+    uint64_t shm=shmOpen(2);
+    int * number=(int *)shm;
+    if((*number)==2000)
+        printf("Sum was done perfectly!\n");
+    else
+        printf("Syncronization not working\n");
 }
