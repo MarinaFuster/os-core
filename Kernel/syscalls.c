@@ -24,6 +24,10 @@ typedef uint64_t (*syscall) (uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t 
 
 static syscall syscalls[SYSCALLSQTY];
 
+/***********************************************************************
+ * GENERAL
+***********************************************************************/
+
 //No puedo deshabilitar las interrupciones realmente con lo cual, unicamente va a cerrar el shell,
 //pero sigue sinedo posible escribir con el teclado
 uint64_t sys_exit(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
@@ -59,8 +63,6 @@ uint64_t sys_clear(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64
 }
 
 uint64_t sys_time(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-    //blockedState();
-    /*
     char hour=_getHours();
     char min=_getMinutes();
     char sec=_getSeconds();
@@ -69,7 +71,6 @@ uint64_t sys_time(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
     ncPrintDec(min);
     ncPrint(":");
     ncPrintDec(sec);
-    */
     return 0;
 }
 
@@ -118,6 +119,10 @@ uint64_t sys_disable_beep(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8,
   return 0;
 }
 
+/***********************************************************************
+ * MEMORY MANAGEMENT
+***********************************************************************/
+
 /* arguements : bytes of memory we need to allocate and pointer_address where we
    store the new address if possible (else null)
 */
@@ -134,6 +139,10 @@ uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
   free(rsi);
   return 0;
 }
+
+/***********************************************************************
+ * PROCESS MANAGEMENT
+***********************************************************************/
 
 /* arguments:
    char * description on rsi
@@ -152,6 +161,30 @@ uint64_t sys_exit_process(uint64_t pid, uint64_t rdx, uint64_t rcx, uint64_t r8,
 
 uint64_t sys_ps(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
   ps();
+  return 0;
+}
+
+/***********************************************************************
+ * IPC
+***********************************************************************/
+
+uint64_t sys_lock(uint8_t callingPID){
+  mutexLock(0, callingPID);
+  return 0;
+}
+
+uint64_t sys_unlock(uint8_t callingPID){
+  mutexUnlock(0, callingPID);
+  return 0;
+}
+
+uint64_t sys_sender(uint8_t callingPID){  // bloqueante
+  blockedState(callingPID);
+  return 0;
+}
+
+uint64_t sys_reciever(uint8_t callingPID){
+  unblockedState(callingPID);
   return 0;
 }
 
@@ -177,25 +210,5 @@ void sysCallsHandler(uint64_t syscode, uint64_t rsi, uint64_t rdx, uint64_t rcx,
   if(VALID_SYS_CODE(syscode)){
     (syscalls[syscode])(rsi,rdx,rcx,r8,r9);
   }
-  return;
-}
-
-void sys_lock(uint8_t callingPID){
-  mutexLock(0, callingPID);
-  return;
-}
-
-void sys_unlock(uint8_t callingPID){
-  mutexUnlock(0, callingPID);
-  return;
-}
-
-void sys_sender(uint8_t callingPID){  // bloqueante
-  blockedState(callingPID);
-  return;
-}
-
-void sys_reciever(uint8_t callingPID){
-  unblockedState(callingPID);
   return;
 }
