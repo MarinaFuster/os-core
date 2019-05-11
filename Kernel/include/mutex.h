@@ -4,7 +4,8 @@
 #define LOCKED 1
 #define UNLOCKED 0
 
-uint8_t createMutex(uint64_t shm);
+uint8_t initMutex();
+void destroyMutex(uint8_t mutexID);
 uint8_t mutexUnlock(int mutexID, uint8_t callingPID);
 uint8_t mutexLock(uint8_t mutexID, uint8_t callingPID);
 

@@ -1,65 +1,83 @@
-// MUTEX tiene estructura donde guarda el shared memory entre dos procesos.
-
-// Deberia haber una funcion en donde se pueda crear un mutex entre dos procesos, que este guarda en la estructura.
-
-// Cuando un proceso quiera acceder a una zona de memoria, deberia hacer lock, que es una funcion de aca que busca
-// el pid y se fija si la zona de memoria esta disponible o no para escribir.
-
 #include <stdint.h>
 #include <syscalls.h>
 #include <scheduler.h>
 #include <mutex.h>
 #include <naiveConsole.h>
+#include <memoryManager.h>
+#include <stdio.h> // We use this just for size of
 
+extern uint64_t mutex_lock(uint64_t mutexState);
 
-typedef struct {
-  //uint8_t involvedPID[2]; // No creo que haga falta
-  uint64_t sharedMemory;
+typedef struct mutexNode{
   uint8_t state;
   uint8_t mutexID;
-} mutex;
+  struct mutexNode * next;
+} mutexNode;
 
-static mutex array[1];
+static mutexNode * first=0;
 static  int mutexIDCounter=1;
 
-// Habria que hacer una lista con nodos de mutex, pero si vamos a hacer solo dos procesos es al pedo.
-
-uint8_t mutexLock(uint8_t mutexID, uint8_t callingPID){
-    if( (array[mutexID]).state==LOCKED ){
-      blockedState(callingPID);
-    }
-
-    else{
-      array[mutexID].state=LOCKED;
-    }
-
-      return 1;
+mutexNode * getMutex(uint8_t mutexID){
+  mutexNode * current=first;
+  while(current!=0){
+    if(current->mutexID==mutexID)
+      return current;
+    current=current->next;
+  }
+  return current;
 }
 
-uint8_t mutexUnlock(int mutexID, uint8_t callingPID){
-    array[mutexID].state=UNLOCKED;
+uint8_t mutexLock(uint8_t mutexID, uint8_t callingPID){
 
-    unblockedState(callingPID);     // callingPID en realidad deberia ser el pid del OTRO proceso QUE ESTABA ESPERANDO
-    // Si fuesen mas, deberia haber una cola con los procesos que estan intentando accender a la shm. En este caso no
+    mutexNode * mutex=getMutex(mutexID);
+    int wasLocked=mutex_lock(mutex->state);
 
+    if(wasLocked){
+      blockedState(callingPID);
+    }
+    else{
+      unblockedState(callingPID);
+    }
     return 1;
 }
 
-uint8_t createMutex(uint64_t shm){
-    mutex newMutex;
-    newMutex.sharedMemory=shm;
-    newMutex.state=UNLOCKED;
-    newMutex.mutexID=mutexIDCounter;
-    array[mutexIDCounter]=newMutex;
-    mutexIDCounter++;
+uint8_t mutexUnlock(int mutexID, uint8_t otherPID){
 
-    //////// TESTING  ///////////////////
-    ncPrintHex(newMutex.sharedMemory);
-    ncNewline();
-    ncPrintDec(newMutex.state);
-    ncNewline();
-    ncPrintDec(newMutex.mutexID);
-    /////////////////////////////////////
+  mutexNode * mutex=getMutex(mutexID);
+  mutex->state=UNLOCKED;
+  unblockedState(otherPID);
 
-    return mutexIDCounter-1;    // Al pedo pq nadie mas deberia saberlo
+  return 1;
 }
+
+mutexNode * destroyMutexRec(mutexNode * current, uint8_t mutexID){
+  if(current==0)
+    return current;
+  if(current->mutexID==mutexID){
+    mutexNode * toReturn=current->next;
+    free((uint64_t)current);
+    return toReturn;
+  }
+  current->next=destroyMutexRec(current->next, mutexID);
+  return current;
+}
+
+void destroyMutex(uint8_t mutexID){
+  first=destroyMutexRec(first, mutexID);
+}
+
+void add(mutexNode * newMutex){
+  newMutex->next=first;
+  first=newMutex;
+}
+
+uint8_t initMutex(){
+  mutexNode * newMutex=(mutexNode *)allocate(sizeof(*newMutex));
+  newMutex->state=UNLOCKED;
+  newMutex->mutexID=mutexIDCounter;
+  add(newMutex);
+  mutexIDCounter++;
+
+  return newMutex->mutexID;
+}
+

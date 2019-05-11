@@ -120,6 +120,7 @@ void testProcessB(){
 }
 
 void testMutexC(){
+    //uint8_t mutex=initMutex(); // mutex==1 just testing once
     uint64_t shm=shmCreate(2);
     int * number=(int *)shm;
     *number=0;
@@ -127,7 +128,10 @@ void testMutexC(){
         int j=0;
         while(j<5000000)
             j++;
+        
+        mutexLock(1,2); // mutexID -- callingPID
         (*number)++;
+        mutexUnlock(1,3); // mutexID --otherPID
     }
     printf("Done with test mutex C!\n");
 }
@@ -139,9 +143,14 @@ void testMutexD(){
         int j=0;
         while(j<5000000)
             j++;
+
+        mutexLock(1,3); // mutexID -- callingPID
         (*number)++;
+        mutexUnlock(1,2); // mutexID -- otherPID
     }
     printf("Done with test mutex D!\n");
+
+    destroyMutex(1); // mutex==1
 }
 
 void testMutexE(){

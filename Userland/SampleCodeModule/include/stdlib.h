@@ -18,6 +18,10 @@ uint64_t shmOpen(uint8_t id);
 void shmClose(uint8_t id);
 void block(uint8_t pid);
 void unblock(uint8_t pid);
+uint8_t initMutex();
+void destroyMutex(uint8_t mutexID);
+void mutexLock(uint8_t mutexID, uint8_t callingPID);
+void mutexUnlock(uint8_t mutexID, uint8_t otherPID);
 
 
 #endif

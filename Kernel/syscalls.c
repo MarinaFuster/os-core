@@ -18,7 +18,7 @@
 #define ENTER '\n'
 #define DELETE '\b'
 
-#define SYSCALLSQTY 20
+#define SYSCALLSQTY 24
 #define VALID_SYS_CODE(c) (c>=0 && c<=SYSCALLSQTY)
 
 typedef uint64_t (*syscall) (uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
@@ -202,23 +202,34 @@ uint64_t sys_unblock(uint64_t pid, uint64_t rdx, uint64_t rcx, uint64_t r8, uint
  * IPC
 ***********************************************************************/
 
-uint64_t sys_lock(uint8_t callingPID){
-  mutexLock(0, callingPID);
+uint64_t sys_init_mutex(uint64_t mutexID, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  int * id=(int *)mutexID;
+  *id=initMutex();
   return 0;
 }
 
-uint64_t sys_unlock(uint8_t callingPID){
-  mutexUnlock(0, callingPID);
+uint64_t sys_destroy_mutex(uint64_t mutexID, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  destroyMutex((uint8_t)mutexID);
   return 0;
 }
 
-uint64_t sys_sender(uint8_t callingPID){  // bloqueante
-  blockedState(callingPID);
+uint64_t sys_mutex_lock(uint64_t mutexID, uint64_t callingPID, uint64_t rcx, uint64_t r8, uint64_t r9){
+  mutexLock((uint8_t)mutexID, (uint8_t)callingPID);
   return 0;
 }
 
-uint64_t sys_reciever(uint8_t callingPID){
-  unblockedState(callingPID);
+uint64_t sys_mutex_unlock(uint64_t mutexID, uint64_t otherPID, uint64_t rcx, uint64_t r8, uint64_t r9){
+  mutexUnlock((uint8_t)mutexID, (uint8_t)otherPID);
+  return 0;
+}
+
+uint64_t sys_sender(uint64_t callingPID, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){  // bloqueante
+  blockedState((uint8_t)callingPID);
+  return 0;
+}
+
+uint64_t sys_reciever(uint64_t callingPID, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  unblockedState((uint8_t)callingPID);
   return 0;
 }
 
@@ -243,6 +254,10 @@ void loadSysCalls(){
   syscalls[17]=&sys_shm_close;
   syscalls[18]=&sys_block;
   syscalls[19]=&sys_unblock;
+  syscalls[20]=&sys_init_mutex;
+  syscalls[21]=&sys_destroy_mutex;
+  syscalls[22]=&sys_mutex_lock;
+  syscalls[23]=&sys_mutex_unlock;
 }
 
 void sysCallsHandler(uint64_t syscode, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){ // lega en rdi desde asm
