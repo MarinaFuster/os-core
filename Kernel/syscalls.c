@@ -76,23 +76,14 @@ uint64_t sys_time(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
 }
 
 uint64_t sys_date(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  uint8_t var=1;
-  while(var<10)
-  {
-    /*
-    char year=_getYear();
-    char month=_getMonth();
-    char day=_getDayofMonth();
-    ncPrintDec(month);
-    ncPrint("-");
-    ncPrintDec(day);
-    ncPrint("-");
-    ncPrintDec(year);
-    */
-    ncPrint("Process Date");
-    ncNewline();
-    var++;
-  }
+  char year=_getYear();
+  char month=_getMonth();
+  char day=_getDayofMonth();
+  ncPrintDec(month);
+  ncPrint("-");
+  ncPrintDec(day);
+  ncPrint("-");
+  ncPrintDec(year);
     return 0;
 }
 
