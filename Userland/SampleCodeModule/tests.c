@@ -97,3 +97,15 @@ void testProcessB(){
         printf(" b ");
     }
 }
+
+void testMutexC(){
+
+}
+
+void testMutexD(){
+
+}
+
+void testMutexE(){
+
+}

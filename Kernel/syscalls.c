@@ -140,6 +140,21 @@ uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
   return 0;
 }
 
+uint64_t sys_shm_create(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  /*Creates shared memory*/
+  return 0;
+}
+
+uint64_t sys_shm_open(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  /*Gives access to an already created shared memory*/
+  return 0;
+}
+
+uint64_t sys_shm_close(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  /*Releases shared memory*/
+  return 0;
+}
+
 /***********************************************************************
  * PROCESS MANAGEMENT
 ***********************************************************************/
