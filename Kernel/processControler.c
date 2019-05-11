@@ -102,6 +102,7 @@ createProcessWithPriority(char * description, int priority,  uint64_t functionPo
   newProcess->description=description;
   if(processID==MAX_PROCESSES_QTY){
       ncPrint("You cannot run more processes");
+      ncNewline();
       free((uint64_t)memoryBlock);
       free((uint64_t)newProcess);
       return 0;
