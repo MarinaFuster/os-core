@@ -85,12 +85,6 @@ void execute(){
   else if(strcmp(command,HELP)){
     exec("ps", 2, (uint64_t)ps, &pid);
   }
-  else if(strcmp(command, TEST_MEMORY)){
-    exec("testmemory", 2, (uint64_t)test_memory, &pid);
-  }
-  else if(strcmp(command, TEST_PROCESSES)){
-    exec("testproess", 2, (uint64_t)test_process, &pid);
-  }
   else if(strcmp(command,EXIT)){
     exec("exit", 2, (uint64_t)exit, &pid);
     running=0;
@@ -100,6 +94,33 @@ void execute(){
   }
   else if(strcmp(command,INVALIDOPERATION)){   // Exception do not count as process
     invalidoperation();
+  }
+  else if(strcmp(command, TEST_MEMORY)){
+    exec("testmemory", 2, (uint64_t)testMemory, &pid);
+  }
+  else if(strcmp(command, TEST_SHARED_MEMORY)){
+    exec("testshmemory", 2, (uint64_t)testSharedMemory, &pid);
+  }
+  else if(strcmp(command, TEST_PROCESS_A)){
+    exec("testprocessa", 2, (uint64_t)testProcessA, &pid);
+  }
+  else if(strcmp(command, TEST_PROCESS_B)){
+    exec("testprcoessb", 2, (uint64_t)testProcessB, &pid);
+  }
+  else if(strcmp(command, TEST_MUTEX_C)){
+    exec("testmutexc", 2, (uint64_t)testMutexC, &pid);
+  }
+  else if(strcmp(command, TEST_MUTEX_D)){
+    exec("testmutexd", 2, (uint64_t)testMutexD, &pid);
+  }
+  else if(strcmp(command, TEST_MUTEX_E)){
+    exec("testmutexe", 2, (uint64_t)testMutexE, &pid);
+  }
+  else if(strcmp(command, TEST_BLOCK)){
+    exec("testblock", 2, (uint64_t)testBlock, &pid);
+  }
+  else if(strcmp(command, TEST_UNBLOCK)){
+    exec("testunblock", 2, (uint64_t)testUnblock, &pid);
   }
   else
     printf(invalidCommandMessage);

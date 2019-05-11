@@ -16,7 +16,7 @@ extern void _cli();
 extern void _sti();
 
 typedef struct processListNode{
-    char* description;  
+    char* description;
     uint8_t pid;
     int priority;
     uint64_t memoryBlock;
@@ -33,7 +33,7 @@ static int empty=1;
 static processList * processRegister=0;
 
 void initializeProcessRegister(){
-  
+
   processRegister=(processList *)allocate(sizeof(*processRegister));
   processRegister->first=0;
 }
@@ -50,6 +50,7 @@ void psProcesses(){
 }
 
 void ps(){
+  ncNewline();
   ncPrint("PID   ");
   ncPrint("Description");
   ncNewline();
@@ -63,7 +64,7 @@ uint8_t noProcessRunning(){
   return empty;
 }
 
-void 
+void
 addToRegister(processListNode * newProcess){
   newProcess->next=processRegister->first;
   processRegister->first=newProcess;
@@ -80,7 +81,7 @@ processListNode * removeFromRegisterRec(processListNode * current, uint8_t pid){
   return current;
 }
 
-void 
+void
 removeFromRegister(uint8_t pid){
   processRegister->first=removeFromRegisterRec(processRegister->first,pid);
 }
@@ -102,6 +103,7 @@ createProcessWithPriority(char * description, int priority,  uint64_t functionPo
   newProcess->description=description;
   if(processID==MAX_PROCESSES_QTY){
       ncPrint("You cannot run more processes");
+      ncNewline();
       free((uint64_t)memoryBlock);
       free((uint64_t)newProcess);
       return 0;
@@ -143,7 +145,7 @@ testStackBuilder(uint64_t functionPointer, uint8_t pid, int priority){
   uint64_t memoryBlock=(uint64_t)allocate(sizeof(OFFSET));
   buildStack(memoryBlock+OFFSET, (uint64_t)wrapperFunction, (uint64_t)functionPointer, (uint64_t)pid, (uint64_t)priority);
   for(int i=1; i<21; i++){
-    ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-8*i)); 
+    ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-8*i));
     ncNewline();
   }
 }

@@ -121,3 +121,45 @@ void free(void * pointer){
 void exec(char * description, int priority, uint64_t functionPointer, uint8_t * pid){
   int80(12,(uint64_t)description,(uint64_t)priority,functionPointer,0,0);
 }
+
+uint64_t shmCreate(uint8_t id){
+  uint64_t address=0;
+  int80(15,(uint64_t)id, (uint64_t)(&address), 0, 0, 0);
+  return address;
+}
+
+uint64_t shmOpen(uint8_t id){
+  uint64_t address=0;
+  int80(16,(uint64_t)id, (uint64_t)(&address), 0, 0, 0);
+  return address;
+}
+
+void shmClose(uint8_t id){
+  int80(17,(uint64_t)id, 0, 0, 0, 0);
+}
+
+void block(uint8_t pid){
+  int80(18,(uint64_t)pid, 0, 0, 0, 0);
+}
+
+void unblock(uint8_t pid){
+  int80(19,(uint64_t)pid, 0, 0, 0, 0);
+}
+
+uint8_t initMutex(){
+  uint8_t mutexID=0;
+  int80(20,(uint64_t)(&mutexID), 0, 0, 0, 0);
+  return mutexID;
+}
+
+void destroyMutex(uint8_t mutexID){
+  int80(21,(uint64_t)mutexID, 0, 0, 0, 0);
+}
+
+void mutexLock(uint8_t mutexID, uint8_t callingPID){
+  int80(22,(uint64_t)mutexID, (uint64_t)callingPID, 0, 0, 0);
+}
+
+void mutexUnlock(uint8_t mutexID, uint8_t otherPID){
+  int80(23,(uint64_t)mutexID, (uint64_t)otherPID, 0, 0, 0);
+}

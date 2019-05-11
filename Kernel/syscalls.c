@@ -10,18 +10,24 @@
 #include "memoryManager.h"
 #include "processController.h"
 #include "scheduler.h"
+#include "mutex.h"
+#include "shm.h"
 
 #define EOF -1
 #define TAB '\t'
 #define ENTER '\n'
 #define DELETE '\b'
 
-#define SYSCALLSQTY 15
+#define SYSCALLSQTY 24
 #define VALID_SYS_CODE(c) (c>=0 && c<=SYSCALLSQTY)
 
 typedef uint64_t (*syscall) (uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
 
 static syscall syscalls[SYSCALLSQTY];
+
+/***********************************************************************
+ * GENERAL
+***********************************************************************/
 
 //No puedo deshabilitar las interrupciones realmente con lo cual, unicamente va a cerrar el shell,
 //pero sigue sinedo posible escribir con el teclado
@@ -70,14 +76,14 @@ uint64_t sys_time(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
 }
 
 uint64_t sys_date(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-    char year=_getYear();
-    char month=_getMonth();
-    char day=_getDayofMonth();
-    ncPrintDec(month);
-    ncPrint("-");
-    ncPrintDec(day);
-    ncPrint("-");
-    ncPrintDec(year);
+  char year=_getYear();
+  char month=_getMonth();
+  char day=_getDayofMonth();
+  ncPrintDec(month);
+  ncPrint("-");
+  ncPrintDec(day);
+  ncPrint("-");
+  ncPrintDec(year);
     return 0;
 }
 
@@ -105,6 +111,10 @@ uint64_t sys_disable_beep(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8,
   return 0;
 }
 
+/***********************************************************************
+ * MEMORY MANAGEMENT
+***********************************************************************/
+
 /* arguements : bytes of memory we need to allocate and pointer_address where we
    store the new address if possible (else null)
 */
@@ -121,6 +131,32 @@ uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
   free(rsi);
   return 0;
 }
+
+/*Creates shared memory*/
+uint64_t sys_shm_create(uint64_t id, uint64_t shm, uint64_t rcx, uint64_t r8, uint64_t r9){
+  uint64_t address=shmCreate((uint8_t)id);
+  uint64_t * aux=(uint64_t *)shm;
+  *aux=address;
+  return 0;
+}
+
+/*Gives access to an already created shared memory*/
+uint64_t sys_shm_open(uint64_t id, uint64_t shm, uint64_t rcx, uint64_t r8, uint64_t r9){
+  uint64_t address=shmOpen((uint8_t)id);
+  uint64_t * aux=(uint64_t *)shm;
+  *aux=address;
+  return 0;
+}
+
+/*Releases shared memory*/
+uint64_t sys_shm_close(uint64_t id, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  shmClose(id);
+  return 0;
+}
+
+/***********************************************************************
+ * PROCESS MANAGEMENT
+***********************************************************************/
 
 /* arguments:
    char * description on rsi
@@ -142,6 +178,52 @@ uint64_t sys_ps(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t 
   return 0;
 }
 
+uint64_t sys_block(uint64_t pid, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  blockedState((uint8_t)pid);
+  return 0;
+}
+
+uint64_t sys_unblock(uint64_t pid, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  unblockedState((uint8_t)pid);
+  return 0;
+}
+
+
+/***********************************************************************
+ * IPC
+***********************************************************************/
+
+uint64_t sys_init_mutex(uint64_t mutexID, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  int * id=(int *)mutexID;
+  *id=initMutex();
+  return 0;
+}
+
+uint64_t sys_destroy_mutex(uint64_t mutexID, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  destroyMutex((uint8_t)mutexID);
+  return 0;
+}
+
+uint64_t sys_mutex_lock(uint64_t mutexID, uint64_t callingPID, uint64_t rcx, uint64_t r8, uint64_t r9){
+  mutexLock((uint8_t)mutexID, (uint8_t)callingPID);
+  return 0;
+}
+
+uint64_t sys_mutex_unlock(uint64_t mutexID, uint64_t otherPID, uint64_t rcx, uint64_t r8, uint64_t r9){
+  mutexUnlock((uint8_t)mutexID, (uint8_t)otherPID);
+  return 0;
+}
+
+uint64_t sys_sender(uint64_t callingPID, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){  // bloqueante
+  blockedState((uint8_t)callingPID);
+  return 0;
+}
+
+uint64_t sys_reciever(uint64_t callingPID, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  unblockedState((uint8_t)callingPID);
+  return 0;
+}
+
 void loadSysCalls(){
   syscalls[0]=&sys_exit;
   syscalls[1]=&sys_time;
@@ -158,6 +240,15 @@ void loadSysCalls(){
   syscalls[12]=&sys_exec;
   syscalls[13]=&sys_exit_process;
   syscalls[14]=&sys_ps;
+  syscalls[15]=&sys_shm_create;
+  syscalls[16]=&sys_shm_open;
+  syscalls[17]=&sys_shm_close;
+  syscalls[18]=&sys_block;
+  syscalls[19]=&sys_unblock;
+  syscalls[20]=&sys_init_mutex;
+  syscalls[21]=&sys_destroy_mutex;
+  syscalls[22]=&sys_mutex_lock;
+  syscalls[23]=&sys_mutex_unlock;
 }
 
 void sysCallsHandler(uint64_t syscode, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){ // lega en rdi desde asm

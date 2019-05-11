@@ -13,4 +13,7 @@ uint64_t contextSwitching(uint64_t rsp);
 uint64_t getStackPointer();
 void loadNext();
 
+int unblockedState(uint8_t pid);
+int blockedState(uint8_t pid);
+
 #endif

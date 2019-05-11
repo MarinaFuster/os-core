@@ -11,6 +11,10 @@ uint64_t sys_paint(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64
 uint64_t sys_exit(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
 uint64_t sys_beep(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
 uint64_t sys_disable_beep(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
+void sys_lock(uint8_t callingPID);
+void sys_unlock(uint8_t callingPID);
+void sys_sender(uint8_t callingPID);
+void sys_reciever(uint8_t callingPID);
 
 void loadSysCalls();
 
