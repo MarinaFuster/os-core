@@ -137,3 +137,11 @@ uint64_t shmOpen(uint8_t id){
 void shmClose(uint8_t id){
   int80(17,(uint64_t)id, 0, 0, 0, 0);
 }
+
+void block(uint8_t pid){
+  int80(18,(uint64_t)pid, 0, 0, 0, 0);
+}
+
+void unblock(uint8_t pid){
+  int80(19,(uint64_t)pid, 0, 0, 0, 0);
+}

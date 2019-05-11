@@ -116,6 +116,12 @@ void execute(){
   else if(strcmp(command, TEST_MUTEX_E)){
     exec("testmutexe", 2, (uint64_t)testMutexE, &pid);
   }
+  else if(strcmp(command, TEST_BLOCK)){
+    exec("testblock", 2, (uint64_t)testBlock, &pid);
+  }
+  else if(strcmp(command, TEST_UNBLOCK)){
+    exec("testunblock", 2, (uint64_t)testUnblock, &pid);
+  }
   else
     printf(invalidCommandMessage);
 }

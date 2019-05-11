@@ -152,3 +152,13 @@ void testMutexE(){
     else
         printf("Syncronization not working\n");
 }
+
+void testBlock(){
+    block(2);
+    printf("Process C blocked!\n");
+}
+
+void testUnblock(){
+    unblock(2);
+    printf("Process C unblocked!\n");
+}

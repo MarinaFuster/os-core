@@ -16,6 +16,8 @@ void exec(char * description, int priority, uint64_t functionPointer, uint8_t * 
 uint64_t shmCreate(uint8_t id);
 uint64_t shmOpen(uint8_t id);
 void shmClose(uint8_t id);
+void block(uint8_t pid);
+void unblock(uint8_t pid);
 
 
 #endif

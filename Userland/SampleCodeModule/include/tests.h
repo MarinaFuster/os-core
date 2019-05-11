@@ -8,6 +8,8 @@
 #define TEST_MUTEX_D "d"
 #define TEST_MUTEX_E "e"
 #define TEST_SHARED_MEMORY "testshm"
+#define TEST_BLOCK "block"
+#define TEST_UNBLOCK "unblock"
 
 void testMemory();
 void testProcessA();
@@ -16,5 +18,7 @@ void testMutexC();
 void testMutexD();
 void testMutexE();
 void testSharedMemory();
+void testBlock();
+void testUnblock();
 
 #endif // __TESTS__

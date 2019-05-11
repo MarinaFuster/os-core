@@ -18,7 +18,7 @@
 #define ENTER '\n'
 #define DELETE '\b'
 
-#define SYSCALLSQTY 18
+#define SYSCALLSQTY 20
 #define VALID_SYS_CODE(c) (c>=0 && c<=SYSCALLSQTY)
 
 typedef uint64_t (*syscall) (uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
@@ -187,6 +187,17 @@ uint64_t sys_ps(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t 
   return 0;
 }
 
+uint64_t sys_block(uint64_t pid, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  blockedState((uint8_t)pid);
+  return 0;
+}
+
+uint64_t sys_unblock(uint64_t pid, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  unblockedState((uint8_t)pid);
+  return 0;
+}
+
+
 /***********************************************************************
  * IPC
 ***********************************************************************/
@@ -230,6 +241,8 @@ void loadSysCalls(){
   syscalls[15]=&sys_shm_create;
   syscalls[16]=&sys_shm_open;
   syscalls[17]=&sys_shm_close;
+  syscalls[18]=&sys_block;
+  syscalls[19]=&sys_unblock;
 }
 
 void sysCallsHandler(uint64_t syscode, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){ // lega en rdi desde asm

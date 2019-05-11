@@ -50,6 +50,7 @@ void psProcesses(){
 }
 
 void ps(){
+  ncNewline();
   ncPrint("PID   ");
   ncPrint("Description");
   ncNewline();
