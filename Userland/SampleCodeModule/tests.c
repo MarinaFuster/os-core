@@ -150,7 +150,7 @@ void testMutexD(){
     }
     printf("Done with test mutex D!\n");
 
-    destroyMutex(1); // mutex==1
+    //destroyMutex(1); // mutex==1
 }
 
 void testMutexE(){
