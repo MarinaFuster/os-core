@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+void write(int filed, char * buffer, int size, uint8_t otherPID);
+void read(int filed, char * buffer, int size, uint8_t callingPID);
+
 void free(void * pointer);
 char getChar();
 void intToString(int n,char * str);
@@ -23,5 +26,8 @@ void destroyMutex(uint8_t mutexID);
 void mutexLock(uint8_t mutexID, uint8_t callingPID);
 void mutexUnlock(uint8_t mutexID, uint8_t otherPID);
 
+void createPipe(uint8_t id, uint8_t * filed);
+void openPipe(uint8_t id, uint8_t * filed);
+void closePipe(uint8_t id);
 
 #endif

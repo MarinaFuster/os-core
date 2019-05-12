@@ -10,6 +10,8 @@
 #define TEST_SHARED_MEMORY "testshm"
 #define TEST_BLOCK "block"
 #define TEST_UNBLOCK "unblock"
+#define TEST_PIPE_F "pipef"
+#define TEST_PIPE_G "pipeg"
 
 void testMemory();
 void testProcessA();
@@ -20,5 +22,7 @@ void testMutexE();
 void testSharedMemory();
 void testBlock();
 void testUnblock();
+void testPipeF();
+void testPipeG();
 
 #endif // __TESTS__

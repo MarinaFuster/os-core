@@ -10,6 +10,14 @@
 
 extern uint64_t int80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
 
+void read(int filed, char * buffer, int size, uint8_t callingPID){
+  int80(3,filed,(uint64_t)buffer,(uint64_t)size,(uint64_t)callingPID,0);
+}
+
+void write(int filed, char * buffer, int size, uint8_t otherPID){
+  int80(4,filed,(uint64_t)buffer,(uint64_t)size,(uint64_t)otherPID,0);
+}
+
 void strncpy(char * destination, const char * source, int length){
 	int i=0;
 	for(; i<=length && source[i]!=0 ;i++){
@@ -162,4 +170,16 @@ void mutexLock(uint8_t mutexID, uint8_t callingPID){
 
 void mutexUnlock(uint8_t mutexID, uint8_t otherPID){
   int80(23,(uint64_t)mutexID, (uint64_t)otherPID, 0, 0, 0);
+}
+
+void createPipe(uint8_t id, uint8_t * filed){
+  int80(24, (uint64_t)id, (uint64_t)filed, 0, 0, 0);
+}
+
+void openPipe(uint8_t id, uint8_t * filed){
+  int80(24, (uint64_t)id, (uint64_t)filed, 0, 0, 0);
+}
+
+void closePipe(uint8_t id){
+  int80(25, (uint64_t)id, 0, 0, 0, 0);
 }
