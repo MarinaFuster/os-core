@@ -23,6 +23,7 @@ static const uint64_t PageSize = 0x1000;
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
 
+#define LOW_PRIORITY 2
 
 typedef int (*EntryPoint)();
 
@@ -60,7 +61,7 @@ int main(){
 	initializeProcessRegister();
 	initializeScheduler();
 	//initializeScreen();
-	createProcessWithPriority("init", 2, (uint64_t)sampleCodeModuleAddress); // description, priority, memory address
+	createProcessWithPriority("init", LOW_PRIORITY, (uint64_t)sampleCodeModuleAddress); // description, priority, memory address
 	//((EntryPoint)sampleCodeModuleAddress)();
 	while(1){
 		_hlt();
