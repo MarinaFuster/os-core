@@ -60,7 +60,7 @@ int main(){
 	initializeProcessRegister();
 	initializeScheduler();
 	//initializeScreen();
-	createProcessWithPriority("init", 2, (uint64_t)sampleCodeModuleAddress);
+	createProcessWithPriority("init", 2, (uint64_t)sampleCodeModuleAddress); // description, priority, memory address
 	//((EntryPoint)sampleCodeModuleAddress)();
 	while(1){
 		_hlt();
