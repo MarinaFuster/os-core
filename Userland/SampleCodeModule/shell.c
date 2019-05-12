@@ -83,7 +83,7 @@ void execute(){
     exec("ps", 2, (uint64_t)ps, &pid);
   }
   else if(strcmp(command,HELP)){
-    exec("ps", 2, (uint64_t)ps, &pid);
+    exec("help", 2, (uint64_t)help, &pid);
   }
   else if(strcmp(command,EXIT)){
     exec("exit", 2, (uint64_t)exit, &pid);
