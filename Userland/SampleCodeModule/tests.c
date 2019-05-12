@@ -83,6 +83,14 @@ void testMemory(){
 
 void testSharedMemory(){
     uint64_t shm=shmCreate(1);
+    uint64_t shm_b=shmOpen(1);
+    uint64_t shm_c=shmCreate(1);
+
+    if(shm==shm_b)
+        printf("Test 1... OK\n");
+    if(shm==shm_c)
+        printf("Test 2... OK\n");
+
     char * buffer=(char *)shm;
     *buffer='x';
     *(buffer+1)='y';

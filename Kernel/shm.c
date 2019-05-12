@@ -38,6 +38,15 @@ shmNode * deleteShmRec(uint8_t id, shmNode * current){
 // Shared memory blocks are fixed size
 uint64_t
 shmCreate(uint8_t id){
+
+    shmNode * current=first;
+    while(current!=NULL){
+        if(current->id == id){
+            return current->address;
+        }
+        current=current->next;
+    }
+    
     uint64_t address=allocate(4096);
     shmNode * newNode=(shmNode *)allocate(sizeof(*newNode));
     newNode->id=id;
