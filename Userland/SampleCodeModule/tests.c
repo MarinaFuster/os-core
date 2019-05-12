@@ -129,9 +129,9 @@ void testMutexC(){
         while(j<5000000)
             j++;
         
-        mutexLock(1,2); // mutexID -- callingPID
+        //mutexLock(1,2); // mutexID -- callingPID
         (*number)++;
-        mutexUnlock(1,3); // mutexID --otherPID
+        //mutexUnlock(1,3); // mutexID --otherPID
     }
     printf("Done with test mutex C!\n");
 }
@@ -144,9 +144,9 @@ void testMutexD(){
         while(j<5000000)
             j++;
 
-        mutexLock(1,3); // mutexID -- callingPID
+        //mutexLock(1,3); // mutexID -- callingPID
         (*number)++;
-        mutexUnlock(1,2); // mutexID -- otherPID
+        //mutexUnlock(1,2); // mutexID -- otherPID
     }
     printf("Done with test mutex D!\n");
 
