@@ -6,6 +6,9 @@
 
 #define MAX_COMMAND_LENGTH 20
 #define BUFFER_SIZE 100
+#define LOW_PRIORITY 2
+#define HIGH_PRIORITY 0
+#define MEDIUM_PRIORITY 1
 
 void execute();
 
@@ -68,25 +71,25 @@ void execute(){
   uint8_t pid=0;
   
   if(strcmp(command,DATE)){
-    exec("date", 2, (uint64_t)date, &pid);
+    exec("date", LOW_PRIORITY, (uint64_t)date, &pid);
   }
   else if(strcmp(command,TIME)){
-    exec("time", 2, (uint64_t)time, &pid);
+    exec("time", MEDIUM_PRIORITY, (uint64_t)time, &pid);
   }
   else if(strcmp(command,CLEAR)){
-    exec("clear", 2, (uint64_t)clear, &pid);
+    exec("clear", LOW_PRIORITY, (uint64_t)clear, &pid);
   }
   else if(strcmp(command,PONG)){
-    exec("pong", 2, (uint64_t)pong, &pid);
+    exec("pong", MEDIUM_PRIORITY, (uint64_t)pong, &pid);
   }
   else if(strcmp(command,PS)){
-    exec("ps", 2, (uint64_t)ps, &pid);
+    exec("ps", LOW_PRIORITY, (uint64_t)ps, &pid);
   }
   else if(strcmp(command,HELP)){
-    exec("help", 2, (uint64_t)help, &pid);
+    exec("help", LOW_PRIORITY, (uint64_t)help, &pid);
   }
   else if(strcmp(command,EXIT)){
-    exec("exit", 2, (uint64_t)exit, &pid);
+    exec("exit", LOW_PRIORITY, (uint64_t)exit, &pid);
     running=0;
   }
   else if(strcmp(command,DIVZERO)){     // Exception do not count as process
@@ -96,31 +99,31 @@ void execute(){
     invalidoperation();
   }
   else if(strcmp(command, TEST_MEMORY)){
-    exec("testmemory", 2, (uint64_t)testMemory, &pid);
+    exec("testmemory", MEDIUM_PRIORITY, (uint64_t)testMemory, &pid);
   }
   else if(strcmp(command, TEST_SHARED_MEMORY)){
-    exec("testshmemory", 2, (uint64_t)testSharedMemory, &pid);
+    exec("testshmemory", LOW_PRIORITY, (uint64_t)testSharedMemory, &pid);
   }
   else if(strcmp(command, TEST_PROCESS_A)){
-    exec("testprocessa", 2, (uint64_t)testProcessA, &pid);
+    exec("testprocessa", LOW_PRIORITY, (uint64_t)testProcessA, &pid);
   }
   else if(strcmp(command, TEST_PROCESS_B)){
-    exec("testprcoessb", 2, (uint64_t)testProcessB, &pid);
+    exec("testprcoessb", LOW_PRIORITY, (uint64_t)testProcessB, &pid);
   }
   else if(strcmp(command, TEST_MUTEX_C)){
-    exec("testmutexc", 2, (uint64_t)testMutexC, &pid);
+    exec("testmutexc", LOW_PRIORITY, (uint64_t)testMutexC, &pid);
   }
   else if(strcmp(command, TEST_MUTEX_D)){
-    exec("testmutexd", 2, (uint64_t)testMutexD, &pid);
+    exec("testmutexd", LOW_PRIORITY, (uint64_t)testMutexD, &pid);
   }
   else if(strcmp(command, TEST_MUTEX_E)){
-    exec("testmutexe", 2, (uint64_t)testMutexE, &pid);
+    exec("testmutexe", LOW_PRIORITY, (uint64_t)testMutexE, &pid);
   }
   else if(strcmp(command, TEST_BLOCK)){
-    exec("testblock", 2, (uint64_t)testBlock, &pid);
+    exec("testblock", LOW_PRIORITY, (uint64_t)testBlock, &pid);
   }
   else if(strcmp(command, TEST_UNBLOCK)){
-    exec("testunblock", 2, (uint64_t)testUnblock, &pid);
+    exec("testunblock", LOW_PRIORITY, (uint64_t)testUnblock, &pid);
   }
   else
     printf(invalidCommandMessage);
