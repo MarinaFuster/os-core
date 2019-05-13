@@ -216,11 +216,11 @@ void testPipeF(){
             messageBuffer[i]='a'+k;
         }
         messageBuffer[i]='\n';
-        write(filed,messageBuffer,15,3); // Attention to PIDs
-
         int j=0;
         while(j<500000000)
             j++;
+        write(filed,messageBuffer,15,3); // Attention to PIDs
+        printf("Just finished writing\n");
     }
     printf("Done\n");
 
@@ -237,7 +237,7 @@ void testPipeG(){
     int i=0;
     while(i<5){
         read(filed,readingBuffer,150,3); // Attention to PIDs !! 
-        printf("\nEl resultado en el buffer es... ");
+        printf("\nBuffer result is... ");
         printf(readingBuffer);
         i++;
     }
