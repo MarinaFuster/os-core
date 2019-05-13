@@ -130,7 +130,6 @@ void loadNext(){
       (priorityQueue->last)->next=0;
     }while((priorityQueue->first)->state==BLOCK);
   }
-
   ncPrint("user@localhost > ");
   _loadProcess(priorityQueue->first->stackPointer);
 

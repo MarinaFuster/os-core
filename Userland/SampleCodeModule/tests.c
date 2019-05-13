@@ -173,12 +173,12 @@ void testMutexE(){
 
 void testBlock(){
     block(2);
-    printf("Process C blocked!\n");
+    printf("Process blocked!\n");
 }
 
 void testUnblock(){
     unblock(2);
-    printf("Process C unblocked!\n");
+    printf("Process unblocked!\n");
 }
 
 // For now it would be used to test that things are working fine
