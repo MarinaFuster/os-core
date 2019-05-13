@@ -120,8 +120,21 @@ uint64_t getStackPointer(){
 }
 
 void loadNext(){
+  _cli();
+
+  if(!(priorityQueue->first==priorityQueue->last)){
+    do{
+      (priorityQueue->last)->next=priorityQueue->first;
+      priorityQueue->last=(priorityQueue->last)->next;
+      priorityQueue->first=(priorityQueue->first)->next;
+      (priorityQueue->last)->next=0;
+    }while((priorityQueue->first)->state==BLOCK);
+  }
+
   ncPrint("user@localhost > ");
   _loadProcess(priorityQueue->first->stackPointer);
+
+  _sti();
 }
 
 uint64_t contextSwitching(uint64_t rsp) {
@@ -151,7 +164,7 @@ uint64_t contextSwitching(uint64_t rsp) {
 
 }
 
-int blockProcess(dequeueNode *current, uint8_t pid){
+int blockProcess(dequeueNode * current, uint8_t pid){
   if(current==NULL)
     return 0;
   if(current->pid==pid){
@@ -179,4 +192,16 @@ int blockedState(uint8_t pid){
 
 int unblockedState(uint8_t pid){
   return unblockProcess(priorityQueue->first, pid);
+}
+
+int isBlocked(uint8_t pid){
+  dequeueNode * current=priorityQueue->first;
+
+  while(current!=0 && current->pid!=pid){
+    current=current->next;
+  }
+  if(current!=0)
+    return (current->state)==BLOCK;
+  
+  return ACTIVE;
 }

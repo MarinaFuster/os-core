@@ -180,3 +180,48 @@ void testUnblock(){
     unblock(2);
     printf("Process C unblocked!\n");
 }
+
+// For now it would be used to test that things are working fine
+void testPipeF(){
+    printf("Starting test!...\n");
+
+    uint8_t filed=0;
+    createPipe(1,&filed);
+    openPipe(1,&filed);
+    closePipe(1);
+
+    createPipe(1,&filed); // This is supposed to have filed=2
+    if(filed==2)
+        printf("Test 1 OK...\n");
+
+    char messageBuffer[15]={0};
+    //char readingBuffer[150]={0};
+
+    for(int i=0;i<15;i++){
+        messageBuffer[i]='a'+i;
+    }
+
+    write(filed,messageBuffer,15,3); // Attention to PIDs
+    //read(filed,readingBuffer,150);
+    //printf("\nEl resultado en el buffer es... ");
+    //printf(readingBuffer);
+    //printf("\nPerfect!\n");
+
+}
+
+void testPipeG(){
+
+    uint8_t filed=0;
+    openPipe(1,&filed);
+     if(filed==2)
+        printf("Test 1 OK...\n");
+
+    char readingBuffer[150]={0};
+    read(filed,readingBuffer,150,3); // Attention to PIDs !! 
+    printf("\nEl resultado en el buffer es... ");
+    printf(readingBuffer);
+    printf("\nPerfect!\n");
+
+    closePipe(1);
+
+}

@@ -15,5 +15,6 @@ void loadNext();
 
 int unblockedState(uint8_t pid);
 int blockedState(uint8_t pid);
+int isBlocked(uint8_t pid);
 
 #endif

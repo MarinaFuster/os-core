@@ -125,6 +125,12 @@ void execute(){
   else if(strcmp(command, TEST_UNBLOCK)){
     exec("testunblock", LOW_PRIORITY, (uint64_t)testUnblock, &pid);
   }
+  else if(strcmp(command, TEST_PIPE_F)){
+    exec("testpipeF", LOW_PRIORITY, (uint64_t)testPipeF, &pid);
+  }
+  else if(strcmp(command, TEST_PIPE_G)){
+    exec("testpipeG", LOW_PRIORITY, (uint64_t)testPipeG, &pid);
+  }
   else
     printf(invalidCommandMessage);
 }
