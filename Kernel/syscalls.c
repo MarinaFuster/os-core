@@ -12,13 +12,14 @@
 #include "scheduler.h"
 #include "mutex.h"
 #include "shm.h"
+#include "messages.h"
 
 #define EOF -1
 #define TAB '\t'
 #define ENTER '\n'
 #define DELETE '\b'
 
-#define SYSCALLSQTY 24
+#define SYSCALLSQTY 26
 #define VALID_SYS_CODE(c) (c>=0 && c<=SYSCALLSQTY)
 
 typedef uint64_t (*syscall) (uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
@@ -36,12 +37,22 @@ uint64_t sys_exit(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
   return 0;
 }
 
-uint64_t sys_read(uint64_t file, uint64_t buffer, uint64_t size, uint64_t r8, uint64_t r9) {
-    readFromInputBuffer(size,(char *)buffer);
+uint64_t sys_read(uint64_t file, uint64_t buffer, uint64_t size, uint64_t callingPID, uint64_t r9) {
+
+    if(file>=2)
+      readFromPipe((uint8_t)file,(char *)buffer, (uint8_t)callingPID); // It is going to read up to 150 characters
+    else
+      readFromInputBuffer(size,(char *)buffer); // Arqui TP code
+
     return 0;
 }
 
-uint64_t sys_write(uint64_t file, uint64_t buffer, uint64_t size, uint64_t r8, uint64_t r9){
+uint64_t sys_write(uint64_t file, uint64_t buffer, uint64_t size, uint64_t otherPID, uint64_t r9){
+    
+    if(file>=2)
+      writeIntoPipe((uint8_t)file,(char *)buffer,(uint8_t)otherPID); // Fixed size in case is a pipe
+    
+    // Arqui TP code
     if(file==1){
           for(int i=0;i<size;i++){
             char c=((char *)buffer)[i];
@@ -214,13 +225,31 @@ uint64_t sys_mutex_unlock(uint64_t mutexID, uint64_t otherPID, uint64_t rcx, uin
   return 0;
 }
 
-uint64_t sys_sender(uint64_t callingPID, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){  // bloqueante
-  blockedState((uint8_t)callingPID);
+uint64_t sys_pipe_create(uint64_t id, uint64_t filed, uint64_t rcx, uint64_t r8, uint64_t r9){
+  uint8_t * descriptor=(uint8_t *)filed;
+  *descriptor=pipeCreate(id);
+  if( (*descriptor) == -1)
+    ncPrint("No more pipes allowed");
+
+  /*Testing!  
+  ncNewline();
+  ncPrint("Pipe de ID ");
+  ncPrintDec(id);
+  ncPrint(" creado y su file descriptor es ");
+  ncPrintDec(*((uint8_t *)filed));
+  ncNewline();*/
   return 0;
 }
 
-uint64_t sys_reciever(uint64_t callingPID, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  unblockedState((uint8_t)callingPID);
+uint64_t sys_pipe_close(uint64_t id, uint64_t filed, uint64_t rcx, uint64_t r8, uint64_t r9){
+  pipeClose(id);
+
+  /*Testing!
+  ncNewline();
+  ncPrint("Pipe de ID ");
+  ncPrintDec(id);
+  ncPrint(" cerrado ");
+  ncNewline();*/
   return 0;
 }
 
@@ -249,6 +278,8 @@ void loadSysCalls(){
   syscalls[21]=&sys_destroy_mutex;
   syscalls[22]=&sys_mutex_lock;
   syscalls[23]=&sys_mutex_unlock;
+  syscalls[24]=&sys_pipe_create;
+  syscalls[25]=&sys_pipe_close;
 }
 
 void sysCallsHandler(uint64_t syscode, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){ // lega en rdi desde asm
