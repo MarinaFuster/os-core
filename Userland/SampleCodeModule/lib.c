@@ -154,10 +154,8 @@ void unblock(uint8_t pid){
   int80(19,(uint64_t)pid, 0, 0, 0, 0);
 }
 
-uint8_t initMutex(){
-  uint8_t mutexID=0;
+void initMutex(uint8_t * mutexID){
   int80(20,(uint64_t)(&mutexID), 0, 0, 0, 0);
-  return mutexID;
 }
 
 void destroyMutex(uint8_t mutexID){
