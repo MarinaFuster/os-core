@@ -130,7 +130,7 @@ void testProcessB(){
 
 void testMutexC(){
     uint8_t mutex=0;
-    initMutex(&mutex); // mutex==1 just testing once
+    initMutex(&mutex);
     uint64_t shm=shmCreate(2);
     int * number=(int *)shm;
     *number=0;
@@ -154,6 +154,7 @@ void testMutexD(){
         while(j<5000000)
             j++;
 
+        // MutexID==1 just testing with one mutex    
         mutexLock(1,3); // mutexID -- callingPID
         (*number)++;
         mutexUnlock(1,2); // mutexID -- otherPID
@@ -208,7 +209,6 @@ void testPipeF(){
         printf("Test 1 OK...\n");
 
     char messageBuffer[15]={0};
-    //char readingBuffer[150]={0};
     for(int k=0;k<5;k++){
         int i=0;    
         for(;i<14;i++){
@@ -217,10 +217,6 @@ void testPipeF(){
         messageBuffer[i]='\n';
         write(filed,messageBuffer,15,3); // Attention to PIDs
     }
-    //read(filed,readingBuffer,150);
-    //printf("\nEl resultado en el buffer es... ");
-    //printf(readingBuffer);
-    //printf("\nPerfect!\n");
 
 }
 
