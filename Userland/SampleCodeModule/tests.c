@@ -209,12 +209,14 @@ void testPipeF(){
 
     char messageBuffer[15]={0};
     //char readingBuffer[150]={0};
-
-    for(int i=0;i<15;i++){
-        messageBuffer[i]='a'+i;
+    for(int k=0;k<5;k++){
+        int i=0;    
+        for(;i<14;i++){
+            messageBuffer[i]='a'+i;
+        }
+        messageBuffer[i]='\n';
+        write(filed,messageBuffer,15,3); // Attention to PIDs
     }
-
-    write(filed,messageBuffer,15,3); // Attention to PIDs
     //read(filed,readingBuffer,150);
     //printf("\nEl resultado en el buffer es... ");
     //printf(readingBuffer);
