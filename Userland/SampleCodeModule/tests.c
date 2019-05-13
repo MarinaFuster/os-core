@@ -209,14 +209,20 @@ void testPipeF(){
         printf("Test 1 OK...\n");
 
     char messageBuffer[15]={0};
+    
     for(int k=0;k<5;k++){
         int i=0;    
         for(;i<14;i++){
-            messageBuffer[i]='a'+i;
+            messageBuffer[i]='a'+k;
         }
         messageBuffer[i]='\n';
         write(filed,messageBuffer,15,3); // Attention to PIDs
+
+        int j=0;
+        while(j<500000000)
+            j++;
     }
+    printf("Done\n");
 
 }
 
@@ -228,11 +234,12 @@ void testPipeG(){
         printf("Test 1 OK...\n");
 
     char readingBuffer[150]={0};
-    read(filed,readingBuffer,150,3); // Attention to PIDs !! 
-    printf("\nEl resultado en el buffer es... ");
-    printf(readingBuffer);
-    printf("\nPerfect!\n");
-
+    while(1){
+        read(filed,readingBuffer,150,3); // Attention to PIDs !! 
+        printf("\nEl resultado en el buffer es... ");
+        printf(readingBuffer);
+        printf("\nPerfect!\n");
+    }
     closePipe(1);
 
 }

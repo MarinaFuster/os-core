@@ -186,7 +186,10 @@ int unblockProcess(dequeueNode *current, uint8_t pid){
 }
 
 int blockedState(uint8_t pid){
-  return blockProcess(priorityQueue->first, pid);
+  _cli();
+  int r = blockProcess(priorityQueue->first, pid);
+  _sti();
+  return r;
 }
 
 int unblockedState(uint8_t pid){

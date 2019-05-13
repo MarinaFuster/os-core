@@ -123,8 +123,11 @@ void readFromPipe(uint8_t filed, char buffer[MESSAGE_LENGTH*10], uint8_t calling
         current=current->next;
     char * cursor=(char *)(current->address);
     
-    if(*cursor==0){ // There is nothing to read from the pipe
+    if(current->line==0){ // There is nothing to read from the pipe
         blockedState(callingPID); // It blocks itself waiting for other process to write something
+        while(isBlocked((callingPID))){ //This is meant to wait untile the timer tick interruption
+            ;
+        }
     }
 
     for(int i=0; i<MESSAGE_LENGTH*(current->line);i++){
