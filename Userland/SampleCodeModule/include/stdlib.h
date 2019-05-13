@@ -30,4 +30,6 @@ void createPipe(uint8_t id, uint8_t * filed);
 void openPipe(uint8_t id, uint8_t * filed);
 void closePipe(uint8_t id);
 
+void getPID(char * description, uint8_t * pid);
+
 #endif

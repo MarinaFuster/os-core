@@ -172,13 +172,25 @@ void testMutexE(){
 }
 
 void testBlock(){
-    block(2);
-    printf("Process blocked!\n");
+    uint8_t pid=0;
+    getPID("testprocessa",&pid);
+    if(pid==0)
+        printf("Process a is not running!!\n");
+    else{
+        block(pid);
+        printf("Process blocked!\n");
+    }
 }
 
 void testUnblock(){
-    unblock(2);
-    printf("Process unblocked!\n");
+    uint8_t pid=0;
+    getPID("testprocessa",&pid);
+    if(pid==0)
+        printf("Process a is not running!!\n");
+    else{
+        unblock(pid);
+        printf("Process unblocked!\n");
+    }
 }
 
 // For now it would be used to test that things are working fine

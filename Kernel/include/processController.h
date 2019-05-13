@@ -10,5 +10,6 @@ uint8_t createProcessWithPriority(char * description,int priority,  uint64_t fun
 void ps();
 void exitProcess(uint8_t pid);
 void testStackBuilder(uint64_t functionPointer, uint8_t pid, int priority);
+uint8_t getPID(char * description);
 
 #endif

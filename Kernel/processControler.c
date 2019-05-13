@@ -16,7 +16,7 @@ extern void _cli();
 extern void _sti();
 
 typedef struct processListNode{
-    char* description;
+    char * description;
     uint8_t pid;
     int priority;
     uint64_t memoryBlock;
@@ -130,11 +130,31 @@ getProcess(uint8_t pid){
   return 0;
 }
 
-void
-exitProcess(uint8_t pid){
+void exitProcess(uint8_t pid){
   processListNode * process=getProcess(pid);
   removeFromRegister(pid);
   removeProcess(pid, process->priority);
+}
+
+int equalstrings(const char * s1, const char * s2){
+  int i=0;
+  for(; s1[i]!='\0' && s2[i]!='\0'; i++){
+    if(s1[i]!=s2[i])
+      return 0; // False
+  }
+  if(s1[i]=='\0' && s2[i]=='\0');
+    return 1; // True
+  return 0; // False
+}
+
+uint8_t getPID(char * description){
+  processListNode * current=processRegister->first;
+  while(current!=0){
+    if(equalstrings((current->description),description)==1) // True
+      return current->pid;
+    current=current->next;
+  }
+  return 0;
 }
 
 /* Tested !
