@@ -154,10 +154,8 @@ void unblock(uint8_t pid){
   int80(19,(uint64_t)pid, 0, 0, 0, 0);
 }
 
-uint8_t initMutex(){
-  uint8_t mutexID=0;
+void initMutex(uint8_t * mutexID){
   int80(20,(uint64_t)(&mutexID), 0, 0, 0, 0);
-  return mutexID;
 }
 
 void destroyMutex(uint8_t mutexID){
@@ -172,14 +170,21 @@ void mutexUnlock(uint8_t mutexID, uint8_t otherPID){
   int80(23,(uint64_t)mutexID, (uint64_t)otherPID, 0, 0, 0);
 }
 
+// Stores in filed the file descriptor I need
 void createPipe(uint8_t id, uint8_t * filed){
   int80(24, (uint64_t)id, (uint64_t)filed, 0, 0, 0);
 }
 
+// Stores in filed the file descriptor I need
 void openPipe(uint8_t id, uint8_t * filed){
   int80(24, (uint64_t)id, (uint64_t)filed, 0, 0, 0);
 }
 
 void closePipe(uint8_t id){
   int80(25, (uint64_t)id, 0, 0, 0, 0);
+}
+
+// Stores in pid what I need
+void getPID(char * description, uint8_t * pid){
+  int80(26, (uint64_t)description, (uint64_t)pid, 0, 0, 0);
 }

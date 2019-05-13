@@ -19,7 +19,7 @@
 #define ENTER '\n'
 #define DELETE '\b'
 
-#define SYSCALLSQTY 26
+#define SYSCALLSQTY 27
 #define VALID_SYS_CODE(c) (c>=0 && c<=SYSCALLSQTY)
 
 typedef uint64_t (*syscall) (uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
@@ -231,25 +231,17 @@ uint64_t sys_pipe_create(uint64_t id, uint64_t filed, uint64_t rcx, uint64_t r8,
   if( (*descriptor) == -1)
     ncPrint("No more pipes allowed");
 
-  /*Testing!  
-  ncNewline();
-  ncPrint("Pipe de ID ");
-  ncPrintDec(id);
-  ncPrint(" creado y su file descriptor es ");
-  ncPrintDec(*((uint8_t *)filed));
-  ncNewline();*/
   return 0;
 }
 
 uint64_t sys_pipe_close(uint64_t id, uint64_t filed, uint64_t rcx, uint64_t r8, uint64_t r9){
   pipeClose(id);
+  return 0;
+}
 
-  /*Testing!
-  ncNewline();
-  ncPrint("Pipe de ID ");
-  ncPrintDec(id);
-  ncPrint(" cerrado ");
-  ncNewline();*/
+uint64_t sys_ask_pid(uint64_t descr, uint64_t pid, uint64_t rcx, uint64_t r8, uint64_t r9){
+  uint8_t * aux=(uint8_t *)pid;
+  *aux=getPID((char *)descr);
   return 0;
 }
 
@@ -280,6 +272,7 @@ void loadSysCalls(){
   syscalls[23]=&sys_mutex_unlock;
   syscalls[24]=&sys_pipe_create;
   syscalls[25]=&sys_pipe_close;
+  syscalls[26]=&sys_ask_pid;
 }
 
 void sysCallsHandler(uint64_t syscode, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){ // lega en rdi desde asm
