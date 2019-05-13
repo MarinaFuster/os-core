@@ -155,13 +155,13 @@ void testMutexD(){
             j++;
 
         // MutexID==1 just testing with one mutex    
-        mutexLock(1,3); // mutexID -- callingPID
+        mutexLock(0,3); // mutexID -- callingPID
         (*number)++;
-        mutexUnlock(1,2); // mutexID -- otherPID
+        mutexUnlock(0,2); // mutexID -- otherPID
     }
     printf("Done with test mutex D!\n");
 
-    destroyMutex(1); // mutex==1
+    destroyMutex(0); // mutex==1
 }
 
 void testMutexE(){
