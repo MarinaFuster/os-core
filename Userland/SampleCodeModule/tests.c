@@ -19,12 +19,12 @@ void testMemory(){
     else 
         printf("Test failed: pointer assigned to 0 size memory block\n");
 
-    void * almost_all_memory_block=malloc(0x5F50000);
+    void * almost_all_memory_block=malloc(0x5F00000);
     if(almost_all_memory_block!=(void*)0x0)
         printf("Test 3... OK\n");
     else
         printf("Test failed: should be able to fit into the memory block\n");
-    void * exceeds_memory_block=malloc(0x10000);
+    void * exceeds_memory_block=malloc(0x610000);
     if(exceeds_memory_block==0)
         printf("Test 4... OK\n");
     else
