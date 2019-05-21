@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 #define MEMORY_SIZE 0x5F58000 
-#define OFFSET 0x1000
+#define PAGE_SIZE 0x1000
 /* 6102 pages */
 
 #define UNSUCCESSFUL -1
@@ -15,7 +15,7 @@ typedef struct{
     uint64_t size;
 }memoryDescriptor;
 
-static memoryDescriptor memoryBlock[MEMORY_SIZE/OFFSET]={{0}};
+static memoryDescriptor memoryBlock[MEMORY_SIZE/PAGE_SIZE]={{0}};
 
 int
 bestFitAlgorithm(int blocks){
@@ -26,7 +26,7 @@ bestFitAlgorithm(int blocks){
     int currentPossibleIndex=-1;
     int i;
     
-    for(i=0; i<MEMORY_SIZE/OFFSET; i++){
+    for(i=0; i<MEMORY_SIZE/PAGE_SIZE; i++){
 
         if(currentPossibleSize!=0){
             if(memoryBlock[i].occupied==0)
@@ -65,8 +65,8 @@ allocate(uint64_t size){
     if(size>MEMORY_SIZE)
         return 0;
 
-    int blocks = size/OFFSET;
-    if(size%OFFSET != 0)
+    int blocks = size/PAGE_SIZE;
+    if(size%PAGE_SIZE != 0)
         blocks+=1;
 
     int index=bestFitAlgorithm(blocks);
@@ -84,7 +84,7 @@ allocate(uint64_t size){
         memoryBlock[index+i].size=0;
     }
 
-    return (uint64_t)memoryStartingPoint+(index*OFFSET);
+    return (uint64_t)memoryStartingPoint+(index*PAGE_SIZE);
 
 }
 
@@ -92,7 +92,7 @@ allocate(uint64_t size){
 uint64_t
 free(uint64_t pointer){
     
-    uint64_t index = (pointer-(uint64_t)memoryStartingPoint)/OFFSET;
+    uint64_t index = (pointer-(uint64_t)memoryStartingPoint)/PAGE_SIZE;
     uint32_t blocks=memoryBlock[index].size;
 
     if(!memoryBlock[index].isBeggining)
