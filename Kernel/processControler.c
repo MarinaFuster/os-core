@@ -43,6 +43,16 @@ void psProcesses(){
   while(current!=0){
     ncPrintDec(current->pid);
     ncPrint("     ");
+    uint8_t state=getState(current->pid);
+    if(state==ACTIVE)
+      ncPrint("Active        ");
+    else if(state==READY)
+      ncPrint("Ready         ");
+    else if(state==BLOCK)
+      ncPrint("Blocked       ");
+    else
+      ncPrint("Unknown state ");
+    ncPrint("");
     ncPrint(current->description);
     ncNewline();
     current=(current->next);
@@ -52,9 +62,10 @@ void psProcesses(){
 void ps(){
   ncNewline();
   ncPrint("PID   ");
-  ncPrint("Description");
+  ncPrint("State");
+  ncPrint("      Description");
   ncNewline();
-  ncPrint("------------------");
+  ncPrint("-----------------------------");
   ncNewline();
 
   psProcesses();
@@ -99,7 +110,7 @@ wrapperFunction(void(*functionPointer)(), uint8_t pid, int priority){
 uint8_t
 createProcessWithPriority(char * description, int priority,  uint64_t functionPointer){
   processListNode * newProcess=(processListNode *)allocate(sizeof(*newProcess));
-  uint64_t memoryBlock=(uint64_t)allocate(sizeof(OFFSET)); // Offset equals to stack size
+  uint64_t memoryBlock=(uint64_t)allocate(sizeof(PAGE_SIZE)); // PAGE_SIZE equals to stack size (our decision)
   newProcess->description=description;
   if(processID==MAX_PROCESSES_QTY){
       ncPrint("You cannot run more processes");
@@ -112,7 +123,7 @@ createProcessWithPriority(char * description, int priority,  uint64_t functionPo
   newProcess->memoryBlock=memoryBlock;
   newProcess->priority=priority;
   addToRegister(newProcess);
-  uint64_t rsp=buildStack(memoryBlock+OFFSET, (uint64_t)wrapperFunction, (uint64_t)functionPointer, (uint64_t)newProcess->pid, (uint64_t)priority);
+  uint64_t rsp=buildStack(memoryBlock+PAGE_SIZE, (uint64_t)wrapperFunction, (uint64_t)functionPointer, (uint64_t)newProcess->pid, (uint64_t)priority);
   addProcessToScheduler(priority, newProcess->pid, rsp);
   empty=0;
   return newProcess->pid;
@@ -162,10 +173,10 @@ uint8_t getPID(char * description){
 */
 void
 testStackBuilder(uint64_t functionPointer, uint8_t pid, int priority){
-  uint64_t memoryBlock=(uint64_t)allocate(sizeof(OFFSET));
-  buildStack(memoryBlock+OFFSET, (uint64_t)wrapperFunction, (uint64_t)functionPointer, (uint64_t)pid, (uint64_t)priority);
+  uint64_t memoryBlock=(uint64_t)allocate(sizeof(PAGE_SIZE));
+  buildStack(memoryBlock+PAGE_SIZE, (uint64_t)wrapperFunction, (uint64_t)functionPointer, (uint64_t)pid, (uint64_t)priority);
   for(int i=1; i<21; i++){
-    ncPrintHex(printValuesFromStack(memoryBlock+OFFSET-8*i));
+    ncPrintHex(printValuesFromStack(memoryBlock+PAGE_SIZE-8*i));
     ncNewline();
   }
 }

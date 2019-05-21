@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+#define ACTIVE 0
+#define READY 1
+#define BLOCK 2
+
 //int removeProcess(int pid);
 //int removeFromDequeueRec(dequeueNode* node, int pid);
 void initializeScheduler();
@@ -16,5 +20,7 @@ void loadNext();
 int unblockedState(uint8_t pid);
 int blockedState(uint8_t pid);
 int isBlocked(uint8_t pid);
+
+uint8_t getState(uint8_t pid);
 
 #endif

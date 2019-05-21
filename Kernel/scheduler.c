@@ -207,3 +207,14 @@ int isBlocked(uint8_t pid){
   
   return ACTIVE;
 }
+
+uint8_t getState(uint8_t pid){
+  uint8_t state=3;
+  dequeueNode * current=priorityQueue->first;
+  while(current!=0){
+    if(current->pid==pid)
+      return current->state;
+    current=current->next;
+  }
+  return state;
+}
