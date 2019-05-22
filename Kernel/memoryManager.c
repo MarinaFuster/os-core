@@ -1,107 +1,196 @@
 #include <stdint.h>
+#include <naiveConsole.h>
 
-#define MEMORY_SIZE 0x5F58000 
-#define PAGE_SIZE 0x1000
-/* 6102 pages */
+#define TRUE 1
+#define FALSE 0
+#define NULL 0
 
-#define UNSUCCESSFUL -1
-#define SUCCESSFUL 1
+#define STARTING_POINT 0x900000
+#define SMALLER_BLOCK 4096 // 4KB
+#define PAGES 1024          // That gives us a total memory block of 4096KB
+#define MAX_ORDER 10
 
-static void * const memoryStartingPoint = (void*)0x900000;
-
-typedef struct{
+// When I make a partition on a block I create both leafs.
+// One of them is going to return an address, the other one would keep it as NULL
+typedef struct treeNode{
+    uint8_t order;
+    void * address;
     uint8_t occupied;
-    uint8_t isBeggining;
-    uint64_t size;
+    uint8_t first;
 }memoryDescriptor;
 
-static memoryDescriptor memoryBlock[MEMORY_SIZE/PAGE_SIZE]={{0}};
 
-int
-bestFitAlgorithm(int blocks){
+static memoryDescriptor buddyBlock[PAGES]={{0}}; 
 
+int powRec(int x, int y){
+    if(y==1)
+        return x;
+    int result=powRec(x,y/2);
+    int answer=result*result;
+    return (y%2==0)?answer:(answer*result);
+}
+
+int power(int x, int y){
+    if(x==0)
+        return 0;
+    if(y==0)
+        return 1;
+    return powRec(x,y);
+}
+
+void initializeBuddyTree(){
+    for(int i=0; i<PAGES; i++){
+        buddyBlock[i].order=MAX_ORDER; // Memory block starts without partitions
+    }
+}
+
+
+// Splits current tree node into two buddies
+void createBuddies(int index){
+    uint8_t prevOrder=buddyBlock[index].order;
+    uint8_t newOrder=prevOrder-1;
+    for(int i=0; i<power(2,prevOrder); i++){
+        buddyBlock[index+i].order=newOrder;
+    }
+}
+
+// Should decide first the order of block I need. Tested, works good.
+int blockOrderFor(uint64_t bytes){
+    if(bytes>(PAGES*SMALLER_BLOCK) || bytes==0)
+        return -1;
+    for(int order=0;order<=MAX_ORDER;order++){
+        if(bytes <= ( (int)(power(2,order))*SMALLER_BLOCK) )
+            return order;  
+    }
+    return -1;
+}
+
+void * buddySystem(uint8_t order){
     int bestPossibleIndex=-1;
-    int bestSize=MEMORY_SIZE;
-    int currentPossibleSize=0;
-    int currentPossibleIndex=-1;
-    int i;
     
-    for(i=0; i<MEMORY_SIZE/PAGE_SIZE; i++){
-
-        if(currentPossibleSize!=0){
-            if(memoryBlock[i].occupied==0)
-                currentPossibleSize+=1;
-            else{
-                if(currentPossibleSize==blocks){ /* I cant find a better fit */
-                    return currentPossibleIndex;
-                }
-                if(currentPossibleSize>blocks && currentPossibleSize < bestSize){
-                        bestSize=currentPossibleSize;
-                        bestPossibleIndex=currentPossibleIndex;
-                }
-                currentPossibleSize=0;
-            }
+    int idx=0, blockOrder=0;
+    for(;idx<PAGES && !(buddyBlock[idx].order==order && buddyBlock[idx].occupied==FALSE);){
+        
+        blockOrder=buddyBlock[idx].order;
+        if(blockOrder<=order){
+            // I'm sure it is occupied because if not, the for would've ended.
+            idx++; // Moving onto the next one
         }
-        else{
-            if(memoryBlock[i].occupied==0){
-                currentPossibleSize+=1;
-                currentPossibleIndex=i;
-            }
+        else if(blockOrder>order){
+            if(buddyBlock[idx].occupied==FALSE && (bestPossibleIndex==-1 || buddyBlock[bestPossibleIndex].order>blockOrder) ) // possible candidate
+                bestPossibleIndex=idx;
+            // Even if it was a good block or bad block, need to increment until the end of the block
+            idx=idx+power(2,blockOrder);
         }
     }
 
-    if(currentPossibleSize>=blocks && bestPossibleIndex==-1)
-        bestPossibleIndex=currentPossibleIndex;
+    // It means that there was a perfect match!
+    if(idx<PAGES){
+        
+        // Occupies needed blocks...
+        buddyBlock[idx].occupied=TRUE;
+        buddyBlock[idx].first=TRUE;
+        for(int i=1; i<power(2,buddyBlock[idx].order); i++)
+            buddyBlock[idx+i].occupied=TRUE;
 
-    return bestPossibleIndex;
+        // ...and returns address
+        return (void *)(uint64_t)(STARTING_POINT+(idx*SMALLER_BLOCK));
+    
+    }
+    else if(bestPossibleIndex==-1){
+        // No space available
+        return NULL;
+    }
+    else{
+        // I need to split
+        while(buddyBlock[bestPossibleIndex].order>order) // I'm always keeping the left buddy
+            createBuddies(bestPossibleIndex); 
+
+        buddyBlock[bestPossibleIndex].occupied=TRUE;
+        buddyBlock[bestPossibleIndex].first=TRUE;
+        for(int i=1; i<power(2,order); i++){
+            buddyBlock[bestPossibleIndex+i].occupied=TRUE;
+        }
+
+        // Returns address
+        return (void *)(uint64_t)(STARTING_POINT+(bestPossibleIndex*SMALLER_BLOCK));
+    }
 }
+
+// Tested and works fine
+void * buddyMalloc(uint64_t bytes){
+    int order=blockOrderFor(bytes);
+    if(order==-1)
+        return NULL;
+    return (order==-1) ? NULL : buddySystem(order);
+}
+
+void printAllBlocks(){
+    for(int i=0; i<PAGES; i++){
+        ncPrint("Bloque numero ");
+        ncPrintDec(i);
+        ncNewline();
+        ncPrint("--------------------\n");
+        ncPrint("Orden ");
+        ncPrintDec(buddyBlock[i].order);
+        ncNewline();
+        ncPrint("Esta ocupado? ");
+        if(buddyBlock[i].occupied==TRUE)
+            ncPrint("si\n");
+        else
+            ncPrint("no\n");
+        ncPrint("Es el primero? ");
+        if(buddyBlock[i].first==TRUE)
+            ncPrint("si\n\n");
+        else
+            ncPrint("no\n\n");
+    }
+}
+
+// Merge buddies because they are both available
+void mergeBuddies(int firstBuddy, int secondBuddy, int blocks){
+    uint8_t newOrder=buddyBlock[firstBuddy].order+1;
+    for(int i=0;i<blocks;i++){
+        buddyBlock[firstBuddy+i].order=newOrder;
+        buddyBlock[secondBuddy+i].order=newOrder;
+    }
+}
+
+// Tested but it should be tested further than this
+uint64_t buddyFree(void * address){
+    if(address<(void *)STARTING_POINT || address>(void *)(STARTING_POINT+PAGES*SMALLER_BLOCK))
+        return -1;
+
+    int index=((uint64_t)address-STARTING_POINT)/SMALLER_BLOCK;
+    if(buddyBlock[index].first==FALSE) // I'm trying to access somewhere in the middle
+        return -1; 
+
+    buddyBlock[index].first=FALSE;
+    int blocks=power(2,buddyBlock[index].order);
+    for(int i=0; i<blocks; i++)
+        buddyBlock[index+i].occupied=FALSE;
+    
+    int buddyIndex;
+    // If (idx/pow(2,order))%2==0 my buddy is the one to my right, else, my buddy is the one to my left
+    if((index/blocks)%2==0)
+        buddyIndex=index+blocks;
+    else
+        buddyIndex=index-blocks;
+    if(buddyBlock[buddyIndex].occupied==FALSE)
+        mergeBuddies(buddyIndex, index, blocks);
+
+    return 0;
+}
+
 
 /* Returns null if memory cannot be allocated, else returns memory address */
 uint64_t
 allocate(uint64_t size){
-
-    if(size==0)
-        return 0;
-    if(size>MEMORY_SIZE)
-        return 0;
-
-    int blocks = size/PAGE_SIZE;
-    if(size%PAGE_SIZE != 0)
-        blocks+=1;
-
-    int index=bestFitAlgorithm(blocks);
-    if(index==-1)
-        return 0;
-
-    memoryBlock[index].isBeggining=1;
-    memoryBlock[index].occupied=1;
-    memoryBlock[index].size=blocks;
-
-    int i;
-    for(i=1;i<blocks;i++){
-        memoryBlock[index+i].occupied=1;
-        memoryBlock[index+i].isBeggining=0;
-        memoryBlock[index+i].size=0;
-    }
-
-    return (uint64_t)memoryStartingPoint+(index*PAGE_SIZE);
-
+    return (uint64_t)buddyMalloc(size);
 }
 
 /* Returns -1 if free process fails */
 uint64_t
 free(uint64_t pointer){
-    
-    uint64_t index = (pointer-(uint64_t)memoryStartingPoint)/PAGE_SIZE;
-    uint32_t blocks=memoryBlock[index].size;
-
-    if(!memoryBlock[index].isBeggining)
-        return UNSUCCESSFUL;
-    
-    for(int i=0; i<blocks; i++){
-        memoryBlock[index+i].occupied=0;
-        memoryBlock[index+i].isBeggining=0;
-        memoryBlock[index+i].size=0;
-    }
-    return SUCCESSFUL;
+    return buddyFree((void *)pointer);
 }
