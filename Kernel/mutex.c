@@ -8,10 +8,16 @@
 
 extern uint64_t mutex_lock(uint64_t * mutexState);
 
+typedef struct pids{
+  uint8_t pid;
+  struct pids * next;
+} pids;
+
 typedef struct mutexNode{
   uint64_t state;
   uint8_t mutexID;
   struct mutexNode * next;
+  pids * listOfPids;
 } mutexNode;
 
 static mutexNode * first=0;
@@ -32,26 +38,28 @@ uint8_t mutexLock(uint8_t mutexID, uint8_t callingPID){
     mutexNode * mutex=getMutex(mutexID);
     int wasLocked=mutex_lock(&(mutex->state));
 
+    //Need some help with this linking it to the list of pids.....
     if(wasLocked){
-      //ncPrint(" El mutex estaba bloqueado entonces su estado es ");
-      //ncPrintDec(mutex->state);
+      //this should be done with each of the pids? I dont think so...
       blockedState(callingPID);
     }
     else{
-      unblockedState(callingPID);
-      //ncPrint(" Ahora el estado del mutex es ");
-      //ncPrintDec(mutex->state);
+      unblockedState(callingPID); //unnecesary??!?!?!
     }
     return 1;
 }
 
-uint8_t mutexUnlock(int mutexID, uint8_t otherPID){
-  //ncPrint(" Quiero desbloquear el mutex... ");
+uint8_t mutexUnlock(int mutexID){
+  //I want to unlock all of the pids involved in the mutex
   mutexNode * mutex=getMutex(mutexID);
   mutex->state=UNLOCKED;
-  //ncPrintDec(mutex->state);
-  unblockedState(otherPID);
 
+  pids * currentPid = mutex->listOfPids;
+  while(currentPid!=0){
+    unblockedState(currentPid->pid);
+    currentPid=currentPid->next;
+  }
+  
   return 1;
 }
 
@@ -71,18 +79,35 @@ void destroyMutex(uint8_t mutexID){
   first=destroyMutexRec(first, mutexID);
 }
 
-void add(mutexNode * newMutex){
+void add(mutexNode * newMutex, uint8_t callingPid){
+  newMutex->listOfPids=(pids *)allocate(sizeof(pids*));
+  (newMutex->listOfPids)->pid=callingPid;
+  (newMutex->listOfPids)->next=0;
   newMutex->next=first;
   first=newMutex;
 }
 
-uint8_t initMutex(){
+uint8_t initMutex(uint8_t callingPid){
   mutexNode * newMutex=(mutexNode *)allocate(sizeof(*newMutex));
   newMutex->state=UNLOCKED;
   newMutex->mutexID=mutexIDCounter;
-  add(newMutex);
+  add(newMutex,callingPid);
   mutexIDCounter++;
 
   return newMutex->mutexID;
+}
+//This method is to vinculate the mutex with all the processes connected to 
+//given mutex
+uint8_t connectToMutex(uint8_t mutexID, uint8_t callingPid){
+  mutexNode * mutex=getMutex(mutexID);
+  if(mutex==NULL){
+    ncPrint("Mutex id does not exist");
+    return 0; //Mutex does not exist
+  }
+  pids * newPidNode = (pids *)allocate(sizeof(pids*));
+  newPidNode->pid=callingPid;
+  //add the pid node to the first position of the list of nodes
+  newPidNode->next=mutex->listOfPids;
+  return 1;
 }
 

@@ -31,10 +31,11 @@ void block(uint8_t pid);
 void unblock(uint8_t pid);
 
 // Mutexes
-void initMutex(uint8_t * mutexID);
+void initMutex(uint8_t * mutexID, uint8_t pid);
 void destroyMutex(uint8_t mutexID);
+void connectMutex(uint8_t mutexID,uint8_t pid);
 void mutexLock(uint8_t mutexID, uint8_t callingPID);
-void mutexUnlock(uint8_t mutexID, uint8_t otherPID);
+void mutexUnlock(uint8_t mutexID);
 
 // Messages
 void createPipe(uint8_t id, uint8_t * filed);

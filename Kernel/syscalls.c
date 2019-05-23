@@ -19,7 +19,7 @@
 #define ENTER '\n'
 #define DELETE '\b'
 
-#define SYSCALLSQTY 27
+#define SYSCALLSQTY 28
 #define VALID_SYS_CODE(c) (c>=0 && c<=SYSCALLSQTY)
 
 typedef uint64_t (*syscall) (uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
@@ -192,9 +192,9 @@ uint64_t sys_unblock(uint64_t pid, uint64_t rdx, uint64_t rcx, uint64_t r8, uint
  * IPC
 ***********************************************************************/
 
-uint64_t sys_init_mutex(uint64_t mutexID, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+uint64_t sys_init_mutex(uint64_t mutexID, uint64_t pid, uint64_t rcx, uint64_t r8, uint64_t r9){
   int * id=(int *)mutexID;
-  *id=initMutex();
+  *id=initMutex(pid);
   return 0;
 }
 
@@ -208,8 +208,8 @@ uint64_t sys_mutex_lock(uint64_t mutexID, uint64_t callingPID, uint64_t rcx, uin
   return 0;
 }
 
-uint64_t sys_mutex_unlock(uint64_t mutexID, uint64_t otherPID, uint64_t rcx, uint64_t r8, uint64_t r9){
-  mutexUnlock((uint8_t)mutexID, (uint8_t)otherPID);
+uint64_t sys_mutex_unlock(uint64_t mutexID, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  mutexUnlock((uint8_t)mutexID);
   return 0;
 }
 
@@ -231,6 +231,11 @@ uint64_t sys_pipe_close(uint64_t id, uint64_t filed, uint64_t rcx, uint64_t r8, 
 uint64_t sys_ask_pid(uint64_t descr, uint64_t pid, uint64_t rcx, uint64_t r8, uint64_t r9){
   uint8_t * aux=(uint8_t *)pid;
   *aux=getPID((char *)descr);
+  return 0;
+}
+
+uint64_t sys_mutex_connect(uint64_t mutexID, uint64_t pid, uint64_t rcx, uint64_t r8, uint64_t r9){
+  connectToMutex(mutexID,pid);
   return 0;
 }
 
@@ -262,6 +267,7 @@ void loadSysCalls(){
   syscalls[24]=&sys_pipe_create;
   syscalls[25]=&sys_pipe_close;
   syscalls[26]=&sys_ask_pid;
+  syscalls[27]=&sys_mutex_connect;
 }
 
 void sysCallsHandler(uint64_t syscode, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){ // lega en rdi desde asm

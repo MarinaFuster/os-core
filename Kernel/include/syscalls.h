@@ -15,7 +15,6 @@ void sys_lock(uint8_t callingPID);
 void sys_unlock(uint8_t callingPID);
 void sys_sender(uint8_t callingPID);
 void sys_reciever(uint8_t callingPID);
-
 void loadSysCalls();
 
 #endif
