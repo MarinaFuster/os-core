@@ -7,7 +7,7 @@
 
 #define STARTING_POINT 0x900000
 #define SMALLER_BLOCK 4096 // 4KB
-#define PAGES 1024          // That gives us a total memory block of 4096KB
+#define PAGES 1024         // That gives us a total memory block of 4096KB
 #define MAX_ORDER 10
 
 // When I make a partition on a block I create both leafs.

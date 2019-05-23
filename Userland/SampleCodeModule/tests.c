@@ -7,7 +7,7 @@ extern uint64_t int80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, ui
 
 void testMemory(){
 
-    void * bigger_than_memory_block=malloc(0x6000000);
+    void * bigger_than_memory_block=malloc(4200000);
     if(bigger_than_memory_block==NULL)
         printf("Test 1... OK\n");
     else
@@ -19,7 +19,7 @@ void testMemory(){
     else 
         printf("Test failed: pointer assigned to 0 size memory block\n");
 
-    void * almost_all_memory_block=malloc(0x5F00000);
+    /*void * almost_all_memory_block=malloc(0x5F00000);
     if(almost_all_memory_block!=(void*)0x0)
         printf("Test 3... OK\n");
     else
@@ -77,7 +77,7 @@ void testMemory(){
     free(meant_to_be_after_first_block);
     free(meant_to_be_perfect_fit);
     free(fourth_block);
-    free(meant_to_be_after_fourth_block);   
+    free(meant_to_be_after_fourth_block);*/   
 
 }
 
