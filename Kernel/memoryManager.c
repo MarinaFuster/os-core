@@ -26,8 +26,7 @@ int powRec(int x, int y){
     if(y==1)
         return x;
     int result=powRec(x,y/2);
-    int answer=result*result;
-    return (y%2==0)?answer:(answer*result);
+    return (y%2==0)?result*result:(result*result*x);
 }
 
 int power(int x, int y){
