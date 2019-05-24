@@ -40,12 +40,12 @@ int strcmp(const char * str1, const char * str2){
 
 char getChar(){
   char buf[1];
-  int80(3,1,(uint64_t)buf,1,0,0);
+  read(0,buf,1,0);
   return (char)*buf;
 }
 
 void putChar(char c){
-  int80(4,1,(uint64_t)&c,1,0,0);
+  write(1,&c,1,0);
   return;
 }
 
