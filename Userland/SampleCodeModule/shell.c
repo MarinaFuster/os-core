@@ -4,11 +4,19 @@
 #include "commands.h"
 #include "tests.h"
 
+// Buffer constants
 #define MAX_COMMAND_LENGTH 20
 #define BUFFER_SIZE 100
+
+// Processes priority
 #define LOW_PRIORITY 2
-#define HIGH_PRIORITY 0
 #define MEDIUM_PRIORITY 1
+#define HIGH_PRIORITY 0
+
+// For executing piped processes
+#define DO_NOT_REDIRECT 0
+#define REDIRECT_STDIN 1
+#define REDIRECT_STDOUT 2
 
 void execute();
 

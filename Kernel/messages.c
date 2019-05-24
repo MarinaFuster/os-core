@@ -14,6 +14,9 @@
 #define ENTER '\n'
 #define DELETE '\b'
 
+#define STDIN 0 
+#define STDOUT 1
+
 typedef struct pipeNode{
     uint8_t fileDESC[2]; // Automatic assignment done by the OS
     uint8_t id;         // Number that the programmer sets to identify it
@@ -101,8 +104,9 @@ void pipeClose(uint8_t id){
 
 void writeIntoPipe(uint8_t filed, char * message,uint8_t otherPID, uint64_t size){
 
-    // STDOUT
-    if(filed==1){
+    if(filed==STDOUT){
+        //getProcessStdout
+        //If stdout == STDOUT do this
           for(int i=0;i<size;i++){
             char c=((char *)message)[i];
             if(c==ENTER)
@@ -115,6 +119,7 @@ void writeIntoPipe(uint8_t filed, char * message,uint8_t otherPID, uint64_t size
               ncPrintChar(c);
           }
           return;
+        //else do the thing below
     }
   
     pipeNode * current=first;
@@ -137,10 +142,12 @@ void writeIntoPipe(uint8_t filed, char * message,uint8_t otherPID, uint64_t size
 // You can read up to 10 lines
 void readFromPipe(uint8_t filed, char * buffer, uint8_t callingPID, uint64_t size){
 
-    // STDIN
-    if(filed==0){
+    if(filed==STDIN){
+        // getProcessStdin
+        // if stdin == STDIN do this
         readFromInputBuffer(size,(char *)buffer);
         return;
+        // else do the thing below
     }
     
     pipeNode * current=first;
