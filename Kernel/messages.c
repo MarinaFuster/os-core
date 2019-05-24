@@ -3,12 +3,16 @@
 #include <naiveConsole.h>
 #include "memoryManager.h"
 #include "scheduler.h"
+#include "inputBuffer.h"
 
-#define MAX_FILE_DESCRIPTOR 10
+#define MAX_FILE_DESCRIPTOR 20
 #define MESSAGE_LENGTH 15 // Small size so it is easy to test
-#define PAGE_SIZE 4096
 #define READ 0
 #define WRITE 1
+
+#define TAB '\t'
+#define ENTER '\n'
+#define DELETE '\b'
 
 typedef struct pipeNode{
     uint8_t fileDESC[2]; // Automatic assignment done by the OS
@@ -95,7 +99,23 @@ void pipeClose(uint8_t id){
     first=deletePipeRec(id,first);
 }
 
-void writeIntoPipe(uint8_t filed, char message[MESSAGE_LENGTH],uint8_t otherPID){
+void writeIntoPipe(uint8_t filed, char * message,uint8_t otherPID, uint64_t size){
+
+    // STDOUT
+    if(filed==1){
+          for(int i=0;i<size;i++){
+            char c=((char *)message)[i];
+            if(c==ENTER)
+              ncNewline();
+            else if(c==TAB)
+              ncTab();
+            else if(c==DELETE)
+              ncDelete();
+            else
+              ncPrintChar(c);
+          }
+          return;
+    }
   
     pipeNode * current=first;
     while(current!=0 && current->fileDESC[WRITE]!=filed)
@@ -115,7 +135,13 @@ void writeIntoPipe(uint8_t filed, char message[MESSAGE_LENGTH],uint8_t otherPID)
 }
 
 // You can read up to 10 lines
-void readFromPipe(uint8_t filed, char buffer[MESSAGE_LENGTH*10], uint8_t callingPID){
+void readFromPipe(uint8_t filed, char * buffer, uint8_t callingPID, uint64_t size){
+
+    // STDIN
+    if(filed==0){
+        readFromInputBuffer(size,(char *)buffer);
+        return;
+    }
     
     pipeNode * current=first;
     while(current!=0 && current->fileDESC[READ]!=filed)

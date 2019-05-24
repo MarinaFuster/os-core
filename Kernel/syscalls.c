@@ -30,43 +30,20 @@ static syscall syscalls[SYSCALLSQTY];
  * GENERAL
 ***********************************************************************/
 
-//No puedo deshabilitar las interrupciones realmente con lo cual, unicamente va a cerrar el shell,
-//pero sigue sinedo posible escribir con el teclado
+//We cannot actually CLOSE the shell, just clears the screen to simulate that
 uint64_t sys_exit(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
   ncClear();
   return 0;
 }
 
 uint64_t sys_read(uint64_t file, uint64_t buffer, uint64_t size, uint64_t callingPID, uint64_t r9) {
-
-    if(file>=2)
-      readFromPipe((uint8_t)file,(char *)buffer, (uint8_t)callingPID); // It is going to read up to 150 characters
-    else
-      readFromInputBuffer(size,(char *)buffer); // Arqui TP code
-
-    return 0;
+  readFromPipe((uint8_t)file,(char *)buffer, (uint8_t)callingPID, size); // It is going to read up to 150 characters
+  return 0;
 }
 
 uint64_t sys_write(uint64_t file, uint64_t buffer, uint64_t size, uint64_t otherPID, uint64_t r9){
-    
-    if(file>=2)
-      writeIntoPipe((uint8_t)file,(char *)buffer,(uint8_t)otherPID); // Fixed size in case is a pipe
-    
-    // Arqui TP code
-    if(file==1){
-          for(int i=0;i<size;i++){
-            char c=((char *)buffer)[i];
-            if(c==ENTER)
-              ncNewline();
-            else if(c==TAB)
-              ncTab();
-            else if(c==DELETE)
-              ncDelete();
-            else
-              ncPrintChar(c);
-          }
-    }
-    return 0;
+  writeIntoPipe((uint8_t)file,(char *)buffer,(uint8_t)otherPID, size); // Fixed size in case is a pipe
+  return 0;
 }
 
 uint64_t sys_clear(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
