@@ -227,10 +227,11 @@ uint64_t sys_mutex_unlock(uint64_t mutexID, uint64_t otherPID, uint64_t rcx, uin
 
 uint64_t sys_pipe_create(uint64_t id, uint64_t filed, uint64_t rcx, uint64_t r8, uint64_t r9){
   uint8_t * descriptor=(uint8_t *)filed;
-  *descriptor=pipeCreate(id);
-  if( (*descriptor) == -1)
+  uint8_t * result=pipeCreate(id);
+  if( result == 0)
     ncPrint("No more pipes allowed");
-
+  descriptor[0]=result[0];
+  descriptor[1]=result[1];
   return 0;
 }
 
