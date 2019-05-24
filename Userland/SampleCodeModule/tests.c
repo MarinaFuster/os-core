@@ -199,13 +199,13 @@ void testUnblock(){
 void testPipeF(){
     printf("Starting test!...\n");
 
-    uint8_t filed=0;
-    createPipe(1,&filed);
-    openPipe(1,&filed);
+    uint8_t filed[2]={0};
+    createPipe(1,filed);
+    openPipe(1,filed);
     closePipe(1);
 
-    createPipe(1,&filed); // This is supposed to have filed=2
-    if(filed==2)
+    createPipe(1,filed); 
+    if(filed[0]==2)
         printf("Test 1 OK...\n");
 
     char messageBuffer[15]={0};
@@ -219,7 +219,7 @@ void testPipeF(){
         int j=0;
         while(j<500000000)
             j++;
-        write(filed,messageBuffer,15,3); // Attention to PIDs
+        write(filed[1],messageBuffer,15,3); // Attention to PIDs
         printf("Just finished writing\n");
     }
     printf("Done\n");
@@ -228,15 +228,15 @@ void testPipeF(){
 
 void testPipeG(){
 
-    uint8_t filed=0;
-    openPipe(1,&filed);
-     if(filed==2)
+    uint8_t filed[2]={0};
+    openPipe(1,filed);
+     if(filed[0]==2)
         printf("Test 1 OK...\n");
 
     char readingBuffer[150]={0};
     int i=0;
     while(i<5){
-        read(filed,readingBuffer,150,3); // Attention to PIDs !! 
+        read(filed[0],readingBuffer,150,3); // Attention to PIDs !! 
         printf("\nBuffer result is... ");
         printf(readingBuffer);
         i++;

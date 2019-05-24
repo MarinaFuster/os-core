@@ -6,9 +6,12 @@
 
 #define MAX_FILE_DESCRIPTOR 10
 #define MESSAGE_LENGTH 15 // Small size so it is easy to test
+#define PAGE_SIZE 4096
+#define READ 0
+#define WRITE 1
 
 typedef struct pipeNode{
-    uint8_t filed;      // Automatic file descriptor assignment (done by the os)
+    uint8_t fileDESC[2]; // Automatic assignment done by the OS
     uint8_t id;         // Number that the programmer sets to identify it
     uint64_t address; // Of the actual shared memory
     uint8_t line; 
@@ -50,7 +53,7 @@ int getMinimumFileDescriptor(){
     int keepGoing=1;
     for(int i=2; i<MAX_FILE_DESCRIPTOR; i++){
         while(current!=0 && keepGoing){
-            if(current->filed==i){
+            if(current->fileDESC[READ]==i || current->fileDESC[WRITE]==i){
                 current=first;
                 keepGoing=0;
             }
@@ -63,48 +66,44 @@ int getMinimumFileDescriptor(){
 
 
 // Shared memory blocks are fixed size
-uint8_t pipeCreate(uint8_t id){
+uint8_t * pipeCreate(uint8_t id){
 
     pipeNode * pipe=pipeOpen(id);
     if(pipe)
-        return pipe->filed;
+        return pipe->fileDESC;
 
-    uint8_t filed=getMinimumFileDescriptor();
-    if(filed==-1)
-        return filed;
+    uint8_t readFD=getMinimumFileDescriptor();
+    uint8_t writeFD=getMinimumFileDescriptor();
+    if(readFD==-1 || writeFD==-1)
+        return 0; // There are not enough file descriptors for a new pipe
     
-    uint64_t address=allocate(4096); // One page for a pipe
+    uint64_t address=allocate(2*PAGE_SIZE); // One page for a pipe
     pipeNode * newNode=(pipeNode *)allocate(sizeof(*newNode));
     newNode->id=id;
-    newNode->filed=filed;
+    newNode->fileDESC[READ]=readFD;
+    newNode->fileDESC[WRITE]=writeFD;
     newNode->address=address;
     newNode->next=0;
     newNode->line=0;
     addPipe(newNode);
 
-    /* TESTING
-    ncNewline(); 
-    ncPrintHex(first);
-    ncNewline(); */
-
-    return newNode->filed;
+    return newNode->fileDESC;
 
 }
 
 void pipeClose(uint8_t id){
     first=deletePipeRec(id,first);
-
-    /* TESTING
-    ncNewline();
-    ncPrintHex(first);
-    ncNewline(); */
 }
 
 void writeIntoPipe(uint8_t filed, char message[MESSAGE_LENGTH],uint8_t otherPID){
   
     pipeNode * current=first;
-    while(current->filed!=filed)
+    while(current!=0 && current->fileDESC[WRITE]!=filed)
         current=current->next;
+
+    if(current==0)
+        return;
+
     char * cursor=((char *)current->address+(MESSAGE_LENGTH*(current->line)));
 
     for(int i=0; i<MESSAGE_LENGTH; i++){
@@ -119,8 +118,12 @@ void writeIntoPipe(uint8_t filed, char message[MESSAGE_LENGTH],uint8_t otherPID)
 void readFromPipe(uint8_t filed, char buffer[MESSAGE_LENGTH*10], uint8_t callingPID){
     
     pipeNode * current=first;
-    while(current->filed!=filed)
+    while(current!=0 && current->fileDESC[READ]!=filed)
         current=current->next;
+
+    if(current==0)
+        return;
+
     char * cursor=(char *)(current->address);
     
     if(current->line==0){ // There is nothing to read from the pipe
