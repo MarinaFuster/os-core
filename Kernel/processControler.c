@@ -8,6 +8,9 @@
 
 #define MAX_PROCESSES_QTY 60
 
+#define STDIN 0
+#define STDOUT 1
+
 extern uint64_t printValuesFromStack(uint64_t pointer); // THIS MUST BE REMOVED
 extern uint64_t buildStack(uint64_t stackStartingPoint,uint64_t wrapperFunction, uint64_t functionPointer, uint64_t pid, uint64_t priority);
 extern void _loadProcess(uint64_t rsp);
@@ -18,6 +21,7 @@ extern void _sti();
 typedef struct processListNode{
     char * description;
     uint8_t pid;
+    uint8_t standardIO[2];
     int priority;
     uint64_t memoryBlock;
     struct processListNode * next;
@@ -33,7 +37,6 @@ static int empty=1;
 static processList * processRegister=0;
 
 void initializeProcessRegister(){
-
   processRegister=(processList *)allocate(sizeof(*processRegister));
   processRegister->first=0;
 }
@@ -120,6 +123,8 @@ createProcessWithPriority(char * description, int priority,  uint64_t functionPo
       return 0;
   }
   newProcess->pid=processID++;
+  newProcess->standardIO[STDIN]=STDIN; // Standard by default
+  newProcess->standardIO[STDOUT]=STDOUT;
   newProcess->memoryBlock=memoryBlock;
   newProcess->priority=priority;
   addToRegister(newProcess);
@@ -179,4 +184,12 @@ testStackBuilder(uint64_t functionPointer, uint8_t pid, int priority){
     ncPrintHex(printValuesFromStack(memoryBlock+PAGE_SIZE-8*i));
     ncNewline();
   }
+}
+
+uint8_t getProcessSTDIN(uint8_t pid){
+  return (getProcess(pid))->standardIO[STDIN];
+}
+
+uint8_t getProcessSTDOUT(uint8_t pid){
+  return (getProcess(pid))->standardIO[STDOUT];
 }
