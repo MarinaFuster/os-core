@@ -126,8 +126,8 @@ void free(void * pointer){
   int80(11,(uint64_t)pointer,0,0,0,0);
 }
 
-void exec(char * description, int priority, uint64_t functionPointer, uint8_t * pid){
-  int80(12,(uint64_t)description,(uint64_t)priority,functionPointer,0,0);
+void exec(char * description, int priority, uint64_t functionPointer, uint8_t * pid, uint8_t redirects){
+  int80(12,(uint64_t)description,(uint64_t)priority,functionPointer,(uint64_t)pid,(uint64_t)redirects);
 }
 
 uint64_t shmCreate(uint8_t id){

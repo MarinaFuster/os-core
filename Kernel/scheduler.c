@@ -216,10 +216,13 @@ dequeueNode * getProcessTC(uint8_t pid){
       return current;
     current=current->next;
   }
+  return 0;
 }
 
 uint8_t getState(uint8_t pid){
   uint8_t state=3;
   dequeueNode * process=getProcessTC(pid); // TC stands for Task Context 
+  if(process==0)
+    return state;
   return process->state;
 }

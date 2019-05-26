@@ -16,7 +16,7 @@ int strlen(const char * string);
 void strncpy(char * dest, const char * source, int n);
 
 // Process Management
-void exec(char * description, int priority, uint64_t functionPointer, uint8_t * pid);
+void exec(char * description, int priority, uint64_t functionPointer, uint8_t * pid, uint8_t filedToRedirect);
 void getPID(char * description, uint8_t * pid);
 
 // Memory Management

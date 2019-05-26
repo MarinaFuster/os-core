@@ -14,9 +14,9 @@
 #define HIGH_PRIORITY 0
 
 // For executing piped processes
-#define DO_NOT_REDIRECT 0
-#define REDIRECT_STDIN 1
-#define REDIRECT_STDOUT 2
+#define DO_NOT_REDIRECT 2
+#define REDIRECT_STDIN 0
+#define REDIRECT_STDOUT 1
 
 void execute();
 
@@ -79,25 +79,25 @@ void execute(){
   uint8_t pid=0;
   
   if(strcmp(command,DATE)){
-    exec("date", LOW_PRIORITY, (uint64_t)date, &pid);
+    exec("date", LOW_PRIORITY, (uint64_t)date, &pid, DO_NOT_REDIRECT);
   }
   else if(strcmp(command,TIME)){
-    exec("time", MEDIUM_PRIORITY, (uint64_t)time, &pid);
+    exec("time", MEDIUM_PRIORITY, (uint64_t)time, &pid, DO_NOT_REDIRECT);
   }
   else if(strcmp(command,CLEAR)){
-    exec("clear", LOW_PRIORITY, (uint64_t)clear, &pid);
+    exec("clear", LOW_PRIORITY, (uint64_t)clear, &pid, DO_NOT_REDIRECT);
   }
   else if(strcmp(command,PONG)){
-    exec("pong", MEDIUM_PRIORITY, (uint64_t)pong, &pid);
+    exec("pong", MEDIUM_PRIORITY, (uint64_t)pong, &pid, DO_NOT_REDIRECT);
   }
   else if(strcmp(command,PS)){
-    exec("ps", LOW_PRIORITY, (uint64_t)ps, &pid);
+    exec("ps", LOW_PRIORITY, (uint64_t)ps, &pid, DO_NOT_REDIRECT);
   }
   else if(strcmp(command,HELP)){
-    exec("help", LOW_PRIORITY, (uint64_t)help, &pid);
+    exec("help", LOW_PRIORITY, (uint64_t)help, &pid, DO_NOT_REDIRECT);
   }
   else if(strcmp(command,EXIT)){
-    exec("exit", LOW_PRIORITY, (uint64_t)exit, &pid);
+    exec("exit", LOW_PRIORITY, (uint64_t)exit, &pid, DO_NOT_REDIRECT);
     running=0;
   }
   else if(strcmp(command,DIVZERO)){     // Exception do not count as process
@@ -107,37 +107,37 @@ void execute(){
     invalidoperation();
   }
   else if(strcmp(command, TEST_MEMORY)){
-    exec("testmemory", MEDIUM_PRIORITY, (uint64_t)testMemory, &pid);
+    exec("testmemory", MEDIUM_PRIORITY, (uint64_t)testMemory, &pid, DO_NOT_REDIRECT);
   }
   else if(strcmp(command, TEST_SHARED_MEMORY)){
-    exec("testshmemory", LOW_PRIORITY, (uint64_t)testSharedMemory, &pid);
+    exec("testshmemory", LOW_PRIORITY, (uint64_t)testSharedMemory, &pid, DO_NOT_REDIRECT);
   }
   else if(strcmp(command, TEST_PROCESS_A)){
-    exec("testprocessa", LOW_PRIORITY, (uint64_t)testProcessA, &pid);
+    exec("testprocessa", LOW_PRIORITY, (uint64_t)testProcessA, &pid, DO_NOT_REDIRECT);
   }
   else if(strcmp(command, TEST_PROCESS_B)){
-    exec("testprcoessb", LOW_PRIORITY, (uint64_t)testProcessB, &pid);
+    exec("testprcoessb", LOW_PRIORITY, (uint64_t)testProcessB, &pid, DO_NOT_REDIRECT);
   }
   else if(strcmp(command, TEST_MUTEX_C)){
-    exec("testmutexc", LOW_PRIORITY, (uint64_t)testMutexC, &pid);
+    exec("testmutexc", LOW_PRIORITY, (uint64_t)testMutexC, &pid, DO_NOT_REDIRECT);
   }
   else if(strcmp(command, TEST_MUTEX_D)){
-    exec("testmutexd", LOW_PRIORITY, (uint64_t)testMutexD, &pid);
+    exec("testmutexd", LOW_PRIORITY, (uint64_t)testMutexD, &pid, DO_NOT_REDIRECT);
   }
   else if(strcmp(command, TEST_MUTEX_E)){
-    exec("testmutexe", LOW_PRIORITY, (uint64_t)testMutexE, &pid);
+    exec("testmutexe", LOW_PRIORITY, (uint64_t)testMutexE, &pid, DO_NOT_REDIRECT);
   }
   else if(strcmp(command, TEST_BLOCK)){
-    exec("testblock", LOW_PRIORITY, (uint64_t)testBlock, &pid);
+    exec("testblock", LOW_PRIORITY, (uint64_t)testBlock, &pid, DO_NOT_REDIRECT);
   }
   else if(strcmp(command, TEST_UNBLOCK)){
-    exec("testunblock", LOW_PRIORITY, (uint64_t)testUnblock, &pid);
+    exec("testunblock", LOW_PRIORITY, (uint64_t)testUnblock, &pid, DO_NOT_REDIRECT);
   }
   else if(strcmp(command, TEST_PIPE_F)){
-    exec("testpipeF", LOW_PRIORITY, (uint64_t)testPipeF, &pid);
+    exec("testpipeF", LOW_PRIORITY, (uint64_t)testPipeF, &pid, DO_NOT_REDIRECT);
   }
   else if(strcmp(command, TEST_PIPE_G)){
-    exec("testpipeG", LOW_PRIORITY, (uint64_t)testPipeG, &pid);
+    exec("testpipeG", LOW_PRIORITY, (uint64_t)testPipeG, &pid, DO_NOT_REDIRECT);
   }
   else
     printf(invalidCommandMessage);

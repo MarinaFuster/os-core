@@ -5,7 +5,7 @@
 #include "scheduler.h"
 #include "inputBuffer.h"
 
-#define MAX_FILE_DESCRIPTOR 20
+#define MAX_FILE_DESCRIPTOR 21 // 0 and 1 are reserved for standard IO
 #define MESSAGE_LENGTH 15 // Small size so it is easy to test
 #define READ 0
 #define WRITE 1
@@ -19,13 +19,24 @@
 
 typedef struct pipeNode{
     uint8_t fileDESC[2]; // Automatic assignment done by the OS
-    uint8_t id;         // Number that the programmer sets to identify it
+    uint8_t id;         // Number that the programmer sets to identify it (0 is reserved for the os)
     uint64_t address; // Of the actual shared memory
     uint8_t line; 
     struct pipeNode * next;
 }pipeNode;
 
 static pipeNode * first=0;
+
+pipeNode * newPipe(uint8_t id, uint8_t readFD, uint8_t writeFD, uint64_t address){
+    pipeNode * newNode=(pipeNode *)allocate(sizeof(*newNode));
+    newNode->id=id;
+    newNode->fileDESC[READ]=readFD;
+    newNode->fileDESC[WRITE]=writeFD;
+    newNode->address=address;
+    newNode->line=0;
+    newNode->next=0;
+    return newNode;
+}
 
 void addPipe(pipeNode * newNode){ // Always adds at the beginning
     newNode->next=first;
@@ -85,13 +96,8 @@ uint8_t * pipeCreate(uint8_t id){
         return 0; // There are not enough file descriptors for a new pipe
     
     uint64_t address=allocate(2*PAGE_SIZE); // One page for a pipe
-    pipeNode * newNode=(pipeNode *)allocate(sizeof(*newNode));
-    newNode->id=id;
-    newNode->fileDESC[READ]=readFD;
-    newNode->fileDESC[WRITE]=writeFD;
-    newNode->address=address;
-    newNode->next=0;
-    newNode->line=0;
+
+    pipeNode * newNode=newPipe(id,readFD, writeFD, address);
     addPipe(newNode);
 
     return newNode->fileDESC;
