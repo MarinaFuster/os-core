@@ -110,27 +110,51 @@ wrapperFunction(void(*functionPointer)(), uint8_t pid, int priority){
   loadNext();
 }
 
-uint8_t
-createProcessWithPriority(char * description, int priority,  uint64_t functionPointer){
+processListNode * newProcessNode(uint8_t pid, char * desc, uint64_t address, int priority, uint8_t stdin, uint8_t stdout){
   processListNode * newProcess=(processListNode *)allocate(sizeof(*newProcess));
-  uint64_t memoryBlock=(uint64_t)allocate(sizeof(PAGE_SIZE)); // PAGE_SIZE equals to stack size (our decision)
-  newProcess->description=description;
+  newProcess->pid=pid;
+  newProcess->description=desc;
+  newProcess->memoryBlock=address;
+  newProcess->priority=priority;
+  newProcess->standardIO[STDIN]=stdin;
+  newProcess->standardIO[STDOUT]=stdout;
+  return newProcess;
+}
+
+/* Arguments:
+    - description of the process
+    - priority of the process
+    - functionPointer in order to build the new stack with the entry_point stored there
+    - filedToRedirect is an indicator of standardIO file descriptor that I need to redirect
+      0 -> redirects standard input
+      1 -> redirects standard output
+      2 -> does not redirect
+    - newFiled is the new file descriptor that will replace some of the above
+*/
+uint8_t
+createProcessWithPriority(char * description, int priority,  uint64_t functionPointer, uint8_t filedToRedirect, uint8_t newFiled){
   if(processID==MAX_PROCESSES_QTY){
       ncPrint("You cannot run more processes");
       ncNewline();
-      free((uint64_t)memoryBlock);
-      free((uint64_t)newProcess);
       return 0;
   }
-  newProcess->pid=processID++;
-  newProcess->standardIO[STDIN]=STDIN; // Standard by default
-  newProcess->standardIO[STDOUT]=STDOUT;
-  newProcess->memoryBlock=memoryBlock;
-  newProcess->priority=priority;
+  uint64_t memoryBlock=(uint64_t)allocate(sizeof(PAGE_SIZE)); // PAGE_SIZE equals to stack size (our decision)
+  uint8_t pid=processID++;
+  uint8_t stdin=0, stdout=1;
+  
+  if(filedToRedirect==STDIN)
+      stdin=newFiled;
+  else if(filedToRedirect==STDOUT)
+      stdout=newFiled;
+
+  processListNode * newProcess=newProcessNode(pid, description, memoryBlock, priority, stdin, stdout);
+
   addToRegister(newProcess);
   uint64_t rsp=buildStack(memoryBlock+PAGE_SIZE, (uint64_t)wrapperFunction, (uint64_t)functionPointer, (uint64_t)newProcess->pid, (uint64_t)priority);
   addProcessToScheduler(priority, newProcess->pid, rsp);
+  
   empty=0;
+  
   return newProcess->pid;
 }
 
@@ -192,4 +216,14 @@ uint8_t getProcessSTDIN(uint8_t pid){
 
 uint8_t getProcessSTDOUT(uint8_t pid){
   return (getProcess(pid))->standardIO[STDOUT];
+}
+
+void setProcessSTDIN(uint8_t pid, uint8_t stdin_filed){
+  processListNode * process=getProcess(pid);
+  process->standardIO[STDIN]=stdin_filed;
+}
+
+void setProcessSTDOUT(uint8_t pid, uint8_t stdout_filed){
+  processListNode * process=getProcess(pid);
+  process->standardIO[STDOUT]=stdout_filed;
 }

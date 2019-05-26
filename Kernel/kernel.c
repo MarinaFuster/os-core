@@ -61,7 +61,10 @@ int main(){
 	initializeProcessRegister();
 	initializeScheduler();
 	//initializeScreen();
-	createProcessWithPriority("init", LOW_PRIORITY, (uint64_t)sampleCodeModuleAddress); // description, priority, memory address
+
+	// 2 indicates to not redirect any standard IO
+	createProcessWithPriority("init", LOW_PRIORITY, (uint64_t)sampleCodeModuleAddress, 2, 0);
+	
 	//((EntryPoint)sampleCodeModuleAddress)();
 	while(1){
 		_hlt();
