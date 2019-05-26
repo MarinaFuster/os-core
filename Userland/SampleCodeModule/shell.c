@@ -95,16 +95,10 @@ void execute(){
     strncpy(command[0],shell_buffer,pipeIndex-2);
     strncpy(command[1], shell_buffer+pipeIndex+2, bufferLength-pipeIndex-2);
   }
-
-  /*TEST
-  printf("Primer comando: ");
-  printf(command[0]);
-  printf(", Segundo comando: ");
-  printf(command[1]);
-  printf("\n");*/
-
+  
   uint8_t pid=0;
   for(int i=0; i<2; i++){
+    
     if(command[i][0]!=0){ // First character is null
 
       uint8_t redirects=DO_NOT_REDIRECT;
