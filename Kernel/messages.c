@@ -4,6 +4,7 @@
 #include "memoryManager.h"
 #include "scheduler.h"
 #include "inputBuffer.h"
+#include "processController.h"
 
 #define MAX_FILE_DESCRIPTOR 21 // 0 and 1 are reserved for standard IO
 #define MESSAGE_LENGTH 15 // Small size so it is easy to test
@@ -16,6 +17,9 @@
 
 #define STDIN 0 
 #define STDOUT 1
+
+extern void _cli();
+extern void _sti();
 
 typedef struct pipeNode{
     uint8_t fileDESC[2]; // Automatic assignment done by the OS
@@ -111,21 +115,26 @@ void pipeClose(uint8_t id){
 void writeIntoPipe(uint8_t filed, char * message,uint8_t otherPID, uint64_t size){
 
     if(filed==STDOUT){
-        //getProcessStdout
-        //If stdout == STDOUT do this
-          for(int i=0;i<size;i++){
-            char c=((char *)message)[i];
-            if(c==ENTER)
-              ncNewline();
-            else if(c==TAB)
-              ncTab();
-            else if(c==DELETE)
-              ncDelete();
-            else
-              ncPrintChar(c);
-          }
-          return;
-        //else do the thing below
+        _cli();
+        uint8_t runningPID=getRunningPID();
+        uint8_t stdout=getProcessSTDOUT(runningPID);
+        _sti();
+
+        if(stdout==STDOUT){
+            for(int i=0;i<size;i++){
+                char c=((char *)message)[i];
+                if(c==ENTER)
+                ncNewline();
+                else if(c==TAB)
+                ncTab();
+                else if(c==DELETE)
+                ncDelete();
+                else
+                ncPrintChar(c);
+            }
+            return;
+        }
+        filed=stdout;
     }
   
     pipeNode * current=first;
@@ -149,11 +158,16 @@ void writeIntoPipe(uint8_t filed, char * message,uint8_t otherPID, uint64_t size
 void readFromPipe(uint8_t filed, char * buffer, uint8_t callingPID, uint64_t size){
 
     if(filed==STDIN){
-        // getProcessStdin
-        // if stdin == STDIN do this
-        readFromInputBuffer(size,(char *)buffer);
-        return;
-        // else do the thing below
+        _cli();
+        uint8_t runningPID=getRunningPID();
+        uint8_t stdin=getProcessSTDIN(runningPID);
+        _sti();
+
+        if(stdin==STDIN){
+            readFromInputBuffer(size,(char *)buffer);
+            return;
+        }
+        filed=stdin;            
     }
     
     pipeNode * current=first;
