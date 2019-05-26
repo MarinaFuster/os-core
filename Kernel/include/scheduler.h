@@ -22,5 +22,6 @@ int blockedState(uint8_t pid);
 int isBlocked(uint8_t pid);
 
 uint8_t getState(uint8_t pid);
+uint8_t getRunningPID();
 
 #endif

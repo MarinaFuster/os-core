@@ -226,3 +226,7 @@ uint8_t getState(uint8_t pid){
     return state;
   return process->state;
 }
+
+uint8_t getRunningPID(){
+  return priorityQueue->first->pid;
+}
