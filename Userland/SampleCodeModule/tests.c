@@ -219,7 +219,7 @@ void testPipeF(){
         int j=0;
         while(j<500000000)
             j++;
-        write(filed[1],messageBuffer,15,3); // Attention to PIDs
+        write(filed[1],messageBuffer,10,3); // Attention to PIDs
         printf("Just finished writing\n");
     }
     printf("Done\n");
