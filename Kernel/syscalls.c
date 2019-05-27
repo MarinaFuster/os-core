@@ -157,8 +157,10 @@ uint64_t sys_shm_close(uint64_t id, uint64_t rdx, uint64_t rcx, uint64_t r8, uin
 uint64_t sys_exec(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
   uint8_t newFileDescriptor=0;
   if(r9!=2){
+    _cli();
     uint8_t * fileDescriptors=pipeCreate(0); // If it is already create, it will just open it
     newFileDescriptor=fileDescriptors[r9];
+    _sti();
   }
   
   (*(uint64_t *)r8)=(uint64_t)createProcessWithPriority((char *)rsi, (int)rdx, rcx, r9, newFileDescriptor);

@@ -25,7 +25,7 @@ typedef struct pipeNode{
     uint8_t fileDESC[2]; // Automatic assignment done by the OS
     uint8_t id;         // Number that the programmer sets to identify it (0 is reserved for the os)
     uint64_t address; // Of the actual shared memory
-    uint8_t line; 
+    uint16_t cursor; 
     struct pipeNode * next;
 }pipeNode;
 
@@ -37,7 +37,7 @@ pipeNode * newPipe(uint8_t id, uint8_t readFD, uint8_t writeFD, uint64_t address
     newNode->fileDESC[READ]=readFD;
     newNode->fileDESC[WRITE]=writeFD;
     newNode->address=address;
-    newNode->line=0;
+    newNode->cursor=0;
     newNode->next=0;
     return newNode;
 }
@@ -144,12 +144,12 @@ void writeIntoPipe(uint8_t filed, char * message,uint8_t otherPID, uint64_t size
     if(current==0)
         return;
 
-    char * cursor=((char *)current->address+(MESSAGE_LENGTH*(current->line)));
+    char * cursor=(char *)(current->address+current->cursor);
 
-    for(int i=0; i<MESSAGE_LENGTH; i++){
+    for(int i=0; i<size; i++){
         cursor[i]=message[i];
     }
-    current->line++;
+    current->cursor=(current->cursor)+size;
     unblockedState(otherPID); // Unblocks the process that is waiting for reading
     
 }
@@ -177,18 +177,19 @@ void readFromPipe(uint8_t filed, char * buffer, uint8_t callingPID, uint64_t siz
     if(current==0)
         return;
 
-    char * cursor=(char *)(current->address);
-    
-    if(current->line==0){ // There is nothing to read from the pipe
+
+    if(current->cursor==0){ // There is nothing to read from the pipe
         blockedState(callingPID); // It blocks itself waiting for other process to write something
         while(isBlocked((callingPID))){ //This is meant to wait untile the timer tick interruption
             ;
         }
     }
 
-    for(int i=0; i<MESSAGE_LENGTH*(current->line);i++){
+    char * cursor=(char *)current->address;
+
+    for(int i=0; i<(current->cursor);i++){
         buffer[i]=cursor[i];
         cursor[i]=0; // Empty
     }
-    current->line=0;
+    current->cursor=0;
 }
