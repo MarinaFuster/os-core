@@ -143,6 +143,7 @@ void testMutexC(){
             j++;
         
         mutexLock(mutex,pid); // mutexID -- callingPID
+        printf("C");
         (*number)++;
         mutexUnlock(mutex); // mutexID 
     }
@@ -155,16 +156,17 @@ void testMutexD(){
     uint64_t shm=shmOpen(2);
     int * number=(int *)shm;
     //connect to mutex (mutedID = 0)
-    connectMutex(0, pid);
+    connectMutex(1, pid);
     for(int i=0;i<1000;i++){
         int j=0;
         while(j<5000000)
             j++;
 
         // MutexID==1 just testing with one mutex    
-        mutexLock(0,pid); // mutexID -- callingPID
+        mutexLock(1,pid); // mutexID -- callingPID
         (*number)++;
-        mutexUnlock(0); // mutexID 
+        printf("D");
+        mutexUnlock(1); // mutexID 
     }
     printf("Done with test mutex D!\n");
 

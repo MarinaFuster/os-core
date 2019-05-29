@@ -40,7 +40,6 @@ uint8_t mutexLock(uint8_t mutexID, uint8_t callingPID){
 
     //Need some help with this linking it to the list of pids.....
     if(wasLocked){
-      //this should be done with each of the pids? I dont think so...
       blockedState(callingPID);
     }
     else{
@@ -50,15 +49,15 @@ uint8_t mutexLock(uint8_t mutexID, uint8_t callingPID){
 }
 
 uint8_t mutexUnlock(int mutexID){
-  //I want to unlock all of the pids involved in the mutex
+  //I want to unlock the next pid
   mutexNode * mutex=getMutex(mutexID);
   mutex->state=UNLOCKED;
+  //problema: que vaya siempre al mismo pid
 
-  pids * currentPid = mutex->listOfPids;
-  while(currentPid!=0){
-    unblockedState(currentPid->pid);
-    currentPid=currentPid->next;
-  }
+  pids * first = mutex->listOfPids; //Going to the end
+  pids * firstNext = first->next; //Going to be the first one
+  unblockedState(firstNext->pid);
+  mutex->listOfPids=firstNext;
   
   return 1;
 }
@@ -104,10 +103,25 @@ uint8_t connectToMutex(uint8_t mutexID, uint8_t callingPid){
     ncPrint("Mutex id does not exist");
     return 0; //Mutex does not exist
   }
+  //Agrego el pid al final
+  if((mutex->listOfPids)->next==NULL){
+    //Tengo uno solo
+    pids * newPidNode = (pids *)allocate(sizeof(pids*));
+    newPidNode->pid=callingPid;
+    //add the pid node to the first position of the list of nodes
+    newPidNode->next=mutex->listOfPids;
+    (mutex->listOfPids)->next=newPidNode;
+    return 1;
+  }
+  
+  pids * current = mutex->listOfPids;
+  while((current->next)->pid != (mutex->listOfPids)->pid){
+    current=current->next;
+  }
   pids * newPidNode = (pids *)allocate(sizeof(pids*));
   newPidNode->pid=callingPid;
   //add the pid node to the first position of the list of nodes
   newPidNode->next=mutex->listOfPids;
+  current->next=newPidNode;
   return 1;
 }
-
