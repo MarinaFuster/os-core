@@ -168,6 +168,9 @@ void execute(){
       else if(strcmp(command[i], TEST_PIPE_G)){
         exec("testpipeG", LOW_PRIORITY, (uint64_t)testPipeG, &pid, redirects);
       }
+      else if(strcmp(command,TEST_MUTEX_Z)){
+        exec("testmutexz",LOW_PRIORITY,(uint64_t)testMutexZ,&pid, redirects);
+      }
       else
         printf(invalidCommandMessage);
     }
