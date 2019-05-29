@@ -150,6 +150,28 @@ void testMutexC(){
     printf("Done with test mutex C!\n");
 }
 
+void testMutexZ(){
+    uint8_t pid=0;
+    getPID("testmutexz",&pid);
+    uint8_t mutex=0;
+    initMutex(&mutex,pid);
+    printf("%d\n",mutex);
+    uint64_t shm=shmCreate(2);
+    int * number=(int *)shm;
+    *number=0;
+    for(int i=0;i<1000;i++){
+        int j=0;
+        while(j<5000000)
+            j++;
+        
+        mutexLock(mutex,pid); // mutexID -- callingPID
+        printf("Z");
+        (*number)++;
+        mutexUnlock(mutex); // mutexID 
+    }
+    printf("Done with test mutex Z!\n");
+}
+
 void testMutexD(){
     uint8_t pid=0;
     getPID("testmutexd",&pid);

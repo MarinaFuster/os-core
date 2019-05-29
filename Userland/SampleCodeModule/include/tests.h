@@ -6,6 +6,7 @@
 #define TEST_PROCESS_B "b"
 #define TEST_MUTEX_C "c"
 #define TEST_MUTEX_D "d"
+#define TEST_MUTEX_Z "z"
 #define TEST_MUTEX_E "e"
 #define TEST_SHARED_MEMORY "testshm"
 #define TEST_BLOCK "block"
@@ -18,6 +19,7 @@ void testProcessA();
 void testProcessB();
 void testMutexC();
 void testMutexD();
+void testMutexZ();
 void testMutexE();
 void testSharedMemory();
 void testBlock();
