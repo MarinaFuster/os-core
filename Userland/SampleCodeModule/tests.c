@@ -1,6 +1,12 @@
 #include "include/stdlib.h"
 #include "include/commands.h"
+#
 #define NULL 0
+#define PHIQ 5
+#define HUNGRY 0
+#define THINKING 1
+#define EATING 2
+
 
 
 extern uint64_t int80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
@@ -16,7 +22,7 @@ void testMemory(){
     void * null_memory_block = malloc(0);
     if(null_memory_block==NULL)
         printf("Test 2... OK\n");
-    else 
+    else
         printf("Test failed: pointer assigned to 0 size memory block\n");
 
     /*void * almost_all_memory_block=malloc(0x5F00000);
@@ -53,7 +59,7 @@ void testMemory(){
         printf("Test 8... OK\n");
     else
         printf("Wrong pointer assignment for fourth block\n");
-    
+
     free(second_block);
     void * meant_to_be_after_fourth_block=malloc(0x27FF);
     if(meant_to_be_after_fourth_block==(void *)(reference_address+0x8000))
@@ -65,7 +71,7 @@ void testMemory(){
         printf("Test 10... OK\n");
     else
         printf("Wrong pointer assignment for block meant to be after first block\n");
-    
+
     free(third_block);
     void * meant_to_be_perfect_fit=malloc(0x1000);
     if(meant_to_be_perfect_fit==(void *)(reference_address+0x3000))
@@ -77,7 +83,7 @@ void testMemory(){
     free(meant_to_be_after_first_block);
     free(meant_to_be_perfect_fit);
     free(fourth_block);
-    free(meant_to_be_after_fourth_block);*/   
+    free(meant_to_be_after_fourth_block);*/
 
 }
 
@@ -98,7 +104,7 @@ void testSharedMemory(){
     *(buffer+3)='\0';
     printf(buffer);
     printf("   ");
-    
+
     uint64_t second_shm=shmOpen(1);
     char * second_buffer=(char *)second_shm;
     *second_buffer='a';
@@ -141,11 +147,11 @@ void testMutexC(){
         int j=0;
         while(j<5000000)
             j++;
-        
+
         mutexLock(mutex,pid); // mutexID -- callingPID
         printf("C");
         (*number)++;
-        mutexUnlock(mutex); // mutexID 
+        mutexUnlock(mutex); // mutexID
     }
     printf("Done with test mutex C!\n");
 }
@@ -163,11 +169,11 @@ void testMutexZ(){
         int j=0;
         while(j<5000000)
             j++;
-        
+
         mutexLock(mutex,pid); // mutexID -- callingPID
         printf("Z");
         (*number)++;
-        mutexUnlock(mutex); // mutexID 
+        mutexUnlock(mutex); // mutexID
     }
     printf("Done with test mutex Z!\n");
 }
@@ -184,11 +190,11 @@ void testMutexD(){
         while(j<5000000)
             j++;
 
-        // MutexID==1 just testing with one mutex    
+        // MutexID==1 just testing with one mutex
         mutexLock(1,pid); // mutexID -- callingPID
         (*number)++;
         printf("D");
-        mutexUnlock(1); // mutexID 
+        mutexUnlock(1); // mutexID
     }
     printf("Done with test mutex D!\n");
 
@@ -242,7 +248,7 @@ void testPipeF(){
     char messageBuffer[15]={0};
 
     for(int k=0;k<5;k++){
-        int i=0;    
+        int i=0;
         for(;i<14;i++){
             messageBuffer[i]='a'+k;
         }
@@ -267,7 +273,7 @@ void testPipeG(){
     char readingBuffer[150]={0};
     int i=0;
     while(i<5){
-        read(filed,readingBuffer,150,3); // Attention to PIDs !! 
+        read(filed,readingBuffer,150,3); // Attention to PIDs !!
         printf("\nBuffer result is... ");
         printf(readingBuffer);
         i++;
@@ -275,4 +281,43 @@ void testPipeG(){
     printf("\nPerfect!\n");
     closePipe(1);
 
+}
+
+void takeFork(uint8_t mutexID, uint8_t pid){
+  mutexLock(1, pid);
+  changeState(1, pid, HUNGRY);
+  printf("Philosopher %d is hungry\n",pid );
+
+  // Eat ONLY if neighbours are not eating
+  checkSides(1, pid);
+  mutexUnlock(1);
+}
+
+void putFork(uint8_t mutexID, uint8_t pid){
+  mutexLock(1, pid);
+  changeState(1, pid, THINKING);
+  printf("Philosopher %d is putting the chopsticks down", pid);
+  mutexUnlock(1);
+  //printf("CHECKPOINT 2\n" );
+}
+
+void testPhi(){
+  // Creo el entorno de los filosofos (mutex y mem compartida)
+  uint8_t pid=0;
+  getPID("testphi",&pid);
+  uint8_t mutex=0;
+  initMutex(&mutex,pid);
+  printf("%d\n",mutex);
+}
+
+void phi(){
+  uint8_t pid=0;
+  getPID("phi", &pid);
+  connectMutex(1, pid);
+  printf("I am philosopher %d\n",pid );
+  while(1){
+    takeFork(1,pid);
+    //printf("CHECKPOINT 1\n" );
+    putFork(1,pid);
+  }
 }

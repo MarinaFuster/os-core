@@ -19,7 +19,7 @@
 #define ENTER '\n'
 #define DELETE '\b'
 
-#define SYSCALLSQTY 28
+#define SYSCALLSQTY 29
 #define VALID_SYS_CODE(c) (c>=0 && c<=SYSCALLSQTY)
 
 typedef uint64_t (*syscall) (uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
@@ -48,10 +48,10 @@ uint64_t sys_read(uint64_t file, uint64_t buffer, uint64_t size, uint64_t callin
 }
 
 uint64_t sys_write(uint64_t file, uint64_t buffer, uint64_t size, uint64_t otherPID, uint64_t r9){
-    
+
     if(file>=2)
       writeIntoPipe((uint8_t)file,(char *)buffer,(uint8_t)otherPID); // Fixed size in case is a pipe
-    
+
     // Arqui TP code
     if(file==1){
           for(int i=0;i<size;i++){
@@ -250,6 +250,17 @@ uint64_t sys_mutex_connect(uint64_t mutexID, uint64_t pid, uint64_t rcx, uint64_
   return 0;
 }
 
+uint64_t sys_mutex_side_check(uint64_t mutexID, uint64_t pid, uint64_t rcx, uint64_t r8, uint64_t r9){
+  checkPhi(mutexID, pid);
+  return 0;
+}
+
+uint64_t sys_change_mutex_state(uint64_t mutexID, uint64_t pid, uint64_t state, uint64_t r8, uint64_t r9){
+  changePhiState(mutexID, pid, state);
+  return 0;
+}
+
+
 void loadSysCalls(){
   syscalls[0]=&sys_exit;
   syscalls[1]=&sys_time;
@@ -279,6 +290,8 @@ void loadSysCalls(){
   syscalls[25]=&sys_pipe_close;
   syscalls[26]=&sys_ask_pid;
   syscalls[27]=&sys_mutex_connect;
+  syscalls[28]=&sys_mutex_side_check;
+  syscalls[29]=&sys_change_mutex_state;
 }
 
 void sysCallsHandler(uint64_t syscode, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){ // lega en rdi desde asm

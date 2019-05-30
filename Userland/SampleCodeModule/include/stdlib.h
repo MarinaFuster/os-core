@@ -36,6 +36,8 @@ void destroyMutex(uint8_t mutexID);
 void connectMutex(uint8_t mutexID,uint8_t pid);
 void mutexLock(uint8_t mutexID, uint8_t callingPID);
 void mutexUnlock(uint8_t mutexID);
+void checkSides(uint64_t mutexID, uint8_t callingPID);
+void changeState(uint64_t mutexID, uint8_t callingPID, uint8_t state);
 
 // Messages
 void createPipe(uint8_t id, uint8_t * filed);

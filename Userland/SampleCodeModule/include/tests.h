@@ -13,6 +13,8 @@
 #define TEST_UNBLOCK "unblock"
 #define TEST_PIPE_F "pipef"
 #define TEST_PIPE_G "pipeg"
+#define PHI_TEST "testphi"
+#define PHI "phi"
 
 void testMemory();
 void testProcessA();
@@ -26,5 +28,10 @@ void testBlock();
 void testUnblock();
 void testPipeF();
 void testPipeG();
+void testPhi();
+void phi();
+
+void putFork(uint8_t pid, uint8_t* state);
+void takeFork(uint8_t pid, uint8_t* state);
 
 #endif // __TESTS__

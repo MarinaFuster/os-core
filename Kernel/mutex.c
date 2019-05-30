@@ -6,11 +6,19 @@
 #include <memoryManager.h>
 #include <stdio.h> // We use this just for size of
 
+#define HUNGRY 0
+#define THINKING 1
+#define EATING 2
+
 extern uint64_t mutex_lock(uint64_t * mutexState);
+
+// Tanto en pids como en mutexnode se pierde referencia al primer elemento de la lista.
 
 typedef struct pids{
   uint8_t pid;
+  uint8_t state;
   struct pids * next;
+  struct pids * prev;
 } pids;
 
 typedef struct mutexNode{
@@ -58,7 +66,7 @@ uint8_t mutexUnlock(int mutexID){
   pids * firstNext = first->next; //Going to be the first one
   unblockedState(firstNext->pid);
   mutex->listOfPids=firstNext;
-  
+
   return 1;
 }
 
@@ -81,7 +89,9 @@ void destroyMutex(uint8_t mutexID){
 void add(mutexNode * newMutex, uint8_t callingPid){
   newMutex->listOfPids=(pids *)allocate(sizeof(pids*));
   (newMutex->listOfPids)->pid=callingPid;
+  (newMutex->listOfPids)->state=THINKING;
   (newMutex->listOfPids)->next=0;
+  (newMutex->listOfPids)->prev=0;
   newMutex->next=first;
   first=newMutex;
 }
@@ -95,7 +105,7 @@ uint8_t initMutex(uint8_t callingPid){
 
   return newMutex->mutexID;
 }
-//This method is to vinculate the mutex with all the processes connected to 
+//This method is to vinculate the mutex with all the processes connected to
 //given mutex
 uint8_t connectToMutex(uint8_t mutexID, uint8_t callingPid){
   mutexNode * mutex=getMutex(mutexID);
@@ -108,20 +118,52 @@ uint8_t connectToMutex(uint8_t mutexID, uint8_t callingPid){
     //Tengo uno solo
     pids * newPidNode = (pids *)allocate(sizeof(pids*));
     newPidNode->pid=callingPid;
+    newPidNode->state=THINKING;
     //add the pid node to the first position of the list of nodes
+    newPidNode->prev=mutex->listOfPids;
     newPidNode->next=mutex->listOfPids;
     (mutex->listOfPids)->next=newPidNode;
+    (mutex->listOfPids)->prev=newPidNode;
     return 1;
   }
-  
-  pids * current = mutex->listOfPids;
+
+  pids * current = (mutex->listOfPids)->next;
   while((current->next)->pid != (mutex->listOfPids)->pid){
     current=current->next;
   }
   pids * newPidNode = (pids *)allocate(sizeof(pids*));
   newPidNode->pid=callingPid;
+  newPidNode->state=THINKING;
   //add the pid node to the first position of the list of nodes
   newPidNode->next=mutex->listOfPids;
+  newPidNode->prev=current;
   current->next=newPidNode;
+  return 1;
+}
+
+uint8_t checkPhi(uint8_t mutexID, uint8_t pid){
+  mutexNode * mutex=getMutex(mutexID);
+  pids* current=(mutex->listOfPids);
+  while((current->pid)!=pid){
+    current=current->next;
+  }
+  if ( (((current->next)->state)!=EATING) && (((current->prev)->state)!=EATING) ){
+    current->state=EATING;
+    ncPrint("Philosopher ");
+    ncPrintDec(pid);
+    ncPrint(" is currently eating");
+    ncNewline;
+    return 1;
+  }
+  return 0;
+}
+
+uint8_t changePhiState(uint8_t mutexID,uint8_t pid, uint8_t state){
+  mutexNode * mutex=getMutex(mutexID);
+  pids* current=(mutex->listOfPids);
+  while((current->pid)!=pid){
+    current=current->next;
+  }
+  current->state=state;
   return 1;
 }

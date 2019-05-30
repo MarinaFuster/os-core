@@ -69,7 +69,7 @@ void execute(){
   char command[MAX_COMMAND_LENGTH];
   strncpy(command,shell_buffer,MAX_COMMAND_LENGTH);
   uint8_t pid=0;
-  
+
   if(strcmp(command,DATE)){
     exec("date", LOW_PRIORITY, (uint64_t)date, &pid);
   }
@@ -132,6 +132,12 @@ void execute(){
     exec("testpipeG", LOW_PRIORITY, (uint64_t)testPipeG, &pid);
   }else if(strcmp(command,TEST_MUTEX_Z)){
     exec("testmutexz",LOW_PRIORITY,(uint64_t)testMutexZ,&pid);
+  }
+  else if(strcmp(command, PHI_TEST)){
+    exec("testphi", LOW_PRIORITY, (uint64_t)testPhi, &pid);
+  }
+  else if (strcmp(command, PHI)){
+    exec("phi", LOW_PRIORITY, (uint64_t)phi, &pid);
   }
   else
     printf(invalidCommandMessage);
