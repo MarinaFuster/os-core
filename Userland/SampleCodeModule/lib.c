@@ -200,3 +200,7 @@ void checkSides(uint64_t mutexID, uint8_t callingPID){
 void changeState(uint64_t mutexID, uint8_t callingPID, uint8_t state){
   int80(29, (uint64_t) mutexID, (uint64_t)callingPID, (uint64_t)state,0,0);
 }
+
+void mutexRemove(uint64_t mutexID, uint8_t callingPID){
+  int80(30, (uint64_t) mutexID, (uint64_t)callingPID, 0,0,0);
+}

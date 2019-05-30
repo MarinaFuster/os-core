@@ -11,5 +11,6 @@ uint8_t mutexLock(uint8_t mutexID, uint8_t callingPID);
 uint8_t connectToMutex(uint8_t mutexID, uint8_t callingPid);
 uint8_t checkSides(uint8_t mutexID, uint8_t pid);
 uint8_t changePhiState(uint8_t mutexID,uint8_t pid, uint8_t state);
+void removeFromMutex(uint8_t mutexID, uint8_t pid);
 
 #endif

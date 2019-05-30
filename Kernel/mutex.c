@@ -41,6 +41,23 @@ mutexNode * getMutex(uint8_t mutexID){
   return current;
 }
 
+void removeFromMutex(uint8_t mutexID, uint8_t pid){
+  mutexNode * mutex=getMutex(mutexID);
+  pids* current=(mutex->listOfPids);
+  while((current->pid)!=pid){
+    current=current->next;
+  }
+  if(((current->prev)!=0)&&(current->next!=0)){
+    (current->prev)->next=current->next;
+    (current->next)->prev=current->prev;
+    ////////// LIBERAR MEMORIA!!!! ///////////
+  }
+
+  if(((mutex->listOfPids)->pid)==pid){
+    mutex->listOfPids=current->next;
+  }
+}
+
 uint8_t mutexLock(uint8_t mutexID, uint8_t callingPID){
 
     mutexNode * mutex=getMutex(mutexID);
@@ -152,7 +169,7 @@ uint8_t checkPhi(uint8_t mutexID, uint8_t pid){
     ncPrint("Philosopher ");
     ncPrintDec(pid);
     ncPrint(" is currently eating");
-    ncNewline;
+    ncNewline();
     return 1;
   }
   return 0;

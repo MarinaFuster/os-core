@@ -19,7 +19,7 @@
 #define ENTER '\n'
 #define DELETE '\b'
 
-#define SYSCALLSQTY 29
+#define SYSCALLSQTY 30
 #define VALID_SYS_CODE(c) (c>=0 && c<=SYSCALLSQTY)
 
 typedef uint64_t (*syscall) (uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
@@ -260,6 +260,11 @@ uint64_t sys_change_mutex_state(uint64_t mutexID, uint64_t pid, uint64_t state, 
   return 0;
 }
 
+uint64_t sys_mutex_remove(uint64_t mutexID, uint64_t pid, uint64_t rcx, uint64_t r8, uint64_t r9){
+  removeFromMutex(mutexID, pid);
+  return 0;
+}
+
 
 void loadSysCalls(){
   syscalls[0]=&sys_exit;
@@ -292,6 +297,7 @@ void loadSysCalls(){
   syscalls[27]=&sys_mutex_connect;
   syscalls[28]=&sys_mutex_side_check;
   syscalls[29]=&sys_change_mutex_state;
+  syscalls[30]=&sys_mutex_remove;
 }
 
 void sysCallsHandler(uint64_t syscode, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){ // lega en rdi desde asm

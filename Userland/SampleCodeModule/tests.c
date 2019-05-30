@@ -296,9 +296,11 @@ void takeFork(uint8_t mutexID, uint8_t pid){
 void putFork(uint8_t mutexID, uint8_t pid){
   mutexLock(1, pid);
   changeState(1, pid, THINKING);
-  printf("Philosopher %d is putting the chopsticks down", pid);
+  printf("Philosopher %d is putting the chopsticks down\n", pid);
   mutexUnlock(1);
-  //printf("CHECKPOINT 2\n" );
+  int j=0;
+  while(j<500000000)
+      j++;
 }
 
 void testPhi(){
@@ -308,6 +310,7 @@ void testPhi(){
   uint8_t mutex=0;
   initMutex(&mutex,pid);
   printf("%d\n",mutex);
+  mutexRemove(1, pid);
 }
 
 void phi(){
@@ -317,7 +320,9 @@ void phi(){
   printf("I am philosopher %d\n",pid );
   while(1){
     takeFork(1,pid);
-    //printf("CHECKPOINT 1\n" );
+    int j=0;
+    while(j<500000000)
+        j++;
     putFork(1,pid);
   }
 }
