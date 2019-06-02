@@ -154,8 +154,8 @@ void unblock(uint8_t pid){
   int80(19,(uint64_t)pid, 0, 0, 0, 0);
 }
 
-void initMutex(uint8_t * mutexID){
-  int80(20,(uint64_t)(&mutexID), 0, 0, 0, 0);
+void initMutex(uint8_t * mutexID, uint8_t pid){
+  int80(20,(uint64_t)(&mutexID), (uint64_t)pid, 0, 0, 0);
 }
 
 void destroyMutex(uint8_t mutexID){
@@ -166,8 +166,8 @@ void mutexLock(uint8_t mutexID, uint8_t callingPID){
   int80(22,(uint64_t)mutexID, (uint64_t)callingPID, 0, 0, 0);
 }
 
-void mutexUnlock(uint8_t mutexID, uint8_t otherPID){
-  int80(23,(uint64_t)mutexID, (uint64_t)otherPID, 0, 0, 0);
+void mutexUnlock(uint8_t mutexID){
+  int80(23,(uint64_t)mutexID, 0, 0, 0, 0);
 }
 
 // Stores in filed the file descriptor I need
@@ -187,4 +187,8 @@ void closePipe(uint8_t id){
 // Stores in pid what I need
 void getPID(char * description, uint8_t * pid){
   int80(26, (uint64_t)description, (uint64_t)pid, 0, 0, 0);
+}
+
+void connectMutex(uint8_t mutexID,uint8_t pid){
+  int80(27,(uint64_t)mutexID,(uint64_t)pid,0,0,0);
 }

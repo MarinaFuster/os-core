@@ -95,6 +95,7 @@ void execute(){
     strncpy(command[0],shell_buffer,pipeIndex-2);
     strncpy(command[1], shell_buffer+pipeIndex+2, bufferLength-pipeIndex-2);
   }
+<<<<<<< HEAD
   
   uint8_t pid=0;
   for(int i=0; i<2; i++){
@@ -168,9 +169,18 @@ void execute(){
       else if(strcmp(command[i], TEST_PIPE_G)){
         exec("testpipeG", LOW_PRIORITY, (uint64_t)testPipeG, &pid, redirects);
       }
+      else if(strcmp(command,TEST_MUTEX_Z)){
+        exec("testmutexz",LOW_PRIORITY,(uint64_t)testMutexZ,&pid, redirects);
+      }
       else
         printf(invalidCommandMessage);
     }
     cleanBuffer(command[i]);
+=======
+  else if(strcmp(command, TEST_PIPE_G)){
+    exec("testpipeG", LOW_PRIORITY, (uint64_t)testPipeG, &pid);
+  }else if(strcmp(command,TEST_MUTEX_Z)){
+    exec("testmutexz",LOW_PRIORITY,(uint64_t)testMutexZ,&pid);
+>>>>>>> 5b642d798c5c00f8c10cfcd897c98c656c733398
   }
 }

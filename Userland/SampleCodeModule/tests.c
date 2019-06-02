@@ -68,8 +68,11 @@ void testProcessB(){
 }
 
 void testMutexC(){
+    uint8_t pid=0;
+    getPID("testmutexc",&pid);
     uint8_t mutex=0;
-    initMutex(&mutex);
+    initMutex(&mutex,pid);
+    printf("%d\n",mutex);
     uint64_t shm=shmCreate(2);
     int * number=(int *)shm;
     *number=0;
@@ -78,25 +81,53 @@ void testMutexC(){
         while(j<5000000)
             j++;
         
-        mutexLock(mutex,2); // mutexID -- callingPID
+        mutexLock(mutex,pid); // mutexID -- callingPID
+        printf("C");
         (*number)++;
-        mutexUnlock(mutex,3); // mutexID --otherPID
+        mutexUnlock(mutex); // mutexID 
     }
     printf("Done with test mutex C!\n");
 }
 
+void testMutexZ(){
+    uint8_t pid=0;
+    getPID("testmutexz",&pid);
+    uint8_t mutex=0;
+    initMutex(&mutex,pid);
+    printf("%d\n",mutex);
+    uint64_t shm=shmCreate(2);
+    int * number=(int *)shm;
+    *number=0;
+    for(int i=0;i<1000;i++){
+        int j=0;
+        while(j<5000000)
+            j++;
+        
+        mutexLock(mutex,pid); // mutexID -- callingPID
+        printf("Z");
+        (*number)++;
+        mutexUnlock(mutex); // mutexID 
+    }
+    printf("Done with test mutex Z!\n");
+}
+
 void testMutexD(){
+    uint8_t pid=0;
+    getPID("testmutexd",&pid);
     uint64_t shm=shmOpen(2);
     int * number=(int *)shm;
+    //connect to mutex (mutedID = 0)
+    connectMutex(1, pid);
     for(int i=0;i<1000;i++){
         int j=0;
         while(j<5000000)
             j++;
 
         // MutexID==1 just testing with one mutex    
-        mutexLock(0,3); // mutexID -- callingPID
+        mutexLock(1,pid); // mutexID -- callingPID
         (*number)++;
-        mutexUnlock(0,2); // mutexID -- otherPID
+        printf("D");
+        mutexUnlock(1); // mutexID 
     }
     printf("Done with test mutex D!\n");
 
