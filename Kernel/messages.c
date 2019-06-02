@@ -28,7 +28,7 @@ typedef struct pipeNode{
     uint8_t fileDESC[2]; // Automatic assignment done by the OS
     uint8_t id;         // Number that the programmer sets to identify it (0 is reserved for the os)
     uint64_t address; // Of the actual shared memory
-    uint16_t cursor; 
+    uint64_t cursor; 
     struct pipeNode * next;
 }pipeNode;
 
@@ -45,14 +45,7 @@ pipeNode * newPipe(uint8_t id, uint8_t readFD, uint8_t writeFD, uint64_t address
     newNode->address=address;
     newNode->cursor=0;
     newNode->next=0;
-    ncPrint("PIPE CON ID: ");
-    ncPrintDec(newNode->id);
-    ncNewline();
-    ncPrint("cree el pipe con read ");
-    ncPrintDec(newNode->fileDESC[READ]);
-    ncPrint(" y con writefd ");
-    ncPrintDec(newNode->fileDESC[WRITE]);
-    ncNewline();
+
     return newNode;
 }
 
@@ -124,10 +117,11 @@ void pipeClose(uint8_t id){
 
 void writeIntoPipe(uint8_t filed, char * message,uint8_t otherPID, uint64_t size){
 
+    uint8_t runningPID, stdout;
     if(filed==STDOUT){
         _cli();
-        uint8_t runningPID=getRunningPID();
-        uint8_t stdout=getProcessSTDOUT(runningPID);
+        runningPID=getRunningPID();
+        stdout=getProcessSTDOUT(runningPID);
         _sti();
 
         if(stdout==STDOUT){
@@ -146,22 +140,21 @@ void writeIntoPipe(uint8_t filed, char * message,uint8_t otherPID, uint64_t size
         }
         filed=stdout;
     }
-  
+
     pipeNode * current=first;
     while(current!=0 && current->fileDESC[WRITE]!=filed)
-        current=current->next;
+        current=current->next;  // Finds the correct pipe 
 
     if(current==0)
         return;
 
-    char * cursor=(char *)(current->address+current->cursor);
-
+    char * cursor=((char *)current->address)+(current->cursor);
     for(int i=0; i<size; i++){
         cursor[i]=message[i];
     }
-    current->cursor=(current->cursor)+size;
+    current->cursor=(uint64_t)size+(current->cursor);
+
     unblockedState(otherPID); // Unblocks the process that is waiting for reading
-    
 }
 
 // You can read up to 10 lines
@@ -201,5 +194,6 @@ void readFromPipe(uint8_t filed, char * buffer, uint8_t callingPID, uint64_t siz
         buffer[i]=cursor[i];
         cursor[i]=0; // Empty
     }
+
     current->cursor=0;
 }
