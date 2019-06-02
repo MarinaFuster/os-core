@@ -7,6 +7,7 @@
 #include "processController.h"
 
 #define MAX_FILE_DESCRIPTOR 21 // 0 and 1 are reserved for standard IO
+#define FILE_DESCRIPTOR_QTY 20
 #define MESSAGE_LENGTH 15 // Small size so it is easy to test
 #define READ 0
 #define WRITE 1
@@ -17,6 +18,8 @@
 
 #define STDIN 0 
 #define STDOUT 1
+
+#define OCCUPIED 1
 
 extern void _cli();
 extern void _sti();
@@ -31,6 +34,9 @@ typedef struct pipeNode{
 
 static pipeNode * first=0;
 
+// index 0==filed 2, and index 20==filed 21
+static int filedescriptors[20]={0}; // 0 if occupied, 1 if not
+
 pipeNode * newPipe(uint8_t id, uint8_t readFD, uint8_t writeFD, uint64_t address){
     pipeNode * newNode=(pipeNode *)allocate(sizeof(*newNode));
     newNode->id=id;
@@ -39,6 +45,14 @@ pipeNode * newPipe(uint8_t id, uint8_t readFD, uint8_t writeFD, uint64_t address
     newNode->address=address;
     newNode->cursor=0;
     newNode->next=0;
+    ncPrint("PIPE CON ID: ");
+    ncPrintDec(newNode->id);
+    ncNewline();
+    ncPrint("cree el pipe con read ");
+    ncPrintDec(newNode->fileDESC[READ]);
+    ncPrint(" y con writefd ");
+    ncPrintDec(newNode->fileDESC[WRITE]);
+    ncNewline();
     return newNode;
 }
 
@@ -51,6 +65,8 @@ pipeNode * deletePipeRec(uint8_t id, pipeNode * current){
     if(current==0)
         return current;
     if(current->id==id){
+        filedescriptors[current->fileDESC[READ]-2]=!OCCUPIED; // -2 because index 0 == filed 2
+        filedescriptors[current->fileDESC[WRITE]-2]=!OCCUPIED;
         pipeNode * aux=current->next;
         free((uint64_t)current->address);
         free((uint64_t)current);
@@ -71,17 +87,11 @@ pipeNode * pipeOpen(uint8_t id){
 }
 
 int getMinimumFileDescriptor(){
-    pipeNode * current=first;
-    int keepGoing=1;
-    for(int i=2; i<MAX_FILE_DESCRIPTOR; i++){
-        while(current!=0 && keepGoing){
-            if(current->fileDESC[READ]==i || current->fileDESC[WRITE]==i){
-                current=first;
-                keepGoing=0;
-            }
+    for(int i=0;i<FILE_DESCRIPTOR_QTY;i++){
+        if(filedescriptors[i]!=OCCUPIED){
+            filedescriptors[i]=OCCUPIED;
+            return i+2;
         }
-        if(keepGoing==1)
-            return i;
     }
     return -1; // No more pipes allowed
 }

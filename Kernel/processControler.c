@@ -46,6 +46,10 @@ void psProcesses(){
   while(current!=0){
     ncPrintDec(current->pid);
     ncPrint("     ");
+    ncPrintDec(current->standardIO[STDIN]);
+    ncPrint("     ");
+    ncPrintDec(current->standardIO[STDOUT]);
+    ncPrint("     ");
     uint8_t state=getState(current->pid);
     if(state==ACTIVE)
       ncPrint("Active        ");
@@ -65,6 +69,8 @@ void psProcesses(){
 void ps(){
   ncNewline();
   ncPrint("PID   ");
+  ncPrint("STDIN   ");
+  ncPrint("STDOUT  ");
   ncPrint("State");
   ncPrint("      Description");
   ncNewline();
