@@ -208,13 +208,25 @@ int isBlocked(uint8_t pid){
   return ACTIVE;
 }
 
-uint8_t getState(uint8_t pid){
-  uint8_t state=3;
+// TC stands for Task Context
+dequeueNode * getProcessTC(uint8_t pid){
   dequeueNode * current=priorityQueue->first;
   while(current!=0){
     if(current->pid==pid)
-      return current->state;
+      return current;
     current=current->next;
   }
-  return state;
+  return 0;
+}
+
+uint8_t getState(uint8_t pid){
+  uint8_t state=3;
+  dequeueNode * process=getProcessTC(pid); // TC stands for Task Context 
+  if(process==0)
+    return state;
+  return process->state;
+}
+
+uint8_t getRunningPID(){
+  return priorityQueue->first->pid;
 }

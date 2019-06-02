@@ -40,12 +40,12 @@ int strcmp(const char * str1, const char * str2){
 
 char getChar(){
   char buf[1];
-  int80(3,1,(uint64_t)buf,1,0,0);
+  read(0,buf,1,0);
   return (char)*buf;
 }
 
 void putChar(char c){
-  int80(4,1,(uint64_t)&c,1,0,0);
+  write(1,&c,1,0);
   return;
 }
 
@@ -126,8 +126,8 @@ void free(void * pointer){
   int80(11,(uint64_t)pointer,0,0,0,0);
 }
 
-void exec(char * description, int priority, uint64_t functionPointer, uint8_t * pid){
-  int80(12,(uint64_t)description,(uint64_t)priority,functionPointer,0,0);
+void exec(char * description, int priority, uint64_t functionPointer, uint8_t * pid, uint8_t redirects){
+  int80(12,(uint64_t)description,(uint64_t)priority,functionPointer,(uint64_t)pid,(uint64_t)redirects);
 }
 
 uint64_t shmCreate(uint8_t id){

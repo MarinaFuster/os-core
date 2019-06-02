@@ -3,19 +3,51 @@
 #include <naiveConsole.h>
 #include "memoryManager.h"
 #include "scheduler.h"
+#include "inputBuffer.h"
+#include "processController.h"
 
-#define MAX_FILE_DESCRIPTOR 10
+#define MAX_FILE_DESCRIPTOR 21 // 0 and 1 are reserved for standard IO
+#define FILE_DESCRIPTOR_QTY 20
 #define MESSAGE_LENGTH 15 // Small size so it is easy to test
+#define READ 0
+#define WRITE 1
+
+#define TAB '\t'
+#define ENTER '\n'
+#define DELETE '\b'
+
+#define STDIN 0 
+#define STDOUT 1
+
+#define OCCUPIED 1
+
+extern void _cli();
+extern void _sti();
 
 typedef struct pipeNode{
-    uint8_t filed;      // Automatic file descriptor assignment (done by the os)
-    uint8_t id;         // Number that the programmer sets to identify it
+    uint8_t fileDESC[2]; // Automatic assignment done by the OS
+    uint8_t id;         // Number that the programmer sets to identify it (0 is reserved for the os)
     uint64_t address; // Of the actual shared memory
-    uint8_t line; 
+    uint64_t cursor; 
     struct pipeNode * next;
 }pipeNode;
 
 static pipeNode * first=0;
+
+// index 0==filed 2, and index 20==filed 21
+static int filedescriptors[20]={0}; // 0 if occupied, 1 if not
+
+pipeNode * newPipe(uint8_t id, uint8_t readFD, uint8_t writeFD, uint64_t address){
+    pipeNode * newNode=(pipeNode *)allocate(sizeof(*newNode));
+    newNode->id=id;
+    newNode->fileDESC[READ]=readFD;
+    newNode->fileDESC[WRITE]=writeFD;
+    newNode->address=address;
+    newNode->cursor=0;
+    newNode->next=0;
+
+    return newNode;
+}
 
 void addPipe(pipeNode * newNode){ // Always adds at the beginning
     newNode->next=first;
@@ -26,6 +58,8 @@ pipeNode * deletePipeRec(uint8_t id, pipeNode * current){
     if(current==0)
         return current;
     if(current->id==id){
+        filedescriptors[current->fileDESC[READ]-2]=!OCCUPIED; // -2 because index 0 == filed 2
+        filedescriptors[current->fileDESC[WRITE]-2]=!OCCUPIED;
         pipeNode * aux=current->next;
         free((uint64_t)current->address);
         free((uint64_t)current);
@@ -46,93 +80,120 @@ pipeNode * pipeOpen(uint8_t id){
 }
 
 int getMinimumFileDescriptor(){
-    pipeNode * current=first;
-    int keepGoing=1;
-    for(int i=2; i<MAX_FILE_DESCRIPTOR; i++){
-        while(current!=0 && keepGoing){
-            if(current->filed==i){
-                current=first;
-                keepGoing=0;
-            }
+    for(int i=0;i<FILE_DESCRIPTOR_QTY;i++){
+        if(filedescriptors[i]!=OCCUPIED){
+            filedescriptors[i]=OCCUPIED;
+            return i+2;
         }
-        if(keepGoing==1)
-            return i;
     }
     return -1; // No more pipes allowed
 }
 
 
 // Shared memory blocks are fixed size
-uint8_t pipeCreate(uint8_t id){
+uint8_t * pipeCreate(uint8_t id){
 
     pipeNode * pipe=pipeOpen(id);
     if(pipe)
-        return pipe->filed;
+        return pipe->fileDESC;
 
-    uint8_t filed=getMinimumFileDescriptor();
-    if(filed==-1)
-        return filed;
+    uint8_t readFD=getMinimumFileDescriptor();
+    uint8_t writeFD=getMinimumFileDescriptor();
+    if(readFD==-1 || writeFD==-1)
+        return 0; // There are not enough file descriptors for a new pipe
     
-    uint64_t address=allocate(4096); // One page for a pipe
-    pipeNode * newNode=(pipeNode *)allocate(sizeof(*newNode));
-    newNode->id=id;
-    newNode->filed=filed;
-    newNode->address=address;
-    newNode->next=0;
-    newNode->line=0;
+    uint64_t address=allocate(2*PAGE_SIZE); // One page for a pipe
+
+    pipeNode * newNode=newPipe(id,readFD, writeFD, address);
     addPipe(newNode);
 
-    /* TESTING
-    ncNewline(); 
-    ncPrintHex(first);
-    ncNewline(); */
-
-    return newNode->filed;
+    return newNode->fileDESC;
 
 }
 
 void pipeClose(uint8_t id){
     first=deletePipeRec(id,first);
-
-    /* TESTING
-    ncNewline();
-    ncPrintHex(first);
-    ncNewline(); */
 }
 
-void writeIntoPipe(uint8_t filed, char message[MESSAGE_LENGTH],uint8_t otherPID){
-  
-    pipeNode * current=first;
-    while(current->filed!=filed)
-        current=current->next;
-    char * cursor=((char *)current->address+(MESSAGE_LENGTH*(current->line)));
+void writeIntoPipe(uint8_t filed, char * message,uint8_t otherPID, uint64_t size){
 
-    for(int i=0; i<MESSAGE_LENGTH; i++){
+    uint8_t runningPID, stdout;
+    if(filed==STDOUT){
+        _cli();
+        runningPID=getRunningPID();
+        stdout=getProcessSTDOUT(runningPID);
+        _sti();
+
+        if(stdout==STDOUT){
+            for(int i=0;i<size;i++){
+                char c=((char *)message)[i];
+                if(c==ENTER)
+                ncNewline();
+                else if(c==TAB)
+                ncTab();
+                else if(c==DELETE)
+                ncDelete();
+                else
+                ncPrintChar(c);
+            }
+            return;
+        }
+        filed=stdout;
+    }
+
+    pipeNode * current=first;
+    while(current!=0 && current->fileDESC[WRITE]!=filed)
+        current=current->next;  // Finds the correct pipe 
+
+    if(current==0)
+        return;
+
+    char * cursor=((char *)current->address)+(current->cursor);
+    for(int i=0; i<size; i++){
         cursor[i]=message[i];
     }
-    current->line++;
+    current->cursor=(uint64_t)size+(current->cursor);
+
     unblockedState(otherPID); // Unblocks the process that is waiting for reading
-    
 }
 
 // You can read up to 10 lines
-void readFromPipe(uint8_t filed, char buffer[MESSAGE_LENGTH*10], uint8_t callingPID){
+void readFromPipe(uint8_t filed, char * buffer, uint8_t callingPID, uint64_t size){
+
+    if(filed==STDIN){
+        _cli();
+        uint8_t runningPID=getRunningPID();
+        uint8_t stdin=getProcessSTDIN(runningPID);
+        _sti();
+
+        if(stdin==STDIN){
+            readFromInputBuffer(size,(char *)buffer);
+            return;
+        }
+        filed=stdin;            
+    }
     
     pipeNode * current=first;
-    while(current->filed!=filed)
+    while(current!=0 && current->fileDESC[READ]!=filed)
         current=current->next;
-    char * cursor=(char *)(current->address);
-    
-    if(current->line==0){ // There is nothing to read from the pipe
+
+    if(current==0)
+        return;
+
+
+    if(current->cursor==0){ // There is nothing to read from the pipe
         blockedState(callingPID); // It blocks itself waiting for other process to write something
         while(isBlocked((callingPID))){ //This is meant to wait untile the timer tick interruption
             ;
         }
     }
 
-    for(int i=0; i<MESSAGE_LENGTH*(current->line);i++){
+    char * cursor=(char *)current->address;
+
+    for(int i=0; i<(current->cursor);i++){
         buffer[i]=cursor[i];
         cursor[i]=0; // Empty
     }
-    current->line=0;
+
+    current->cursor=0;
 }

@@ -30,43 +30,20 @@ static syscall syscalls[SYSCALLSQTY];
  * GENERAL
 ***********************************************************************/
 
-//No puedo deshabilitar las interrupciones realmente con lo cual, unicamente va a cerrar el shell,
-//pero sigue sinedo posible escribir con el teclado
+//We cannot actually CLOSE the shell, just clears the screen to simulate that
 uint64_t sys_exit(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
   ncClear();
   return 0;
 }
 
 uint64_t sys_read(uint64_t file, uint64_t buffer, uint64_t size, uint64_t callingPID, uint64_t r9) {
-
-    if(file>=2)
-      readFromPipe((uint8_t)file,(char *)buffer, (uint8_t)callingPID); // It is going to read up to 150 characters
-    else
-      readFromInputBuffer(size,(char *)buffer); // Arqui TP code
-
-    return 0;
+  readFromPipe((uint8_t)file,(char *)buffer, (uint8_t)callingPID, size); // It is going to read up to 150 characters
+  return 0;
 }
 
 uint64_t sys_write(uint64_t file, uint64_t buffer, uint64_t size, uint64_t otherPID, uint64_t r9){
-    
-    if(file>=2)
-      writeIntoPipe((uint8_t)file,(char *)buffer,(uint8_t)otherPID); // Fixed size in case is a pipe
-    
-    // Arqui TP code
-    if(file==1){
-          for(int i=0;i<size;i++){
-            char c=((char *)buffer)[i];
-            if(c==ENTER)
-              ncNewline();
-            else if(c==TAB)
-              ncTab();
-            else if(c==DELETE)
-              ncDelete();
-            else
-              ncPrintChar(c);
-          }
-    }
-    return 0;
+  writeIntoPipe((uint8_t)file,(char *)buffer,(uint8_t)otherPID, size); // Fixed size in case is a pipe
+  return 0;
 }
 
 uint64_t sys_clear(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
@@ -169,13 +146,24 @@ uint64_t sys_shm_close(uint64_t id, uint64_t rdx, uint64_t rcx, uint64_t r8, uin
  * PROCESS MANAGEMENT
 ***********************************************************************/
 
-/* arguments:
-   char * description on rsi
-   int priority on rdx
-   uint64_t function pointer on rcx
+/* Arguments:
+   rsi: description of the process (char *)
+   rdx: priority of the process (int)
+   rcx: function pointer 
+   r8: where the pid is stored (uint8_t *)
+   r9: indicates if the stdin/stdout must be redirected
+
 */
 uint64_t sys_exec(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  (*(uint64_t *)r8)=(uint64_t)createProcessWithPriority((char *)rsi, (int)rdx, rcx);
+  uint8_t newFileDescriptor=0;
+  if(r9!=2){
+    _cli();
+    uint8_t * fileDescriptors=pipeCreate(0); // If it is already created, it will just open it
+    newFileDescriptor=*(fileDescriptors+r9);
+    _sti();
+  }
+  
+  (*(uint64_t *)r8)=(uint64_t)createProcessWithPriority((char *)rsi, (int)rdx, rcx, r9, newFileDescriptor);
   return 0;
 }
 
@@ -227,10 +215,11 @@ uint64_t sys_mutex_unlock(uint64_t mutexID, uint64_t otherPID, uint64_t rcx, uin
 
 uint64_t sys_pipe_create(uint64_t id, uint64_t filed, uint64_t rcx, uint64_t r8, uint64_t r9){
   uint8_t * descriptor=(uint8_t *)filed;
-  *descriptor=pipeCreate(id);
-  if( (*descriptor) == -1)
+  uint8_t * result=pipeCreate(id);
+  if( result == 0)
     ncPrint("No more pipes allowed");
-
+  descriptor[0]=result[0];
+  descriptor[1]=result[1];
   return 0;
 }
 
