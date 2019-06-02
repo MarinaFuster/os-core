@@ -18,67 +18,6 @@ void testMemory(){
         printf("Test 2... OK\n");
     else 
         printf("Test failed: pointer assigned to 0 size memory block\n");
-
-    /*void * almost_all_memory_block=malloc(0x5F00000);
-    if(almost_all_memory_block!=(void*)0x0)
-        printf("Test 3... OK\n");
-    else
-        printf("Test failed: should be able to fit into the memory block\n");
-    void * exceeds_memory_block=malloc(0x610000);
-    if(exceeds_memory_block==0)
-        printf("Test 4... OK\n");
-    else
-        printf("Test failed: there is no enough space. Memory block should not be assigned!\n");
-    free(almost_all_memory_block);
-
-    void * first_block=malloc(0x2000);
-    void * reference_address=first_block;
-
-    if(first_block!=(void*)0x0)
-        printf("Test 5... OK\n");
-    else
-        printf("Test failed: first block should fit into the memory block\n");
-    void * second_block=malloc(0x2000);
-    if(second_block==(void*)(reference_address+0x2000))
-        printf("Test 6... OK\n");
-    else
-        printf("Wrong pointer assignment for second block\n");
-    void * third_block=malloc(0x2000);
-    if(third_block==(void*)(reference_address+0x4000))
-        printf("Test 7... OK\n");
-    else
-        printf("Wrong pointer assignment for third block\n");
-    void * fourth_block=malloc(0x2000);
-    if(fourth_block==(void*)(reference_address+0x6000))
-        printf("Test 8... OK\n");
-    else
-        printf("Wrong pointer assignment for fourth block\n");
-    
-    free(second_block);
-    void * meant_to_be_after_fourth_block=malloc(0x27FF);
-    if(meant_to_be_after_fourth_block==(void *)(reference_address+0x8000))
-        printf("Test 9... OK\n");
-    else
-        printf("Wrong pointer assignment for block meant to be after fourth block\n");
-    void * meant_to_be_after_first_block=malloc(0x1000);
-    if(meant_to_be_after_first_block==(void *)(reference_address+0x2000))
-        printf("Test 10... OK\n");
-    else
-        printf("Wrong pointer assignment for block meant to be after first block\n");
-    
-    free(third_block);
-    void * meant_to_be_perfect_fit=malloc(0x1000);
-    if(meant_to_be_perfect_fit==(void *)(reference_address+0x3000))
-        printf("Test 11... OK\n");
-    else
-        printf("Wrong pointer assignment for block meant to be perfect fit\n");
-
-    free(first_block);
-    free(meant_to_be_after_first_block);
-    free(meant_to_be_perfect_fit);
-    free(fourth_block);
-    free(meant_to_be_after_fourth_block);*/   
-
 }
 
 void testSharedMemory(){

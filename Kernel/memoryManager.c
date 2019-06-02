@@ -147,12 +147,32 @@ void printAllBlocks(){
 }
 
 // Merge buddies because they are both available
-void mergeBuddies(int firstBuddy, int secondBuddy, int blocks){
-    uint8_t newOrder=buddyBlock[firstBuddy].order+1;
+void mergeBuddies(int leftBuddy, int rightBuddy, int blocks){
+    uint8_t newOrder=buddyBlock[leftBuddy].order+1;
     for(int i=0;i<blocks;i++){
-        buddyBlock[firstBuddy+i].order=newOrder;
-        buddyBlock[secondBuddy+i].order=newOrder;
+        buddyBlock[leftBuddy+i].order=newOrder;
+        buddyBlock[rightBuddy+i].order=newOrder;
     }
+    if(buddyBlock[leftBuddy].order==MAX_ORDER) // Memory fully merged 
+        return;
+    
+    int newBlocksQty=power(2,newOrder); // I need to check if I can keep merging buddies...
+    int buddy;
+
+    // Reusing left and right buddies variables
+    if((leftBuddy/newBlocksQty)%2==0){
+        buddy=leftBuddy+newBlocksQty;
+        rightBuddy=buddy;
+    }
+    else{
+        rightBuddy=leftBuddy;    
+        leftBuddy=leftBuddy-newBlocksQty;
+        buddy=leftBuddy;
+    }
+
+    // Merges buddies recursively...
+    if(buddyBlock[buddy].order==newOrder && buddyBlock[buddy].occupied==FALSE)
+        mergeBuddies(leftBuddy, rightBuddy, newBlocksQty);
 }
 
 // Tested but it should be tested further than this
@@ -169,14 +189,20 @@ uint64_t buddyFree(void * address){
     for(int i=0; i<blocks; i++)
         buddyBlock[index+i].occupied=FALSE;
     
-    int buddyIndex;
+    int buddy, rightBuddy, leftBuddy;
     // If (idx/pow(2,order))%2==0 my buddy is the one to my right, else, my buddy is the one to my left
-    if((index/blocks)%2==0)
-        buddyIndex=index+blocks;
-    else
-        buddyIndex=index-blocks;
-    if(buddyBlock[buddyIndex].occupied==FALSE)
-        mergeBuddies(buddyIndex, index, blocks);
+    if((index/blocks)%2==0){
+        buddy=rightBuddy=index+blocks;
+        leftBuddy=index;
+    }
+    else{
+        buddy=leftBuddy=index-blocks;
+        rightBuddy=index;
+    }
+
+    // If my buddy is ready to merge...
+    if(buddyBlock[buddy].occupied==FALSE && buddyBlock[buddy].order==buddyBlock[index].order)
+        mergeBuddies(leftBuddy, rightBuddy, blocks);
 
     return 0;
 }
