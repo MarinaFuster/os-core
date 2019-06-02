@@ -45,18 +45,20 @@ void psProcesses(){
   processListNode * current=(processRegister->first);
   while(current!=0){
     ncPrintDec(current->pid);
-    ncPrint("     ");
+    ncPrint("       ");
     ncPrintDec(current->standardIO[STDIN]);
-    ncPrint("     ");
+    ncPrint("         ");
     ncPrintDec(current->standardIO[STDOUT]);
-    ncPrint("     ");
+    ncPrint("          ");
+    ncPrintDec(current->priority);
+    ncPrint("      ");
     uint8_t state=getState(current->pid);
     if(state==ACTIVE)
-      ncPrint("Active        ");
+      ncPrint("Active    ");
     else if(state==READY)
-      ncPrint("Ready         ");
+      ncPrint("Ready     ");
     else if(state==BLOCK)
-      ncPrint("Blocked       ");
+      ncPrint("Blocked   ");
     else
       ncPrint("Unknown state ");
     ncPrint("");
@@ -71,10 +73,11 @@ void ps(){
   ncPrint("PID   ");
   ncPrint("STDIN   ");
   ncPrint("STDOUT  ");
-  ncPrint("State");
-  ncPrint("      Description");
+  ncPrint("   Priority");
+  ncPrint("   State");
+  ncPrint("     Description");
   ncNewline();
-  ncPrint("-----------------------------");
+  ncPrint("----------------------------------------------------------");
   ncNewline();
 
   psProcesses();
