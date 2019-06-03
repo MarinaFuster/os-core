@@ -70,7 +70,11 @@ void removeFromMutex(uint8_t mutexID, uint8_t pid){
     ncPrintDec(current->next->pid);
     ncNewline();
 
-
+    ncPrint("-----------------------");
+    ncNewline();
+    ncPrint("Luego de remover el proceso...");
+    ncNewline();
+    ncPrint("-----------------------");
     (current->prev)->next=current->next;
     (current->next)->prev=current->prev;
     ncNewline();
