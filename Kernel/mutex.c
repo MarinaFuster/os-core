@@ -129,6 +129,19 @@ uint8_t connectToMutex(uint8_t mutexID, uint8_t callingPid){
     return 0; //Mutex does not exist
   }
   //Agrego el pid al final
+
+  if((mutex->listOfPids)==NULL){
+    //Tengo uno solo
+    pids * newPidNode = (pids *)allocate(sizeof(pids*));
+    newPidNode->pid=callingPid;
+    newPidNode->state=THINKING;
+    //add the pid node to the first position of the list of nodes
+    newPidNode->prev=NULL;
+    newPidNode->next=NULL;
+    (mutex->listOfPids)=newPidNode;
+    return 1;
+  }
+
   if((mutex->listOfPids)->next==NULL){
     //Tengo uno solo
     pids * newPidNode = (pids *)allocate(sizeof(pids*));
