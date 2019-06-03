@@ -5,6 +5,7 @@
 #include <naiveConsole.h>
 #include "idtLoader.h"
 #include "scheduler.h"
+#include "memoryManager.h"
 #include "processController.h"
 
 extern void delay();
@@ -65,7 +66,7 @@ int main(){
 
 	// 2 indicates to not redirect any standard IO
 	createProcessWithPriority("init", LOW_PRIORITY, (uint64_t)sampleCodeModuleAddress, 2, 0);
-	
+
 	//((EntryPoint)sampleCodeModuleAddress)();
 	while(1){
 		_hlt();
