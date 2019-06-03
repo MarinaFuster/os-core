@@ -78,6 +78,17 @@ void testProcessB(){
     }
 }
 
+void testReadFromA(){
+    char buffer[1];
+    for(int i=0;i<1000;i++){
+        int j=0;
+        while(j<500000)
+            j++;
+        *buffer=getChar(); // From standard input
+        printf(buffer);
+    }
+}
+
 void testMutexC(){
     uint8_t pid=0;
     getPID("testmutexc",&pid);

@@ -147,6 +147,9 @@ void execute(){
       else if(strcmp(command[i], TEST_PROCESS_B)){
         exec("testprcoessb", LOW_PRIORITY, (uint64_t)testProcessB, &pid, redirects);
       }
+      else if(strcmp(command[i], TEST_PROCESS_READ_A)){
+        exec("testprcoessreada", LOW_PRIORITY, (uint64_t)testReadFromA, &pid, redirects);
+      }
       else if(strcmp(command[i], TEST_MUTEX_C)){
         exec("testmutexc", LOW_PRIORITY, (uint64_t)testMutexC, &pid, redirects);
       }

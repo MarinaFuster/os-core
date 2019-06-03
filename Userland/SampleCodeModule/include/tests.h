@@ -4,6 +4,7 @@
 #define TEST_MEMORY "testmemory"
 #define TEST_PROCESS_A "a"
 #define TEST_PROCESS_B "b"
+#define TEST_PROCESS_READ_A "reada"
 #define TEST_MUTEX_C "c"
 #define TEST_MUTEX_D "d"
 #define TEST_MUTEX_Z "z"
@@ -21,6 +22,7 @@
 void testMemory();
 void testProcessA();
 void testProcessB();
+void testReadFromA();
 void testMutexC();
 void testMutexD();
 void testMutexZ();
