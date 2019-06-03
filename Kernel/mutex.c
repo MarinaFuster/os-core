@@ -46,19 +46,41 @@ void removeFromMutex(uint8_t mutexID, uint8_t pid){
   while((current->pid)!=pid){   // ARREGLAR SI NO ENCUENTRA PID
     current=current->next;
   }
-  if( ((current->next)->pid)==(current->pid) ){
-    mutex->listOfPids=NULL;
+  if( ((current->next)->pid)==(current->pid) ){ // Hay uno solo
+    mutex->listOfPids=0;
+
     return;
   }
-  else{
+  else{   // Hay mas de uno
+
+    ncPrint("El PID a remover es: ");
+    ncPrintDec(pid);
+    ncNewline();
+    ncPrint("Cuyo valor izquierdo es ");
+    ncPrintDec(current->prev->pid);
+    ncPrint(" y el valor derecho es ");
+    ncPrintDec(current->next->pid);
+    ncNewline();
+
+
     (current->prev)->next=current->next;
     (current->next)->prev=current->prev;
+    ncPrint("ENTRO CON MAS DE UN VALOR ");
+    ncNewline();
+    ncPrint("El valor izquierdo del pid: ");
+    ncPrintDec((current->next)->pid);
+    ncPrint(" es ");
+    ncPrintDec(((current->next)->next)->pid);
+    ncNewline();
+    ncPrint("El valor derecho es ");
+    ncPrintDec(((current->next)->prev)->pid);
+    ncNewline();
     ////////// LIBERAR MEMORIA!!!! ///////////
   }
 
-  if(((mutex->listOfPids)->pid)==pid){
-    mutex->listOfPids=current->next;
-  }
+  //if(((mutex->listOfPids)->pid)==pid){
+  //  mutex->listOfPids=current->next;
+  //}
 }
 
 uint8_t mutexLock(uint8_t mutexID, uint8_t callingPID){
@@ -151,7 +173,7 @@ uint8_t connectToMutex(uint8_t mutexID, uint8_t callingPid){
     return 1;
   }
 
-  if((mutex->listOfPids)->next==NULL){
+  if( (mutex->listOfPids->pid)==((mutex->listOfPids)->next)->pid){
     //Tengo uno solo
     pids * newPidNode = (pids *)allocate(sizeof(pids*));
     newPidNode->pid=callingPid;
@@ -198,8 +220,15 @@ uint8_t checkPhi(uint8_t mutexID, uint8_t pid){
 uint8_t changePhiState(uint8_t mutexID,uint8_t pid, uint8_t state){
   mutexNode * mutex=getMutex(mutexID);
   pids* current=(mutex->listOfPids);
-  while((current->pid)!=pid){
+
+  pids* first=mutex->listOfPids;
+
+  while(((current->pid)!=pid)&&(current->pid!=first->pid)){
     current=current->next;
+  }
+
+  if((current->pid==first->pid)&&(current->pid!=pid)){
+    return 1;
   }
 
   if(current->state==EATING){

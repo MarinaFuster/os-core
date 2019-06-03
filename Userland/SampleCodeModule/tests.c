@@ -271,5 +271,4 @@ void circleTest(){
 
 void rphi(){
   mutexRemove(1,4);
-  pidCounter++;
 }
