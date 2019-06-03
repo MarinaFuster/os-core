@@ -24,4 +24,7 @@ int isBlocked(uint8_t pid);
 uint8_t getState(uint8_t pid);
 uint8_t getRunningPID();
 
+void upgradePriorityFromScheduler(uint64_t pid);
+void downgradePriorityFromScheduler(uint64_t pid,int oldPriority);
+
 #endif

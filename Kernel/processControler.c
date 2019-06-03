@@ -150,7 +150,7 @@ createProcessWithPriority(char * description, int priority,  uint64_t functionPo
   uint64_t memoryBlock=(uint64_t)allocate(sizeof(PAGE_SIZE)); // PAGE_SIZE equals to stack size (our decision)
   uint8_t pid=processID++;
   uint8_t stdin=0, stdout=1;
-  
+
   if(filedToRedirect==STDIN)
       stdin=newFiled;
   else if(filedToRedirect==STDOUT)
@@ -161,9 +161,9 @@ createProcessWithPriority(char * description, int priority,  uint64_t functionPo
   addToRegister(newProcess);
   uint64_t rsp=buildStack(memoryBlock+PAGE_SIZE, (uint64_t)wrapperFunction, (uint64_t)functionPointer, (uint64_t)newProcess->pid, (uint64_t)priority);
   addProcessToScheduler(priority, newProcess->pid, rsp);
-  
+
   empty=0;
-  
+
   return newProcess->pid;
 }
 
@@ -235,4 +235,19 @@ void setProcessSTDIN(uint8_t pid, uint8_t stdin_filed){
 void setProcessSTDOUT(uint8_t pid, uint8_t stdout_filed){
   processListNode * process=getProcess(pid);
   process->standardIO[STDOUT]=stdout_filed;
+}
+
+void upgradePriority(uint8_t pid){
+  processListNode * node = getProcess((uint8_t)pid);
+  if((node->priority)==0)
+    return;
+  upgradePriorityFromScheduler(pid);
+  (node->priority)--;
+}
+void downgradePriority(uint8_t pid){
+  processListNode * node = getProcess((uint8_t)pid);
+  if((node->priority)==2)
+    return;
+  downgradePriorityFromScheduler(pid,node->priority);
+  (node->priority)++;
 }

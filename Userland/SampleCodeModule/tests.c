@@ -86,7 +86,7 @@ void testMutexC(){
             j++;
 
         mutexLock(1,pid); // mutexID -- callingPID
-        printf("C");
+        //printf("C");
         (*number)++;
         mutexUnlock(1); // mutexID
     }
@@ -106,7 +106,7 @@ void testMutexZ(){
             j++;
 
         mutexLock(1,pid); // mutexID -- callingPID
-        printf("Z");
+        //printf("Z");
         (*number)++;
         mutexUnlock(1); // mutexID
     }
@@ -126,7 +126,7 @@ void testMutexD(){
         // MutexID==1 just testing with one mutex
         mutexLock(1,pid); // mutexID -- callingPID
         (*number)++;
-        printf("D");
+        //printf("D");
         mutexUnlock(1); // mutexID
     }
     printf("Done with test mutex D!\n");

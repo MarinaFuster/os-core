@@ -13,11 +13,17 @@ void printf(const char * str, ...);
 void putChar(char c);
 int strcmp(const char * str1, const char * str2);
 int strlen(const char * string);
+int upcmp(const char * string);
+int downcmp(const char * string);
+int numUp(const char * str);
+int numDown(const char * str);
 void strncpy(char * dest, const char * source, int n);
 
 // Process Management
 void exec(char * description, int priority, uint64_t functionPointer, uint8_t * pid, uint8_t filedToRedirect);
 void getPID(char * description, uint8_t * pid);
+void up(uint8_t pid);
+void down(uint8_t pid);
 
 // Memory Management
 void * malloc(uint64_t size);

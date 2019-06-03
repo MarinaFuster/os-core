@@ -18,7 +18,8 @@ uint8_t getProcessSTDIN(uint8_t pid);
 uint8_t getProcessSTDOUT(uint8_t pid);
 void setProcessSTDIN(uint8_t pid, uint8_t stdin_filed);
 void setProcessSTDOUT(uint8_t pid, uint8_t stdout_filed);
-
+void upgradePriority(uint8_t pid);
+void downgradePriority(uint8_t pid);
 void testStackBuilder(uint64_t functionPointer, uint8_t pid, int priority);
 
 #endif

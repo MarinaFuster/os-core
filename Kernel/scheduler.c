@@ -204,7 +204,7 @@ int isBlocked(uint8_t pid){
   }
   if(current!=0)
     return (current->state)==BLOCK;
-  
+
   return ACTIVE;
 }
 
@@ -221,7 +221,7 @@ dequeueNode * getProcessTC(uint8_t pid){
 
 uint8_t getState(uint8_t pid){
   uint8_t state=3;
-  dequeueNode * process=getProcessTC(pid); // TC stands for Task Context 
+  dequeueNode * process=getProcessTC(pid); // TC stands for Task Context
   if(process==0)
     return state;
   return process->state;
@@ -229,4 +229,35 @@ uint8_t getState(uint8_t pid){
 
 uint8_t getRunningPID(){
   return priorityQueue->first->pid;
+}
+
+void upgradePriorityFromScheduler(uint64_t pid){
+  dequeueNode * node = getProcessTC((uint8_t)pid);
+  dequeueNode * newNode=(dequeueNode *)allocate(sizeof(dequeueNode));
+  newNode->pid=node->pid;
+  newNode->state=node->state;
+  newNode->stackPointer=node->stackPointer;
+  newNode->next=0;
+  _cli();
+  addToRoundRobin(newNode);
+  _sti();
+}
+void downgradePriorityFromScheduler(uint64_t pid,int oldPriority){
+  dequeueNode * current = priorityQueue->first;
+  while((current->next)!=NULL){
+    if(((current->next)->pid) == pid){
+      if(oldPriority==2){
+        if(priorityQueue->last == current->next){
+          priorityQueue->last=current;
+          current->next=0;
+        }else{
+          current->next=(current->next)->next;
+        }
+        return;
+      }else{
+        oldPriority++;
+      }
+    }
+    current=current->next;
+  }
 }

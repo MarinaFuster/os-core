@@ -82,7 +82,36 @@ char * intToString(int num, char * str){
   }
   return str;
 }
-
+int upcmp(const char * str){
+  if(strlen(str)<4)
+    return FALSE;
+  if(str[0] == 'u' && str[1] == 'p' && str[2] == ' ')
+    return TRUE;
+  return FALSE;
+}
+int downcmp(const char * str){
+  if(strlen(str)<6)
+    return FALSE;
+  if(str[0] == 'd' && str[1] == 'o' && str[2] == 'w'&& str[3] == 'n'&& str[4] == ' ')
+    return TRUE;
+  return FALSE;
+}
+int numUp(const char * str){
+  int num = str[3] - '0';
+  if(str[4]==0)
+    return num;
+  num*=10;
+  num+=str[4] - '0';
+  return num;
+}
+int numDown(const char * str){
+  int num = str[5] - '0';
+  if(str[6]==0)
+    return num;
+  num*=10;
+  num+=str[6] - '0';
+  return num;
+}
 void printf(const char * str, ...){
   char num[12];
   va_list argsList;
@@ -207,4 +236,10 @@ void mutexRemove(uint64_t mutexID, uint8_t callingPID){
 
 void circleTesting(uint64_t mutexID){
   int80(31, (uint64_t) mutexID, 0, 0,0,0);
+}
+void up(uint8_t pid){
+  int80(32,(uint64_t)pid,0,0,0,0);
+}
+void down(uint8_t pid){
+  int80(33,(uint64_t)pid,0,0,0,0);
 }
