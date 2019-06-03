@@ -176,6 +176,9 @@ void execute(){
       else if (strcmp(command[i], PHI)){
         exec("phi", LOW_PRIORITY, (uint64_t)phi, &pid, redirects);
     }
+    else if(strcmp(command[i], CIRCLE)){
+      exec("circle", LOW_PRIORITY, (uint64_t)circleTest, &pid, redirects);
+    }
       else
         printf(invalidCommandMessage);
     }

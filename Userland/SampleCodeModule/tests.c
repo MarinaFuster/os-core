@@ -84,10 +84,10 @@ void testMutexC(){
         while(j<5000000)
             j++;
 
-        mutexLock(mutex,pid); // mutexID -- callingPID
+        mutexLock(1,pid); // mutexID -- callingPID
         printf("C");
         (*number)++;
-        mutexUnlock(mutex); // mutexID
+        mutexUnlock(1); // mutexID
     }
     printf("Done with test mutex C!\n");
 }
@@ -95,21 +95,19 @@ void testMutexC(){
 void testMutexZ(){
     uint8_t pid=0;
     getPID("testmutexz",&pid);
-    uint8_t mutex=0;
-    initMutex(&mutex,pid);
-    printf("%d\n",mutex);
-    uint64_t shm=shmCreate(2);
+    uint64_t shm=shmOpen(2);
     int * number=(int *)shm;
+    connectMutex(1, pid);
     *number=0;
     for(int i=0;i<1000;i++){
         int j=0;
         while(j<5000000)
             j++;
 
-        mutexLock(mutex,pid); // mutexID -- callingPID
+        mutexLock(1,pid); // mutexID -- callingPID
         printf("Z");
         (*number)++;
-        mutexUnlock(mutex); // mutexID
+        mutexUnlock(1); // mutexID
     }
     printf("Done with test mutex Z!\n");
 }
@@ -119,13 +117,11 @@ void testMutexD(){
     getPID("testmutexd",&pid);
     uint64_t shm=shmOpen(2);
     int * number=(int *)shm;
-    //connect to mutex (mutedID = 0)
     connectMutex(1, pid);
     for(int i=0;i<1000;i++){
         int j=0;
         while(j<5000000)
             j++;
-
         // MutexID==1 just testing with one mutex
         mutexLock(1,pid); // mutexID -- callingPID
         (*number)++;
@@ -133,7 +129,6 @@ void testMutexD(){
         mutexUnlock(1); // mutexID
     }
     printf("Done with test mutex D!\n");
-
     destroyMutex(0); // mutex==1
 }
 
@@ -244,7 +239,7 @@ void testPhi(){
   // Creo el entorno de los filosofos (mutex y mem compartida)
   uint8_t pid=0;
   getPID("testphi",&pid);
-  uint8_t mutex=0;
+  uint8_t mutex=1;
   initMutex(&mutex,pid);
   printf("%d\n",mutex);
   mutexRemove(1, pid);
@@ -262,4 +257,9 @@ void phi(){
         j++;
     putFork(1,pid);
   }
+}
+
+void circleTest(){
+  printf("DEBUG\n");
+   circleTesting(1);
 }

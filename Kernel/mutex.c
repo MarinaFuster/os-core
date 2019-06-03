@@ -64,6 +64,9 @@ uint8_t mutexLock(uint8_t mutexID, uint8_t callingPID){
     //Need some help with this linking it to the list of pids.....
     if(wasLocked){
       blockedState(callingPID);
+      while(isBlocked((callingPID))){
+        ;
+      }
     }
     else{
       unblockedState(callingPID); //unnecesary??!?!?!
@@ -105,8 +108,8 @@ void add(mutexNode * newMutex, uint8_t callingPid){
   newMutex->listOfPids=(pids *)allocate(sizeof(pids*));
   (newMutex->listOfPids)->pid=callingPid;
   (newMutex->listOfPids)->state=THINKING;
-  (newMutex->listOfPids)->next=0;
-  (newMutex->listOfPids)->prev=0;
+  (newMutex->listOfPids)->next=newMutex->listOfPids;
+  (newMutex->listOfPids)->prev=newMutex->listOfPids;
   newMutex->next=first;
   first=newMutex;
 }
@@ -136,9 +139,10 @@ uint8_t connectToMutex(uint8_t mutexID, uint8_t callingPid){
     newPidNode->pid=callingPid;
     newPidNode->state=THINKING;
     //add the pid node to the first position of the list of nodes
-    newPidNode->prev=NULL;
-    newPidNode->next=NULL;
+    newPidNode->prev=newPidNode;
+    newPidNode->next=newPidNode;
     (mutex->listOfPids)=newPidNode;
+
     return 1;
   }
 
@@ -201,4 +205,20 @@ uint8_t changePhiState(uint8_t mutexID,uint8_t pid, uint8_t state){
   }
   current->state=state;
   return 1;
+}
+
+uint8_t checkCircularList(uint8_t mutexID){
+  mutexNode * mutex=getMutex(mutexID);
+
+  pids* first=(mutex->listOfPids);
+
+  ncPrintDec(first->pid);
+
+  pids* current=(mutex->listOfPids)->next;
+  while((current->pid)!=first->pid){
+    ncPrintDec(current->pid);
+    current=current->next;
+  }
+  ncNewline();
+  return 0;
 }
