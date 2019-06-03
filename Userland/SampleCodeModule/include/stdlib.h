@@ -28,6 +28,7 @@ void down(uint8_t pid);
 // Memory Management
 void * malloc(uint64_t size);
 void free(void * pointer);
+void printOccupiedMemory();
 
 // Shared memory
 uint64_t shmCreate(uint8_t id);

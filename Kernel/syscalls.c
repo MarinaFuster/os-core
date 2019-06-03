@@ -19,7 +19,7 @@
 #define ENTER '\n'
 #define DELETE '\b'
 
-#define SYSCALLSQTY 34
+#define SYSCALLSQTY 35
 #define VALID_SYS_CODE(c) (c>=0 && c<=SYSCALLSQTY)
 
 typedef uint64_t (*syscall) (uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
@@ -119,6 +119,12 @@ uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
   free(rsi);
   return 0;
 }
+
+uint64_t sys_occupied_memory(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  ncPrint("METHOD FOR PRINTING OCCUPIED MEMORY SHOULD BE CREATED HERE");
+  return 0;
+}
+
 
 /*Creates shared memory*/
 uint64_t sys_shm_create(uint64_t id, uint64_t shm, uint64_t rcx, uint64_t r8, uint64_t r9){
@@ -301,6 +307,7 @@ void loadSysCalls(){
   syscalls[31]=&sys_circular_list;
   syscalls[32]=&sys_up;
   syscalls[33]=&sys_down;
+  syscalls[34]=&sys_occupied_memory;
 }
 
 void sysCallsHandler(uint64_t syscode, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){ // lega en rdi desde asm

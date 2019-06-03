@@ -155,6 +155,10 @@ void free(void * pointer){
   int80(11,(uint64_t)pointer,0,0,0,0);
 }
 
+void printOccupiedMemory(){
+  int80(34,0,0,0,0,0);
+}
+
 void exec(char * description, int priority, uint64_t functionPointer, uint8_t * pid, uint8_t redirects){
   int80(12,(uint64_t)description,(uint64_t)priority,functionPointer,(uint64_t)pid,(uint64_t)redirects);
 }

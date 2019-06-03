@@ -22,6 +22,8 @@ void testMemory(){
         printf("Test 2... OK\n");
     else
         printf("Test failed: pointer assigned to 0 size memory block\n");
+
+    printOccupiedMemory();
 }
 
 void testSharedMemory(){
