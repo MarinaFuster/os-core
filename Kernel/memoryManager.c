@@ -222,12 +222,6 @@ free(uint64_t pointer){
 
 void printOccupiedMemory(){
     for(int i=0;i<PAGES;i++){
-        if(buddyBlock[i].order>0){
-            ncPrint("- ");
-            ncPrintDec(i);
-            ncPrint(" - ");
-        }
-    /*
         if(buddyBlock[i].occupied && buddyBlock[i].first){
             int blocks=power(2,buddyBlock[i].order);
             ncPrint("Bloque numero ");
@@ -241,8 +235,5 @@ void printOccupiedMemory(){
             else
                 ncPrint(" bloques.\n");
         }
-    */
     }
-    
-   
 }
