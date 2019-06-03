@@ -24,6 +24,9 @@ void testMemory(){
         printf("Test failed: pointer assigned to 0 size memory block\n");
 
     printOccupiedMemory();
+    void * second_half_of_memory_block=malloc(4096*2);
+    printOccupiedMemory();
+    free(second_half_of_memory_block);
 }
 
 void testSharedMemory(){

@@ -121,7 +121,7 @@ uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
 }
 
 uint64_t sys_occupied_memory(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
-  ncPrint("METHOD FOR PRINTING OCCUPIED MEMORY SHOULD BE CREATED HERE");
+  printOccupiedMemory();
   return 0;
 }
 

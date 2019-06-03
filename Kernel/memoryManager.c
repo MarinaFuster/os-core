@@ -14,7 +14,6 @@
 // One of them is going to return an address, the other one would keep it as NULL
 typedef struct treeNode{
     uint8_t order;
-    void * address;
     uint8_t occupied;
     uint8_t first;
 }memoryDescriptor;
@@ -218,4 +217,22 @@ allocate(uint64_t size){
 uint64_t
 free(uint64_t pointer){
     return buddyFree((void *)pointer);
+}
+
+void printOccupiedMemory(){
+    for(int i=0;i<PAGES;i++){
+        if(buddyBlock[i].occupied && buddyBlock[i].first){
+            int blocks=power(2,buddyBlock[i].order);
+            ncPrint("Bloque numero ");
+            ncPrintDec(i);
+            ncPrint(", orden ");
+            ncPrintDec(buddyBlock[i].order);
+            ncPrint(", ocupa ");
+            ncPrintDec(blocks);
+            if(blocks==1)
+                ncPrint(" bloque.\n");
+            else
+                ncPrint(" bloques.\n");
+        }
+    }
 }
