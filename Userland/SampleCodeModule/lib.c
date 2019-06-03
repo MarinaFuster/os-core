@@ -192,3 +192,16 @@ void getPID(char * description, uint8_t * pid){
 void connectMutex(uint8_t mutexID,uint8_t pid){
   int80(27,(uint64_t)mutexID,(uint64_t)pid,0,0,0);
 }
+
+
+void checkSides(uint64_t mutexID, uint8_t callingPID){
+  int80(28, (uint64_t) mutexID, (uint64_t)callingPID, 0,0,0);
+}
+
+void changeState(uint64_t mutexID, uint8_t callingPID, uint8_t state){
+  int80(29, (uint64_t) mutexID, (uint64_t)callingPID, (uint64_t)state,0,0);
+}
+
+void mutexRemove(uint64_t mutexID, uint8_t callingPID){
+  int80(30, (uint64_t) mutexID, (uint64_t)callingPID, 0,0,0);
+}
