@@ -22,6 +22,11 @@ void testMemory(){
         printf("Test 2... OK\n");
     else
         printf("Test failed: pointer assigned to 0 size memory block\n");
+
+    printOccupiedMemory();
+    void * second_half_of_memory_block=malloc(4096*2);
+    printOccupiedMemory();
+    free(second_half_of_memory_block);
 }
 
 void testSharedMemory(){
@@ -86,7 +91,7 @@ void testMutexC(){
             j++;
 
         mutexLock(1,pid); // mutexID -- callingPID
-        printf("C");
+        //printf("C");
         (*number)++;
         mutexUnlock(1); // mutexID
     }
@@ -106,7 +111,7 @@ void testMutexZ(){
             j++;
 
         mutexLock(1,pid); // mutexID -- callingPID
-        printf("Z");
+        //printf("Z");
         (*number)++;
         mutexUnlock(1); // mutexID
     }
@@ -126,7 +131,7 @@ void testMutexD(){
         // MutexID==1 just testing with one mutex
         mutexLock(1,pid); // mutexID -- callingPID
         (*number)++;
-        printf("D");
+        //printf("D");
         mutexUnlock(1); // mutexID
     }
     printf("Done with test mutex D!\n");

@@ -178,9 +178,14 @@ void execute(){
       }
       else if(strcmp(command[i], CIRCLE)){
         exec("circle", LOW_PRIORITY, (uint64_t)circleTest, &pid, redirects);
-      }
-      else if(strcmp(command[i], RPHI)){
-        exec("rphi", LOW_PRIORITY, (uint64_t)rphi, &pid, redirects);
+      }else if(strcmp(command[i], RPHI)){
+          exec("rphi", LOW_PRIORITY, (uint64_t)rphi, &pid, redirects);
+      }else if(upcmp(command[i])){
+        up(numUp(command[i]));
+        //exec("up",numUp(command[i]),(uint64_t)up,&pid,redirects);
+      }else if(downcmp(command[i])){
+        down(numDown(command[i]));
+        //exec("down",numDown(command[i]),(uint64_t)down,&pid,redirects);
       }
       else
         printf(invalidCommandMessage);

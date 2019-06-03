@@ -19,7 +19,7 @@
 #define ENTER '\n'
 #define DELETE '\b'
 
-#define SYSCALLSQTY 32
+#define SYSCALLSQTY 35
 #define VALID_SYS_CODE(c) (c>=0 && c<=SYSCALLSQTY)
 
 typedef uint64_t (*syscall) (uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
@@ -119,6 +119,12 @@ uint64_t sys_free(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
   free(rsi);
   return 0;
 }
+
+uint64_t sys_occupied_memory(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  printOccupiedMemory();
+  return 0;
+}
+
 
 /*Creates shared memory*/
 uint64_t sys_shm_create(uint64_t id, uint64_t shm, uint64_t rcx, uint64_t r8, uint64_t r9){
@@ -258,7 +264,14 @@ uint64_t sys_circular_list(uint64_t mutexID, uint64_t pid, uint64_t rcx, uint64_
   checkCircularList(mutexID);
   return 0;
 }
-
+uint64_t sys_up(uint64_t pid, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  upgradePriority((uint8_t)pid);
+  return 0;
+}
+uint64_t sys_down(uint64_t pid, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+  downgradePriority((uint8_t)pid);
+  return 0;
+}
 void loadSysCalls(){
   syscalls[0]=&sys_exit;
   syscalls[1]=&sys_time;
@@ -291,7 +304,10 @@ void loadSysCalls(){
   syscalls[28]=&sys_mutex_side_check;
   syscalls[29]=&sys_change_mutex_state;
   syscalls[30]=&sys_mutex_remove;
-  syscalls[31]=&sys_circular_list;  
+  syscalls[31]=&sys_circular_list;
+  syscalls[32]=&sys_up;
+  syscalls[33]=&sys_down;
+  syscalls[34]=&sys_occupied_memory;
 }
 
 void sysCallsHandler(uint64_t syscode, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){ // lega en rdi desde asm
