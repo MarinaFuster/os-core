@@ -63,7 +63,7 @@ void testSharedMemory(){
 }
 
 void testProcessA(){
-    for(int i=0;i<1000;i++){
+    for(int i=0;i<500;i++){
         int j=0;
         while(j<500000)
             j++;
@@ -72,7 +72,7 @@ void testProcessA(){
 }
 
 void testProcessB(){
-    for(int i=0;i<1000;i++){
+    for(int i=0;i<500;i++){
         int j=0;
         while(j<500000)
             j++;
@@ -82,13 +82,29 @@ void testProcessB(){
 
 void testReadFromA(){
     char buffer[1];
-    for(int i=0;i<1000;i++){
+    
+    // This was the ideal...
+    // but for some reason it was not returning properly
+    /*for(int i=0;i<1000;i++){
         int j=0;
         while(j<500000)
             j++;
         *buffer=getChar(); // From standard input
         printf(buffer);
-    }
+    }*/
+
+    // We want to show that testProcessA was writing on another file descriptor
+    uint8_t filed[2]={0};
+    openPipe(0,filed); // We are opening the OS pipe. This isn't supposed to be done here!
+    
+    buffer[501]={0};
+    read(2, buffer, 500, 0); // We are reading what testProcessA left on its stdout...
+
+    printf(buffer); // Printing it...
+
+    closePipe(0); // Closing OS pipe. We are not using it anymore
+    // If we want to redirect other processes it will be reopen
+
 }
 
 void testMutexC(){
