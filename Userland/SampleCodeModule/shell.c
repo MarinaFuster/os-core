@@ -168,13 +168,13 @@ void execute(){
       else if(strcmp(command[i], TEST_PIPE_G)){
         exec("testpipeG", LOW_PRIORITY, (uint64_t)testPipeG, &pid, redirects);
       }
-      else if(strcmp(command,TEST_MUTEX_Z)){
+      else if(strcmp(command[i],TEST_MUTEX_Z)){
         exec("testmutexz",LOW_PRIORITY,(uint64_t)testMutexZ,&pid, redirects);
-      }else if(strcmp(command, PHI_TEST)){
-        exec("testphi", LOW_PRIORITY, (uint64_t)testPhi, &pid);
+      }else if(strcmp(command[i], PHI_TEST)){
+        exec("testphi", LOW_PRIORITY, (uint64_t)testPhi, &pid, redirects);
       }
-      else if (strcmp(command, PHI)){
-        exec("phi", LOW_PRIORITY, (uint64_t)phi, &pid);
+      else if (strcmp(command[i], PHI)){
+        exec("phi", LOW_PRIORITY, (uint64_t)phi, &pid, redirects);
     }
       else
         printf(invalidCommandMessage);
