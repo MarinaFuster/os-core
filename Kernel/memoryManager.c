@@ -36,7 +36,7 @@ int power(int x, int y){
     return powRec(x,y);
 }
 
-void initializeBuddyTree(){
+void initializeBuddyMemory(){
     for(int i=0; i<PAGES; i++){
         buddyBlock[i].order=MAX_ORDER; // Memory block starts without partitions
     }
@@ -47,7 +47,8 @@ void initializeBuddyTree(){
 void createBuddies(int index){
     uint8_t prevOrder=buddyBlock[index].order;
     uint8_t newOrder=prevOrder-1;
-    for(int i=0; i<power(2,prevOrder); i++){
+    int blocks=power(2,prevOrder);
+    for(int i=0; i<blocks; i++){
         buddyBlock[index+i].order=newOrder;
     }
 }
@@ -221,6 +222,12 @@ free(uint64_t pointer){
 
 void printOccupiedMemory(){
     for(int i=0;i<PAGES;i++){
+        if(buddyBlock[i].order>0){
+            ncPrint("- ");
+            ncPrintDec(i);
+            ncPrint(" - ");
+        }
+    /*
         if(buddyBlock[i].occupied && buddyBlock[i].first){
             int blocks=power(2,buddyBlock[i].order);
             ncPrint("Bloque numero ");
@@ -234,5 +241,8 @@ void printOccupiedMemory(){
             else
                 ncPrint(" bloques.\n");
         }
+    */
     }
+    
+   
 }
