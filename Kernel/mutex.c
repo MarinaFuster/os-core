@@ -42,10 +42,15 @@ mutexNode * getMutex(uint8_t mutexID){
 void removeFromMutex(uint8_t mutexID, uint8_t pid){
   mutexNode * mutex=getMutex(mutexID);
   pids* current=(mutex->listOfPids);
-  while((current->pid)!=pid){
+
+  while((current->pid)!=pid){   // ARREGLAR SI NO ENCUENTRA PID
     current=current->next;
   }
-  if(((current->prev)!=0)&&(current->next!=0)){
+  if( ((current->next)->pid)==(current->pid) ){
+    mutex->listOfPids=NULL;
+    return;
+  }
+  else{
     (current->prev)->next=current->next;
     (current->next)->prev=current->prev;
     ////////// LIBERAR MEMORIA!!!! ///////////
@@ -209,6 +214,16 @@ uint8_t changePhiState(uint8_t mutexID,uint8_t pid, uint8_t state){
 
 uint8_t checkCircularList(uint8_t mutexID){
   mutexNode * mutex=getMutex(mutexID);
+
+  if(mutex==0){
+    ncPrint("Error, no existe ese mutex");
+    ncNewline();
+    return 0;
+  }
+
+  if(mutex->listOfPids==NULL){
+    return 0;
+  }
 
   pids* first=(mutex->listOfPids);
 

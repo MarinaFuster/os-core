@@ -291,7 +291,7 @@ void loadSysCalls(){
   syscalls[28]=&sys_mutex_side_check;
   syscalls[29]=&sys_change_mutex_state;
   syscalls[30]=&sys_mutex_remove;
-  syscalls[31]=&sys_circular_list;
+  syscalls[31]=&sys_circular_list;  
 }
 
 void sysCallsHandler(uint64_t syscode, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){ // lega en rdi desde asm

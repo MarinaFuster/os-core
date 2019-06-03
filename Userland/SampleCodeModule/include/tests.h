@@ -16,6 +16,7 @@
 #define PHI_TEST "testphi"
 #define PHI "phi"
 #define CIRCLE "circle"
+#define RPHI "rphi"
 
 void testMemory();
 void testProcessA();
@@ -32,6 +33,7 @@ void testPipeG();
 void testPhi();
 void phi();
 void circleTest();
+void rphi();
 
 
 #endif // __TESTS__

@@ -1,12 +1,13 @@
 #include "include/stdlib.h"
 #include "include/commands.h"
 #define NULL 0
-#define PHIQ 5
 #define HUNGRY 1
 #define THINKING 2
 #define EATING 3
 
 extern uint64_t int80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
+
+static int pidCounter=3;
 
 void testMemory(){
 
@@ -260,6 +261,10 @@ void phi(){
 }
 
 void circleTest(){
-  printf("DEBUG\n");
    circleTesting(1);
+}
+
+void rphi(){
+  mutexRemove(1,4);
+  pidCounter++;
 }

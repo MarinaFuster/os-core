@@ -40,6 +40,7 @@ void checkSides(uint64_t mutexID, uint8_t callingPID);
 void changeState(uint64_t mutexID, uint8_t callingPID, uint8_t state);
 void mutexRemove(uint64_t mutexID, uint8_t callingPID);
 void circleTesting(uint64_t mutexID);
+
 // Messages
 void createPipe(uint8_t id, uint8_t * filed);
 void openPipe(uint8_t id, uint8_t * filed);
