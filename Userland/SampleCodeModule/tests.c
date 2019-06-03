@@ -7,8 +7,6 @@
 
 extern uint64_t int80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
 
-static int pidCounter=3;
-
 void testMemory(){
 
     void * bigger_than_memory_block=malloc(4200000);
@@ -23,10 +21,14 @@ void testMemory(){
     else
         printf("Test failed: pointer assigned to 0 size memory block\n");
 
+
+    void * first_block=malloc(4100);
+    void * second_block=malloc(2097152);
+    void * third_block=malloc(16383);
     printOccupiedMemory();
-    void * second_half_of_memory_block=malloc(4096*2);
-    printOccupiedMemory();
-    free(second_half_of_memory_block);
+    free(first_block);
+    free(second_block);
+    free(third_block);
 }
 
 void testSharedMemory(){
