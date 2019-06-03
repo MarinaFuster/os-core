@@ -179,6 +179,13 @@ uint8_t changePhiState(uint8_t mutexID,uint8_t pid, uint8_t state){
   while((current->pid)!=pid){
     current=current->next;
   }
+
+  if(current->state==EATING){
+    ncPrint("Philosopher ");
+    ncPrintDec(pid);
+    ncPrint(" is putting the chopsticks down");
+    ncNewline();
+  }
   current->state=state;
   return 1;
 }

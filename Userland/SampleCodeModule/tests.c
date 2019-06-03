@@ -232,10 +232,9 @@ void takeFork(uint8_t mutexID, uint8_t pid){
 }
 
 void putFork(uint8_t mutexID, uint8_t pid){
-  mutexLock(1, pid);
+  //mutexLock(1, pid);
   changeState(1, pid, THINKING);
-  printf("Philosopher %d is putting the chopsticks down\n", pid);
-  mutexUnlock(1);
+  //mutexUnlock(1);
   int j=0;
   while(j<500000000)
       j++;
