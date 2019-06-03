@@ -58,6 +58,7 @@ void * initializeKernelBinary()
 int main(){
 	ncClear();
 	load_idt();
+	initializeBuddyMemory();
 	initializeProcessRegister();
 	initializeScheduler();
 	//initializeScreen();
