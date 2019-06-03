@@ -29,6 +29,8 @@ void testMemory(){
     free(first_block);
     free(second_block);
     free(third_block);
+    free(bigger_than_memory_block);
+    free(null_memory_block);
 }
 
 void testSharedMemory(){
