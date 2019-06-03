@@ -166,10 +166,8 @@ uint64_t contextSwitching(uint64_t rsp) {
 int blockProcess(dequeueNode * current, uint8_t pid){
   if(current==NULL)
     return 0;
-  if(current->pid==pid){
+  if(current->pid==pid)
     current->state=BLOCK;
-    return 1;
-  }
   blockProcess(current->next, pid);
   return 0;
 }
@@ -177,10 +175,8 @@ int blockProcess(dequeueNode * current, uint8_t pid){
 int unblockProcess(dequeueNode *current, uint8_t pid){
   if(current==NULL)
     return 0;
-  if(current->pid==pid){
-    current->state=ACTIVE;   // We are going to share mutex just among 2 processes. If not, this should be READY.
-    return 1;
-  }
+  if(current->pid==pid)
+    current->state=ACTIVE;
   unblockProcess(current->next, pid);
   return 0;
 }
