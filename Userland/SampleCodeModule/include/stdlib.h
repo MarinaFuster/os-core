@@ -18,6 +18,8 @@ int downcmp(const char * string);
 int numUp(const char * str);
 int numDown(const char * str);
 void strncpy(char * dest, const char * source, int n);
+uint8_t rphiCmp(const char * str);
+uint8_t numRphi(const char * str);
 
 // Process Management
 void exec(char * description, int priority, uint64_t functionPointer, uint8_t * pid, uint8_t filedToRedirect);

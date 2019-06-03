@@ -56,6 +56,23 @@ int strlen(const char* str){
 	return i;
 }
 
+uint8_t rphiCmp(const char * str){
+  if(strlen(str)<6)
+    return FALSE;
+  if(str[0] == 'r' && str[1] == 'p' && str[2] == 'h'&& str[3] == 'i'&& str[4] == ' ')
+    return TRUE;
+  return FALSE;
+}
+
+uint8_t numRphi(const char * str){
+  uint8_t num = str[5] - '0';
+  if(str[6]==0)
+    return num;
+  num*=10;
+  num+=str[6] - '0';
+  return num;
+}
+
 void swap(char * str, int index1, int index2){ //swapea dos valores en un string
   char aux = str[index1];
   str[index1] = str[index2];

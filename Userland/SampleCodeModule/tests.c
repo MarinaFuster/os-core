@@ -236,7 +236,7 @@ void testPipeG(){
 void takeFork(uint8_t mutexID, uint8_t pid){
   mutexLock(1, pid);
   changeState(1, pid, HUNGRY);
-  printf("Philosopher %d is hungry\n",pid );
+  //printf("Philosopher %d is hungry\n",pid );
   int j=0;
   while(j<500000000)
       j++;
@@ -282,6 +282,6 @@ void circleTest(){
    circleTesting(1);
 }
 
-void rphi(){
-  mutexRemove(1,4);
+void rphi(uint8_t pid){
+  mutexRemove(1,pid);
 }

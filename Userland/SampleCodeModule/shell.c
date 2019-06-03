@@ -189,6 +189,9 @@ void execute(){
       }else if(downcmp(command[i])){
         down(numDown(command[i]));
         //exec("down",numDown(command[i]),(uint64_t)down,&pid,redirects);
+      }else if(rphiCmp(command[i])){
+        rphi(numRphi(command[i]));
+        //exec("down",numDown(command[i]),(uint64_t)down,&pid,redirects);
       }
       else
         printf(invalidCommandMessage);

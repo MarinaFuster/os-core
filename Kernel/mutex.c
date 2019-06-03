@@ -43,6 +43,14 @@ void removeFromMutex(uint8_t mutexID, uint8_t pid){
   mutexNode * mutex=getMutex(mutexID);
   pids* current=(mutex->listOfPids);
 
+  if(current==NULL){
+    return;
+  }
+
+  if(!(inMutex(1, pid))) {
+    return 1;
+  }
+
   while((current->pid)!=pid){   // ARREGLAR SI NO ENCUENTRA PID
     current=current->next;
   }
@@ -161,7 +169,6 @@ uint8_t connectToMutex(uint8_t mutexID, uint8_t callingPid){
   //Agrego el pid al final
 
   if((mutex->listOfPids)==NULL){
-    //Tengo uno solo
     pids * newPidNode = (pids *)allocate(sizeof(pids*));
     newPidNode->pid=callingPid;
     newPidNode->state=THINKING;
@@ -197,15 +204,65 @@ uint8_t connectToMutex(uint8_t mutexID, uint8_t callingPid){
   newPidNode->next=mutex->listOfPids;
   newPidNode->prev=current;
   current->next=newPidNode;
+  (mutex->listOfPids)->prev=newPidNode;
   return 1;
 }
+
+uint8_t inMutex(uint8_t mutexID, uint8_t pid){
+  int found=0;
+  mutexNode * mutex=getMutex(mutexID);
+  pids* current=(mutex->listOfPids)->next;
+  pids* first=mutex->listOfPids;
+
+  if(first->pid==pid)
+    found=1;
+
+  while((first->pid!=current->pid)&&(found==0)){
+    if(current->pid==pid){
+      found=1;
+    }
+    current=current->next;
+  }
+
+  if (found==1){
+    return 1;
+  }
+
+  return 0;
+}
+
 
 uint8_t checkPhi(uint8_t mutexID, uint8_t pid){
   mutexNode * mutex=getMutex(mutexID);
   pids* current=(mutex->listOfPids);
+
+  if(!(inMutex(1, pid))) {
+    return 1;
+  }
+
+  ncPrint("Philosopher ");
+  ncPrintDec(pid);
+  ncPrint(" is hungry");
+  ncNewline();
+
+  int j=0;
+  while(j<500000000)
+      j++;
+
   while((current->pid)!=pid){
     current=current->next;
   }
+
+  ncPrint("Soy el filosofo con pid: ");
+  ncPrintDec(pid);
+  ncNewline();
+  ncPrint("Mi valor derecho es: ");
+  ncPrintDec((current->next)->pid);
+  ncNewline();
+  ncPrint("Y mi valor izquierdo es: ");
+  ncPrintDec((current->prev)->pid);
+  ncNewline();
+
   if ( (((current->next)->state)!=EATING) && (((current->prev)->state)!=EATING) ){
     current->state=EATING;
     ncPrint("Philosopher ");
@@ -221,15 +278,14 @@ uint8_t changePhiState(uint8_t mutexID,uint8_t pid, uint8_t state){
   mutexNode * mutex=getMutex(mutexID);
   pids* current=(mutex->listOfPids);
 
-  pids* first=mutex->listOfPids;
+  if(!(inMutex(1, pid))) {    // Bocho a todos los que no esten en la mesa
+    return 1;
+  }
 
-  while(((current->pid)!=pid)&&(current->pid!=first->pid)){
+  while((current->pid)!=pid){
     current=current->next;
   }
 
-  if((current->pid==first->pid)&&(current->pid!=pid)){
-    return 1;
-  }
 
   if(current->state==EATING){
     ncPrint("Philosopher ");

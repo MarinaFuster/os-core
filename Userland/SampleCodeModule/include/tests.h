@@ -35,7 +35,7 @@ void testPipeG();
 void testPhi();
 void phi();
 void circleTest();
-void rphi();
+void rphi(uint8_t pid);
 
 
 #endif // __TESTS__
