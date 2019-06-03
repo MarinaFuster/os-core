@@ -79,6 +79,7 @@ void testProcessB(){
 }
 
 void testReadFromA(){
+    int k=0;
     char buffer[1];
     for(int i=0;i<1000;i++){
         int j=0;
