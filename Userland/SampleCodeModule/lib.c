@@ -264,3 +264,11 @@ void up(uint8_t pid){
 void down(uint8_t pid){
   int80(33,(uint64_t)pid,0,0,0,0);
 }
+
+void inMutexCheck(uint64_t ans, uint8_t pid){
+  int80(35, (uint64_t)ans, (uint64_t)pid,0,0,0);
+}
+
+void quitProcess(uint8_t pid){
+  int80(13,(uint64_t)pid,0,0,0,0);
+}

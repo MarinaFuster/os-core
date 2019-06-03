@@ -81,7 +81,6 @@ void testProcessB(){
 }
 
 void testReadFromA(){
-    int k=0;
     char buffer[1];
     for(int i=0;i<1000;i++){
         int j=0;
@@ -269,16 +268,19 @@ void testPhi(){
 
 void phi(){
   uint8_t pid=0;
+  uint8_t keepGoing=1;
   getPID("phi", &pid);
   connectMutex(1, pid);
   printf("I am philosopher %d\n",pid );
-  while(1){
+  while(keepGoing){
     takeFork(1,pid);
     int j=0;
     while(j<500000000)
         j++;
     putFork(1,pid);
+    inMutexCheck(&keepGoing, pid);
   }
+  quitProcess(pid);
 }
 
 void circleTest(){

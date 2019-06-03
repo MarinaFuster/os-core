@@ -48,7 +48,7 @@ void removeFromMutex(uint8_t mutexID, uint8_t pid){
   }
 
   if(!(inMutex(1, pid))) {
-    return 1;
+    return;
   }
 
   while((current->pid)!=pid){   // ARREGLAR SI NO ENCUENTRA PID
@@ -73,7 +73,6 @@ void removeFromMutex(uint8_t mutexID, uint8_t pid){
 
     (current->prev)->next=current->next;
     (current->next)->prev=current->prev;
-    ncPrint("ENTRO CON MAS DE UN VALOR ");
     ncNewline();
     ncPrint("El valor izquierdo del pid: ");
     ncPrintDec((current->next)->pid);
@@ -229,6 +228,12 @@ uint8_t inMutex(uint8_t mutexID, uint8_t pid){
   }
 
   return 0;
+}
+
+uint8_t inMutexCheckFront(uint64_t ans, uint8_t pid){
+  uint8_t * aux=ans;
+  *aux=inMutex(1, pid);
+  return 1;
 }
 
 

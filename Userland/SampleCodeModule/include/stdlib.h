@@ -26,6 +26,7 @@ void exec(char * description, int priority, uint64_t functionPointer, uint8_t * 
 void getPID(char * description, uint8_t * pid);
 void up(uint8_t pid);
 void down(uint8_t pid);
+void quitProcess(uint8_t pid);
 
 // Memory Management
 void * malloc(uint64_t size);
@@ -49,6 +50,7 @@ void checkSides(uint64_t mutexID, uint8_t callingPID);
 void changeState(uint64_t mutexID, uint8_t callingPID, uint8_t state);
 void mutexRemove(uint64_t mutexID, uint8_t callingPID);
 void circleTesting(uint64_t mutexID);
+void inMutexCheck(uint8_t * ans, uint8_t pid);
 
 // Messages
 void createPipe(uint8_t id, uint8_t * filed);

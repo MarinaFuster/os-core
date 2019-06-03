@@ -14,5 +14,6 @@ uint8_t changePhiState(uint8_t mutexID,uint8_t pid, uint8_t state);
 void removeFromMutex(uint8_t mutexID, uint8_t pid);
 uint8_t checkCircularList(uint8_t mutexID);
 uint8_t inMutex(uint8_t mutexID, uint8_t pid);
+uint8_t inMutexCheckFront(uint64_t ans, uint8_t pid);
 
 #endif
