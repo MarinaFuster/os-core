@@ -19,7 +19,7 @@
 #define ENTER '\n'
 #define DELETE '\b'
 
-#define SYSCALLSQTY 28
+#define SYSCALLSQTY 30
 #define VALID_SYS_CODE(c) (c>=0 && c<=SYSCALLSQTY)
 
 typedef uint64_t (*syscall) (uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
@@ -149,7 +149,7 @@ uint64_t sys_shm_close(uint64_t id, uint64_t rdx, uint64_t rcx, uint64_t r8, uin
 /* Arguments:
    rsi: description of the process (char *)
    rdx: priority of the process (int)
-   rcx: function pointer 
+   rcx: function pointer
    r8: where the pid is stored (uint8_t *)
    r9: indicates if the stdin/stdout must be redirected
 
@@ -162,7 +162,7 @@ uint64_t sys_exec(uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_
     newFileDescriptor=*(fileDescriptors+r9);
     _sti();
   }
-  
+
   (*(uint64_t *)r8)=(uint64_t)createProcessWithPriority((char *)rsi, (int)rdx, rcx, r9, newFileDescriptor);
   return 0;
 }
@@ -239,6 +239,21 @@ uint64_t sys_mutex_connect(uint64_t mutexID, uint64_t pid, uint64_t rcx, uint64_
   return 0;
 }
 
+uint64_t sys_mutex_side_check(uint64_t mutexID, uint64_t pid, uint64_t rcx, uint64_t r8, uint64_t r9){
+  checkPhi(mutexID, pid);
+  return 0;
+}
+
+uint64_t sys_change_mutex_state(uint64_t mutexID, uint64_t pid, uint64_t state, uint64_t r8, uint64_t r9){
+  changePhiState(mutexID, pid, state);
+  return 0;
+}
+
+uint64_t sys_mutex_remove(uint64_t mutexID, uint64_t pid, uint64_t rcx, uint64_t r8, uint64_t r9){
+  removeFromMutex(mutexID, pid);
+  return 0;
+}
+
 void loadSysCalls(){
   syscalls[0]=&sys_exit;
   syscalls[1]=&sys_time;
@@ -268,6 +283,9 @@ void loadSysCalls(){
   syscalls[25]=&sys_pipe_close;
   syscalls[26]=&sys_ask_pid;
   syscalls[27]=&sys_mutex_connect;
+  syscalls[28]=&sys_mutex_side_check;
+  syscalls[29]=&sys_change_mutex_state;
+  syscalls[30]=&sys_mutex_remove;
 }
 
 void sysCallsHandler(uint64_t syscode, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){ // lega en rdi desde asm
