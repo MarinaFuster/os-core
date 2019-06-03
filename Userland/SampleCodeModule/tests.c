@@ -81,11 +81,11 @@ void testProcessB(){
 }
 
 void testReadFromA(){
-    char buffer[1];
     
     // This was the ideal...
     // but for some reason it was not returning properly
-    /*for(int i=0;i<1000;i++){
+    /*char buffer[1];
+    for(int i=0;i<1000;i++){
         int j=0;
         while(j<500000)
             j++;
@@ -97,7 +97,7 @@ void testReadFromA(){
     uint8_t filed[2]={0};
     openPipe(0,filed); // We are opening the OS pipe. This isn't supposed to be done here!
     
-    buffer[501]={0};
+    char buffer[501]={0};
     read(2, buffer, 500, 0); // We are reading what testProcessA left on its stdout...
 
     printf(buffer); // Printing it...
