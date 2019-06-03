@@ -61,7 +61,7 @@ void testSharedMemory(){
 }
 
 void testProcessA(){
-    for(int i=0;i<100;i++){
+    for(int i=0;i<1000;i++){
         int j=0;
         while(j<500000)
             j++;
@@ -70,7 +70,7 @@ void testProcessA(){
 }
 
 void testProcessB(){
-    for(int i=0;i<100;i++){
+    for(int i=0;i<1000;i++){
         int j=0;
         while(j<500000)
             j++;
