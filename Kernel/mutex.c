@@ -235,7 +235,7 @@ uint8_t inMutex(uint8_t mutexID, uint8_t pid){
 }
 
 uint8_t inMutexCheckFront(uint64_t ans, uint8_t pid){
-  uint8_t * aux=ans;
+  uint8_t * aux=(uint8_t *)ans;
   *aux=inMutex(1, pid);
   return 1;
 }
