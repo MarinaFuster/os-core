@@ -13,6 +13,8 @@
 #define TEST_UNBLOCK "unblock"
 #define TEST_PIPE_F "pipef"
 #define TEST_PIPE_G "pipeg"
+#define PHI_TEST "testphi"
+#define PHI "phi"
 
 void testMemory();
 void testProcessA();
@@ -26,6 +28,9 @@ void testBlock();
 void testUnblock();
 void testPipeF();
 void testPipeG();
+void testPhi();
+void phi();
+
 
 
 #endif // __TESTS__
